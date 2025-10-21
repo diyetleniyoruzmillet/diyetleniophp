@@ -97,25 +97,32 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
         /* Navbar */
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
-            padding: 1.2rem 0;
-            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0,0,0,0.08);
+            padding: 1rem 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid rgba(14, 165, 233, 0.1);
         }
 
         .navbar.scrolled {
-            padding: 0.8rem 0;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+            padding: 0.6rem 0;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 1);
         }
 
         .navbar-brand {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all 0.3s;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
         }
 
         .nav-link {
@@ -123,33 +130,109 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             font-weight: 500;
             transition: all 0.3s;
             position: relative;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            margin: 0 4px;
+        }
+
+        .nav-link i {
+            opacity: 0.7;
+            transition: all 0.3s;
         }
 
         .nav-link:hover {
             color: #0ea5e9 !important;
+            background: rgba(14, 165, 233, 0.08);
         }
 
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary-gradient);
-            transition: width 0.3s;
+        .nav-link:hover i {
+            opacity: 1;
+            transform: translateY(-2px);
         }
 
-        .nav-link:hover::after {
-            width: 100%;
+        /* Emergency Link */
+        .emergency-link {
+            color: #dc2626 !important;
+            font-weight: 600;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.2);
         }
 
+        .emergency-link:hover {
+            background: rgba(220, 38, 38, 0.15);
+            color: #b91c1c !important;
+        }
+
+        .pulse-icon {
+            animation: pulse-emergency 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse-emergency {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 12px;
+            margin-top: 12px;
+            min-width: 220px;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            color: #0ea5e9;
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        .dropdown-item:hover i {
+            opacity: 1;
+        }
+
+        .dropdown-divider {
+            margin: 8px 0;
+            opacity: 0.5;
+        }
+
+        /* User Menu */
+        .user-menu {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            font-weight: 600;
+            color: #0ea5e9 !important;
+        }
+
+        .user-menu:hover {
+            background: rgba(14, 165, 233, 0.15);
+        }
+
+        /* Buttons */
         .btn-gradient {
             background: var(--primary-gradient);
             border: none;
             color: white;
             font-weight: 600;
-            padding: 12px 30px;
+            padding: 10px 28px;
             border-radius: 50px;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
@@ -159,6 +242,71 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             transform: translateY(-3px);
             box-shadow: 0 6px 25px rgba(14, 165, 233, 0.5);
             color: white;
+        }
+
+        .btn-dietitian {
+            border-color: #10b981;
+            color: #10b981;
+            font-weight: 600;
+            padding: 10px 28px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            border-width: 2px;
+        }
+
+        .btn-dietitian:hover {
+            background: #10b981;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-login {
+            font-weight: 600;
+            color: #0ea5e9 !important;
+        }
+
+        .btn-login:hover {
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate.slideIn {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 991px) {
+            .navbar-nav {
+                padding: 15px 0;
+            }
+
+            .nav-link {
+                margin: 5px 0;
+            }
+
+            .dropdown-menu {
+                border: none;
+                box-shadow: none;
+                background: transparent;
+                padding-left: 15px;
+            }
+
+            .btn-gradient, .btn-dietitian {
+                width: 100%;
+                margin-top: 10px;
+            }
         }
 
         /* Hero Section */
@@ -716,40 +864,75 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             <a class="navbar-brand" href="/">
                 <i class="fas fa-heartbeat me-2"></i>Diyetlenio
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
+                <ul class="navbar-nav mx-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="#features">Özellikler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#dietitians">Diyetisyenler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger fw-bold" href="#emergency">
-                            <i class="fas fa-ambulance me-1"></i>Acil Nöbetçi
+                        <a class="nav-link" href="#features">
+                            <i class="fas fa-star me-1"></i>Özellikler
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#how-it-works">Nasıl Çalışır</a>
+                        <a class="nav-link" href="#dietitians">
+                            <i class="fas fa-user-md me-1"></i>Diyetisyenler
+                        </a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-book me-1"></i>Kaynaklar
+                        </a>
+                        <ul class="dropdown-menu animate slideIn" aria-labelledby="resourcesDropdown">
+                            <li><a class="dropdown-item" href="/blog"><i class="fas fa-newspaper me-2"></i>Blog</a></li>
+                            <li><a class="dropdown-item" href="/recipes"><i class="fas fa-utensils me-2"></i>Tarifler</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/faq"><i class="fas fa-question-circle me-2"></i>SSS</a></li>
+                            <li><a class="dropdown-item" href="/help"><i class="fas fa-life-ring me-2"></i>Yardım</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pricing">
+                            <i class="fas fa-tag me-1"></i>Fiyatlar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link emergency-link" href="#emergency">
+                            <i class="fas fa-ambulance me-1 pulse-icon"></i>Acil Nöbetçi
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav align-items-center">
                     <?php if ($auth->check()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= $auth->user()->getUserType() === 'admin' ? '/admin/dashboard.php' : ($auth->user()->getUserType() === 'dietitian' ? '/dietitian/dashboard.php' : '/client/dashboard.php') ?>">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle user-menu" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle me-1"></i><?= clean($auth->user()->getFullName()) ?>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout.php">Çıkış</a>
+                            <ul class="dropdown-menu dropdown-menu-end animate slideIn" aria-labelledby="userDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="<?= $auth->user()->getUserType() === 'admin' ? '/admin/dashboard.php' : ($auth->user()->getUserType() === 'dietitian' ? '/dietitian/dashboard.php' : '/client/dashboard.php') ?>">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Panel
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/logout.php"><i class="fas fa-sign-out-alt me-2"></i>Çıkış</a></li>
+                            </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="/login.php">Giriş</a>
+                            <a class="nav-link btn-login" href="/login.php">
+                                <i class="fas fa-sign-in-alt me-1"></i>Giriş
+                            </a>
                         </li>
                         <li class="nav-item ms-2">
-                            <a class="btn btn-gradient" href="/register-client.php">Ücretsiz Başla</a>
+                            <a class="btn btn-gradient" href="/register-client.php">
+                                <i class="fas fa-rocket me-1"></i>Ücretsiz Başla
+                            </a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-outline-primary btn-dietitian" href="/register-dietitian.php">
+                                <i class="fas fa-user-md me-1"></i>Diyetisyen Ol
+                            </a>
                         </li>
                     <?php endif; ?>
                 </ul>

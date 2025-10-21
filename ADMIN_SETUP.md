@@ -1,14 +1,21 @@
-# Admin Kullanıcısı Kurulum Kılavuzu
+# 🔧 Admin Şifre Düzeltme Kılavuzu
 
-## 🚀 Hızlı Kurulum
+## ⚠️ Sorun
+Veritabanındaki admin şifresi hash'i yanlıştı. Hash **"password"** şifresi içindi, **"Admin123!"** için değil.
 
-Admin kullanıcısını veritabanına eklemek için aşağıdaki adımlardan birini izleyin:
+## ✅ Çözüm
+
+Admin şifresini düzeltmek için aşağıdaki komutlardan birini çalıştırın:
 
 ---
 
-## Yöntem 1: SQL Dosyası ile (ÖNERİLEN)
+## Yöntem 1: sudo ile (ÖNERİLEN)
 
-Terminal'de şu komutu çalıştırın:
+```bash
+sudo mysql diyetlenio < scripts/create-admin.sql
+```
+
+## Yöntem 2: MySQL root kullanıcısı ile
 
 ```bash
 mysql -u root -p diyetlenio < scripts/create-admin.sql
