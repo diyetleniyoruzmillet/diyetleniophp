@@ -22,7 +22,7 @@ try {
     // Popüler diyetisyenler (en yüksek puanlı, onaylı)
     $stmt = $conn->query("
         SELECT u.id, u.full_name, dp.title, dp.specialization, dp.rating_avg,
-               dp.total_clients, dp.consultation_fee, u.profile_photo
+               dp.total_clients, dp.consultation_fee, u.profile_photo, dp.about_me
         FROM users u
         INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
         WHERE dp.is_approved = 1 AND u.is_active = 1
@@ -61,247 +61,598 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <meta name="description" content="Uzman diyetisyenlerle online görüşme, kişisel diyet programı ve beslenme danışmanlığı. Sağlıklı yaşam yolculuğunuza hemen başlayın!">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #28a745;
-            --secondary-color: #20c997;
-            --dark-color: #2d3748;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
         }
 
         /* Navbar */
         .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            padding: 1.2rem 0;
+            transition: all 0.3s;
+        }
+
+        .navbar.scrolled {
+            padding: 0.8rem 0;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.12);
         }
 
         .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: #2d3748 !important;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #11998e !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--success-gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-gradient {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(17, 153, 142, 0.5);
+            color: white;
         }
 
         /* Hero Section */
         .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 100px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
             position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             overflow: hidden;
+            padding: 100px 0;
         }
 
         .hero-section::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,106.7C1248,96,1344,96,1392,96L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
-            background-size: cover;
-            background-position: bottom;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            top: -300px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            bottom: -200px;
+            left: -100px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(30px, 30px) rotate(180deg); }
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
+            color: white;
         }
 
         .hero-title {
-            font-size: 3.5rem;
-            font-weight: 700;
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.2;
             margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease;
         }
 
         .hero-subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
+            font-size: 1.4rem;
             opacity: 0.95;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-buttons {
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero-image {
+            animation: fadeInRight 1s ease 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .btn-hero {
-            padding: 15px 40px;
+            padding: 18px 45px;
             font-size: 1.1rem;
             border-radius: 50px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid white;
         }
 
         .btn-hero:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
 
-        /* Features Section */
+        .btn-hero-primary {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .btn-hero-outline {
+            background: transparent;
+            color: white;
+            border-color: white;
+        }
+
+        .btn-hero-outline:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Feature Cards */
         .features-section {
-            padding: 80px 0;
-            background: #f8f9fa;
+            padding: 120px 0;
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            font-weight: 300;
         }
 
         .feature-card {
             background: white;
-            border-radius: 15px;
-            padding: 40px 30px;
+            border-radius: 20px;
+            padding: 45px 35px;
             text-align: center;
-            transition: all 0.3s;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #e2e8f0;
             height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--success-gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            transform: translateY(-15px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            border-color: transparent;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
         }
 
         .feature-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2rem;
+            margin: 0 auto 25px;
+            font-size: 2.5rem;
+            transition: all 0.4s;
         }
 
-        /* How It Works */
-        .how-it-works {
-            padding: 80px 0;
+        .feature-card:hover .feature-icon {
+            transform: rotateY(360deg) scale(1.1);
         }
 
-        .step-card {
-            text-align: center;
-            padding: 30px 20px;
-        }
-
-        .step-number {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
+        .feature-title {
+            font-size: 1.4rem;
             font-weight: 700;
-            margin: 0 auto 20px;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .feature-desc {
+            color: #718096;
+            line-height: 1.7;
         }
 
         /* Stats Section */
         .stats-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 80px 0;
+            background: var(--primary-gradient);
             color: white;
-            padding: 60px 0;
+            position: relative;
         }
 
         .stat-item {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
         .stat-number {
-            font-size: 3rem;
-            font-weight: 700;
+            font-size: 3.5rem;
+            font-weight: 800;
             margin-bottom: 10px;
+            display: block;
         }
 
         .stat-label {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             opacity: 0.9;
+            font-weight: 300;
         }
 
         /* Dietitians Section */
         .dietitians-section {
-            padding: 80px 0;
-            background: #f8f9fa;
+            padding: 120px 0;
+            background: white;
         }
 
         .dietitian-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 25px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.4s;
             height: 100%;
+            border: 1px solid #e2e8f0;
         }
 
         .dietitian-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
         }
 
-        .dietitian-avatar {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .dietitian-header {
+            height: 280px;
+            background: var(--primary-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
             color: white;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .dietitian-info {
-            padding: 25px;
+        .dietitian-header::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            top: -50%;
+            left: -50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .dietitian-body {
+            padding: 30px;
+        }
+
+        .dietitian-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2d3748;
+        }
+
+        .dietitian-title {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
         }
 
         .rating {
-            color: #ffc107;
+            color: #fbbf24;
+            margin-bottom: 15px;
+        }
+
+        .dietitian-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            background: linear-gradient(135deg, #11998e20 0%, #38ef7d20 100%);
+            border-radius: 20px;
+            color: #11998e;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .dietitian-price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #11998e;
+            margin-bottom: 20px;
+        }
+
+        /* How It Works */
+        .how-section {
+            padding: 120px 0;
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--success-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+            transition: all 0.4s;
+        }
+
+        .step-card:hover .step-number {
+            transform: scale(1.15) rotate(360deg);
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .step-desc {
+            color: #718096;
+            line-height: 1.6;
         }
 
         /* CTA Section */
         .cta-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--warning-gradient);
             color: white;
-            padding: 80px 0;
+            padding: 100px 0;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            top: -250px;
+            right: -100px;
+        }
+
+        .cta-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta-desc {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 40px;
         }
 
         /* Footer */
         footer {
-            background: var(--dark-color);
+            background: #1a202c;
             color: white;
-            padding: 50px 0 20px;
+            padding: 80px 0 30px;
         }
 
-        footer a {
-            color: rgba(255,255,255,0.7);
+        .footer-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .footer-desc {
+            color: #a0aec0;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #a0aec0;
             text-decoration: none;
-            transition: color 0.3s;
+            transition: all 0.3s;
         }
 
-        footer a:hover {
+        .footer-links a:hover {
             color: white;
+            padding-left: 5px;
         }
 
         .social-links a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            line-height: 40px;
-            text-align: center;
-            margin: 0 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-right: 10px;
             transition: all 0.3s;
         }
 
         .social-links a:hover {
-            background: var(--primary-color);
-            transform: translateY(-3px);
+            background: var(--success-gradient);
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+            padding-top: 30px;
+            text-align: center;
+            color: #a0aec0;
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--success-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
+            z-index: 1000;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top" id="navbar">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="fas fa-heartbeat me-2"></i>Diyetlenio
@@ -310,7 +661,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="#features">Özellikler</a>
                     </li>
@@ -333,8 +684,8 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
                         <li class="nav-item">
                             <a class="nav-link" href="/login.php">Giriş</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="btn btn-light text-success ms-2" href="/register-client.php">Ücretsiz Başla</a>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-gradient" href="/register-client.php">Ücretsiz Başla</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -362,24 +713,24 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <div class="row align-items-center hero-content">
-                <div class="col-lg-6">
-                    <h1 class="hero-title">Sağlıklı Yaşam İçin Profesyonel Destek</h1>
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content">
+                    <h1 class="hero-title">Sağlıklı Yaşam Yolculuğunuz Burada Başlıyor</h1>
                     <p class="hero-subtitle">
-                        Uzman diyetisyenlerle online görüşme yapın, kişisel diyet programınızı alın ve
-                        hedeflerinize ulaşın.
+                        Uzman diyetisyenlerle online görüşme yapın, size özel diyet programı alın ve
+                        hedeflerinize profesyonel destekle ulaşın.
                     </p>
-                    <div class="d-flex gap-3 flex-wrap">
-                        <a href="/register-client.php" class="btn btn-light btn-hero text-success">
+                    <div class="d-flex gap-3 flex-wrap hero-buttons">
+                        <a href="/register-client.php" class="btn btn-hero btn-hero-primary">
                             <i class="fas fa-rocket me-2"></i>Hemen Başla
                         </a>
-                        <a href="/register-dietitian.php" class="btn btn-outline-light btn-hero">
-                            <i class="fas fa-user-md me-2"></i>Diyetisyen Olarak Katıl
+                        <a href="/register-dietitian.php" class="btn btn-hero btn-hero-outline">
+                            <i class="fas fa-user-md me-2"></i>Diyetisyen Katıl
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-6 text-center d-none d-lg-block">
-                    <i class="fas fa-apple-alt" style="font-size: 15rem; opacity: 0.2;"></i>
+                <div class="col-lg-6 text-center hero-image d-none d-lg-block">
+                    <i class="fas fa-apple-alt" style="font-size: 20rem; opacity: 0.15;"></i>
                 </div>
             </div>
         </div>
@@ -389,81 +740,85 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <section id="features" class="features-section">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Neden Diyetlenio?</h2>
-                <p class="lead text-muted">Platform özelliklerimizi keşfedin</p>
+                <h2 class="section-title">Neden Diyetlenio?</h2>
+                <p class="section-subtitle">Size sunduğumuz eşsiz özellikler</p>
             </div>
 
             <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card feature-card">
-                        <div class="feature-icon bg-primary bg-opacity-10 text-primary">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); color: #667eea;">
                             <i class="fas fa-video"></i>
                         </div>
-                        <h4 class="mb-3">Online Görüşme</h4>
-                        <p class="text-muted">
-                            Diyetisyeninizle video konferans üzerinden yüz yüze görüşme yapın.
-                            Evden çıkmadan profesyonel destek alın.
+                        <h4 class="feature-title">Online Video Görüşme</h4>
+                        <p class="feature-desc">
+                            Diyetisyeninizle HD kalitesinde video konferans üzerinden yüz yüze görüşme yapın.
+                            Evinizin konforunda profesyonel destek alın.
                         </p>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="card feature-card">
-                        <div class="feature-icon bg-success bg-opacity-10 text-success">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #11998e20 0%, #38ef7d20 100%); color: #11998e;">
                             <i class="fas fa-calendar-check"></i>
                         </div>
-                        <h4 class="mb-3">Kolay Randevu</h4>
-                        <p class="text-muted">
-                            Diyetisyenlerin müsaitlik durumlarını görün ve kolayca randevu alın.
-                            Hatırlatma bildirimleri alın.
+                        <h4 class="feature-title">Kolay Randevu Sistemi</h4>
+                        <p class="feature-desc">
+                            Diyetisyenlerin müsaitlik takvimini görün, size uygun saatte hemen randevu alın.
+                            Otomatik hatırlatma bildirimleri.
                         </p>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="card feature-card">
-                        <div class="feature-icon bg-info bg-opacity-10 text-info">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe20 0%, #00f2fe20 100%); color: #4facfe;">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <h4 class="mb-3">İlerleme Takibi</h4>
-                        <p class="text-muted">
-                            Kilo, ölçü ve beslenme takibinizi yapın. Gelişiminizi grafiklerle görüntüleyin.
+                        <h4 class="feature-title">İlerleme Takibi</h4>
+                        <p class="feature-desc">
+                            Kilo, ölçü ve beslenme takibinizi detaylı yapın. Gelişiminizi interaktif
+                            grafiklerle anlık görüntüleyin.
                         </p>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="card feature-card">
-                        <div class="feature-icon bg-warning bg-opacity-10 text-warning">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #fbbf2420 0%, #f5961520 100%); color: #fbbf24;">
                             <i class="fas fa-utensils"></i>
                         </div>
-                        <h4 class="mb-3">Diyet Planı</h4>
-                        <p class="text-muted">
-                            Size özel hazırlanan diyet programlarına erişin. Sağlıklı tarifler keşfedin.
+                        <h4 class="feature-title">Kişisel Diyet Planı</h4>
+                        <p class="feature-desc">
+                            Size özel hazırlanan günlük diyet programlarına erişin. Besin değerleri ve
+                            sağlıklı tariflerle desteklenmiş içerik.
                         </p>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="card feature-card">
-                        <div class="feature-icon bg-danger bg-opacity-10 text-danger">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb20 0%, #f5576c20 100%); color: #f093fb;">
                             <i class="fas fa-comments"></i>
                         </div>
-                        <h4 class="mb-3">Mesajlaşma</h4>
-                        <p class="text-muted">
-                            Diyetisyeninizle platform üzerinden güvenli mesajlaşma yapın.
+                        <h4 class="feature-title">Güvenli Mesajlaşma</h4>
+                        <p class="feature-desc">
+                            Diyetisyeninizle platform üzerinden güvenli, şifreli mesajlaşma yapın.
+                            Sorularınıza hızlı cevap alın.
                         </p>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="card feature-card">
-                        <div class="feature-icon bg-secondary bg-opacity-10 text-secondary">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #a8edea20 0%, #fed6e320 100%); color: #6dd5ed;">
                             <i class="fas fa-shield-alt"></i>
                         </div>
-                        <h4 class="mb-3">Güvenli Platform</h4>
-                        <p class="text-muted">
-                            Kişisel verileriniz SSL ile şifrelenir. KVKK uyumlu güvenli altyapı.
+                        <h4 class="feature-title">%100 Güvenli</h4>
+                        <p class="feature-desc">
+                            Kişisel ve sağlık verileriniz SSL ile şifrelenir. KVKK uyumlu,
+                            ISO sertifikalı güvenli altyapı.
                         </p>
                     </div>
                 </div>
@@ -475,28 +830,28 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <section class="stats-section">
         <div class="container">
             <div class="row">
-                <div class="col-md-3 col-6">
+                <div class="col-lg-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number"><?= number_format($stats['total_dietitians'] ?? 0) ?>+</div>
+                        <span class="stat-number counter"><?= $stats['total_dietitians'] ?? 0 ?></span>+
                         <div class="stat-label">Uzman Diyetisyen</div>
                     </div>
                 </div>
-                <div class="col-md-3 col-6">
+                <div class="col-lg-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number"><?= number_format($stats['total_clients'] ?? 0) ?>+</div>
+                        <span class="stat-number counter"><?= $stats['total_clients'] ?? 0 ?></span>+
                         <div class="stat-label">Mutlu Danışan</div>
                     </div>
                 </div>
-                <div class="col-md-3 col-6">
+                <div class="col-lg-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number"><?= number_format($stats['completed_sessions'] ?? 0) ?>+</div>
+                        <span class="stat-number counter"><?= $stats['completed_sessions'] ?? 0 ?></span>+
                         <div class="stat-label">Tamamlanan Seans</div>
                     </div>
                 </div>
-                <div class="col-md-3 col-6">
+                <div class="col-lg-3 col-6">
                     <div class="stat-item">
-                        <div class="stat-number"><?= number_format($stats['total_articles'] ?? 0) ?>+</div>
-                        <div class="stat-label">Blog Yazısı</div>
+                        <span class="stat-number">4.9</span>/5
+                        <div class="stat-label">Ortalama Memnuniyet</div>
                     </div>
                 </div>
             </div>
@@ -508,59 +863,58 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <section id="dietitians" class="dietitians-section">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Popüler Diyetisyenlerimiz</h2>
-                <p class="lead text-muted">En çok tercih edilen uzmanlarımız</p>
+                <h2 class="section-title">Popüler Diyetisyenlerimiz</h2>
+                <p class="section-subtitle">En çok tercih edilen uzman diyetisyenlerimiz</p>
             </div>
 
             <div class="row g-4">
                 <?php foreach ($topDietitians as $dietitian): ?>
-                <div class="col-md-4">
-                    <div class="card dietitian-card">
-                        <div class="dietitian-avatar">
+                <div class="col-lg-4 col-md-6">
+                    <div class="dietitian-card">
+                        <div class="dietitian-header">
                             <?php if ($dietitian['profile_photo']): ?>
-                                <img src="/assets/uploads/<?= clean($dietitian['profile_photo']) ?>" alt="<?= clean($dietitian['full_name']) ?>">
+                                <img src="/assets/uploads/<?= clean($dietitian['profile_photo']) ?>"
+                                     alt="<?= clean($dietitian['full_name']) ?>"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
                             <?php else: ?>
                                 <i class="fas fa-user-md"></i>
                             <?php endif; ?>
                         </div>
-                        <div class="dietitian-info">
-                            <h5 class="mb-1"><?= clean($dietitian['full_name']) ?></h5>
-                            <p class="text-muted small mb-2"><?= clean($dietitian['title']) ?></p>
+                        <div class="dietitian-body">
+                            <h5 class="dietitian-name"><?= clean($dietitian['full_name']) ?></h5>
+                            <p class="dietitian-title"><?= clean($dietitian['title']) ?></p>
 
-                            <div class="rating mb-2">
+                            <div class="rating mb-3">
                                 <?php
                                 $rating = $dietitian['rating_avg'] ?? 0;
                                 for($i = 1; $i <= 5; $i++):
-                                    if ($i <= $rating): ?>
-                                        <i class="fas fa-star"></i>
-                                    <?php else: ?>
-                                        <i class="far fa-star"></i>
-                                    <?php endif;
+                                    echo $i <= $rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
                                 endfor; ?>
                                 <span class="text-muted ms-2">(<?= number_format($rating, 1) ?>)</span>
                             </div>
 
-                            <p class="small text-muted mb-3">
-                                <i class="fas fa-users me-1"></i><?= $dietitian['total_clients'] ?> danışan
+                            <span class="dietitian-badge">
+                                <i class="fas fa-users me-1"></i><?= $dietitian['total_clients'] ?> Danışan
+                            </span>
+
+                            <p class="text-muted small mb-3" style="line-height: 1.6;">
+                                <?= clean(mb_substr($dietitian['about_me'] ?? $dietitian['specialization'], 0, 100)) ?>...
                             </p>
 
-                            <p class="small mb-3"><?= clean(substr($dietitian['specialization'], 0, 100)) ?>...</p>
+                            <div class="dietitian-price"><?= number_format($dietitian['consultation_fee'], 0) ?> ₺</div>
 
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-success"><?= number_format($dietitian['consultation_fee'], 0) ?> TL</span>
-                                <a href="/dietitian-profile.php?id=<?= $dietitian['id'] ?>" class="btn btn-sm btn-outline-success">
-                                    Profil
-                                </a>
-                            </div>
+                            <a href="/dietitian-profile.php?id=<?= $dietitian['id'] ?>" class="btn btn-gradient w-100">
+                                Profili Görüntüle <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
             </div>
 
-            <div class="text-center mt-4">
-                <a href="/dietitians.php" class="btn btn-success btn-lg">
-                    Tüm Diyetisyenleri Gör <i class="fas fa-arrow-right ms-2"></i>
+            <div class="text-center mt-5">
+                <a href="/dietitians.php" class="btn btn-gradient" style="padding: 15px 50px; font-size: 1.1rem;">
+                    Tüm Diyetisyenleri Keşfet <i class="fas fa-arrow-right ms-2"></i>
                 </a>
             </div>
         </div>
@@ -568,43 +922,51 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <?php endif; ?>
 
     <!-- How It Works -->
-    <section id="how-it-works" class="how-it-works">
+    <section id="how-it-works" class="how-section">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Nasıl Çalışır?</h2>
-                <p class="lead text-muted">4 basit adımda sağlıklı yaşam</p>
+                <h2 class="section-title">Nasıl Çalışır?</h2>
+                <p class="section-subtitle">4 basit adımda sağlıklı yaşama başlayın</p>
             </div>
 
             <div class="row g-4">
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
                     <div class="step-card">
                         <div class="step-number">1</div>
-                        <h5 class="mb-3">Kayıt Olun</h5>
-                        <p class="text-muted">Ücretsiz hesap oluşturun ve profilinizi tamamlayın.</p>
+                        <h5 class="step-title">Ücretsiz Kayıt Olun</h5>
+                        <p class="step-desc">
+                            Hızlı ve kolay kayıt formu ile hesap oluşturun. Sağlık bilgilerinizi ekleyin.
+                        </p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
                     <div class="step-card">
                         <div class="step-number">2</div>
-                        <h5 class="mb-3">Diyetisyen Seçin</h5>
-                        <p class="text-muted">Size uygun diyetisyeni bulun ve randevu alın.</p>
+                        <h5 class="step-title">Diyetisyen Seçin</h5>
+                        <p class="step-desc">
+                            Uzmanlık alanlarına göre filtreleyin, size en uygun diyetisyeni bulun.
+                        </p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
                     <div class="step-card">
                         <div class="step-number">3</div>
-                        <h5 class="mb-3">Online Görüşme</h5>
-                        <p class="text-muted">Video görüşme ile diyetisyeninizle tanışın.</p>
+                        <h5 class="step-title">Randevu Alın</h5>
+                        <p class="step-desc">
+                            Müsait saatlerden size uygun olanı seçin, online görüşme yapın.
+                        </p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
                     <div class="step-card">
                         <div class="step-number">4</div>
-                        <h5 class="mb-3">Hedeflerinize Ulaşın</h5>
-                        <p class="text-muted">Özel programınızla sağlıklı yaşam yolculuğunuza başlayın.</p>
+                        <h5 class="step-title">Hedefinize Ulaşın</h5>
+                        <p class="step-desc">
+                            Özel programınızla, profesyonel destekle sağlıklı yaşam yolculuğunuza başlayın.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -614,13 +976,15 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
-            <h2 class="display-5 fw-bold mb-4">Sağlıklı Yaşam Yolculuğunuza Bugün Başlayın!</h2>
-            <p class="lead mb-4">Binlerce kişi Diyetlenio ile hedeflerine ulaştı. Sırada siz varsınız!</p>
+            <h2 class="cta-title">Sağlıklı Yaşam Yolculuğunuza Bugün Başlayın!</h2>
+            <p class="cta-desc">
+                Binlerce kişi Diyetlenio ile hedeflerine ulaştı. Şimdi sıra sizde!
+            </p>
             <div class="d-flex gap-3 justify-content-center flex-wrap">
-                <a href="/register-client.php" class="btn btn-light btn-lg btn-hero text-success">
+                <a href="/register-client.php" class="btn btn-hero btn-hero-primary">
                     <i class="fas fa-user-plus me-2"></i>Ücretsiz Kayıt Ol
                 </a>
-                <a href="/register-dietitian.php" class="btn btn-outline-light btn-lg btn-hero">
+                <a href="/register-dietitian.php" class="btn btn-hero btn-hero-outline">
                     <i class="fas fa-user-md me-2"></i>Diyetisyen Olarak Katıl
                 </a>
             </div>
@@ -632,73 +996,85 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <h4 class="mb-3">
+                    <div class="footer-brand">
                         <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-                    </h4>
-                    <p class="text-muted">
+                    </div>
+                    <p class="footer-desc">
                         Sağlıklı yaşam için profesyonel diyetisyen desteği.
-                        Online görüşme, kişisel diyet programları ve daha fazlası.
+                        Online görüşme, kişisel diyet programları ve daha fazlası ile
+                        hedeflerinize ulaşın.
                     </p>
-                    <div class="social-links mt-3">
+                    <div class="social-links">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
                         <a href="#"><i class="fab fa-twitter"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
                         <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
 
                 <div class="col-lg-2 col-md-4">
-                    <h5 class="mb-3">Platform</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/dietitians.php">Diyetisyenler</a></li>
-                        <li class="mb-2"><a href="/blog">Blog</a></li>
-                        <li class="mb-2"><a href="/recipes">Tarifler</a></li>
-                        <li class="mb-2"><a href="/about">Hakkımızda</a></li>
+                    <h5 class="footer-title">Platform</h5>
+                    <ul class="footer-links">
+                        <li><a href="/dietitians.php">Diyetisyenler</a></li>
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/recipes">Tarifler</a></li>
+                        <li><a href="/about">Hakkımızda</a></li>
+                        <li><a href="/pricing">Fiyatlar</a></li>
                     </ul>
                 </div>
 
                 <div class="col-lg-2 col-md-4">
-                    <h5 class="mb-3">Destek</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/help">Yardım Merkezi</a></li>
-                        <li class="mb-2"><a href="/contact">İletişim</a></li>
-                        <li class="mb-2"><a href="/faq">SSS</a></li>
+                    <h5 class="footer-title">Destek</h5>
+                    <ul class="footer-links">
+                        <li><a href="/help">Yardım Merkezi</a></li>
+                        <li><a href="/contact">İletişim</a></li>
+                        <li><a href="/faq">SSS</a></li>
+                        <li><a href="/feedback">Geri Bildirim</a></li>
                     </ul>
                 </div>
 
                 <div class="col-lg-2 col-md-4">
-                    <h5 class="mb-3">Yasal</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="/terms">Kullanım Şartları</a></li>
-                        <li class="mb-2"><a href="/privacy">Gizlilik Politikası</a></li>
-                        <li class="mb-2"><a href="/kvkk">KVKK</a></li>
+                    <h5 class="footer-title">Yasal</h5>
+                    <ul class="footer-links">
+                        <li><a href="/terms">Kullanım Şartları</a></li>
+                        <li><a href="/privacy">Gizlilik Politikası</a></li>
+                        <li><a href="/kvkk">KVKK</a></li>
+                        <li><a href="/cookies">Çerez Politikası</a></li>
                     </ul>
                 </div>
 
                 <div class="col-lg-2 col-md-4">
-                    <h5 class="mb-3">İletişim</h5>
-                    <ul class="list-unstyled text-muted">
-                        <li class="mb-2">
+                    <h5 class="footer-title">İletişim</h5>
+                    <ul class="footer-links">
+                        <li>
                             <i class="fas fa-envelope me-2"></i>
                             info@diyetlenio.com
                         </li>
-                        <li class="mb-2">
+                        <li>
                             <i class="fas fa-phone me-2"></i>
                             0850 123 4567
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            İstanbul, Türkiye
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
-
-            <div class="text-center text-muted">
+            <div class="footer-bottom">
                 <p class="mb-0">
                     &copy; <?= date('Y') ?> Diyetlenio. Tüm hakları saklıdır. | v<?= APP_VERSION ?>
                 </p>
             </div>
         </div>
     </footer>
+
+    <!-- Scroll to Top -->
+    <div class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -712,6 +1088,68 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
                 }
             });
         });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll to top button
+        const scrollTop = document.getElementById('scrollTop');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                scrollTop.classList.add('show');
+            } else {
+                scrollTop.classList.remove('show');
+            }
+        });
+
+        scrollTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Counter animation
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.innerText;
+                    const count = +counter.getAttribute('data-count') || 0;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.setAttribute('data-count', Math.ceil(count + inc));
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 1);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        // Trigger animation when stats section is in view
+        const statsSection = document.querySelector('.stats-section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
     </script>
 </body>
 </html>
