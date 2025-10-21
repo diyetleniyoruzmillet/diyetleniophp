@@ -6,7 +6,7 @@
  * .env dosyasından yapılandırma bilgilerini okur.
  */
 
-// .env dosyasını yükle
+// .env dosyasını yükle (sadece local development için)
 if (file_exists(__DIR__ . '/../.env')) {
     $envFile = file_get_contents(__DIR__ . '/../.env');
     $lines = explode("\n", $envFile);
@@ -28,12 +28,19 @@ if (file_exists(__DIR__ . '/../.env')) {
             // Tırnak işaretlerini temizle
             $value = trim($value, '"\'');
 
-            // Ortam değişkenine kaydet
+            // Ortam değişkenine kaydet (sadece yoksa)
             if (!array_key_exists($key, $_ENV)) {
                 $_ENV[$key] = $value;
                 putenv("$key=$value");
             }
         }
+    }
+}
+
+// Railway veya diğer cloud platformlar için getenv() desteği ekle
+foreach (['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 'DB_CONNECTION', 'DB_CHARSET', 'DB_COLLATION', 'DB_PREFIX'] as $key) {
+    if (!isset($_ENV[$key]) && getenv($key) !== false) {
+        $_ENV[$key] = getenv($key);
     }
 }
 

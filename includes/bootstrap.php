@@ -47,6 +47,9 @@ spl_autoload_register(function ($className) {
 });
 
 // Global değişkenler
+$db = null;
+$auth = null;
+
 try {
     // Veritabanı bağlantısı
     $db = Database::getInstance();
@@ -55,12 +58,22 @@ try {
     $auth = new Auth();
 
 } catch (Exception $e) {
-    // Hata durumunda
+    // Hata durumunda loglama
     error_log('Bootstrap Error: ' . $e->getMessage());
+    error_log('Error Trace: ' . $e->getTraceAsString());
 
-    if (DEBUG_MODE) {
-        die('Sistem hatası: ' . $e->getMessage());
+    // Health check endpoint'i için veritabanı hatası önemsiz
+    if (strpos($_SERVER['REQUEST_URI'] ?? '', '/health.php') !== false) {
+        // Health check için devam et
+        return;
+    }
+
+    // Diğer sayfalar için hata göster
+    if (defined('DEBUG_MODE') && DEBUG_MODE) {
+        http_response_code(500);
+        die('Sistem hatası: ' . $e->getMessage() . '<br><br>DB Host: ' . ($_ENV['DB_HOST'] ?? 'not set'));
     } else {
+        http_response_code(500);
         die('Sistem hatası oluştu. Lütfen daha sonra tekrar deneyin.');
     }
 }
