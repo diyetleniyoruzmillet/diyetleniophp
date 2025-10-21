@@ -93,11 +93,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $notes
                 ]);
 
+                $appointmentId = $conn->lastInsertId();
                 $success = true;
                 setFlash('success', 'Randevunuz başarıyla oluşturuldu!');
-                
-                // TODO: E-posta bildirimi gönder
-                
+
+                // Bildirim gönder
+                try {
+                    $notification = new Notification();
+                    $notification->notifyAppointmentCreated($appointmentId);
+                } catch (Exception $notifError) {
+                    error_log('Notification error: ' . $notifError->getMessage());
+                    // Bildirim hatası randevu oluşturmayı engellemez
+                }
+
             } catch (Exception $e) {
                 error_log('Appointment creation error: ' . $e->getMessage());
                 $errors[] = 'Randevu oluşturulurken bir hata oluştu.';

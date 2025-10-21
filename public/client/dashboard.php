@@ -74,24 +74,30 @@ $stmt->execute([$userId]);
 $weightHistory = $stmt->fetchAll();
 
 // Bugünün öğünleri (aktif plandan)
-// NOT: diet_plan_meals tablosu henüz oluşturulmadı, gelecek sürümde eklenecek
 $todayMeals = [];
-/*
 if ($activePlan) {
     try {
         $stmt = $conn->prepare("
             SELECT * FROM diet_plan_meals
             WHERE plan_id = ? AND day_of_week = DAYOFWEEK(NOW())
-            ORDER BY meal_time ASC
+            ORDER BY
+                CASE meal_time
+                    WHEN 'breakfast' THEN 1
+                    WHEN 'snack1' THEN 2
+                    WHEN 'lunch' THEN 3
+                    WHEN 'snack2' THEN 4
+                    WHEN 'dinner' THEN 5
+                    WHEN 'snack3' THEN 6
+                END ASC
         ");
         $stmt->execute([$activePlan['id']]);
         $todayMeals = $stmt->fetchAll();
     } catch (PDOException $e) {
-        // Tablo henüz oluşturulmamış, boş array döndür
+        // Tablo yoksa boş array
+        error_log('Diet plan meals query error: ' . $e->getMessage());
         $todayMeals = [];
     }
 }
-*/
 
 $pageTitle = 'Danışan Paneli';
 ?>

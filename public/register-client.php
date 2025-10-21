@@ -123,16 +123,13 @@ $pageTitle = 'Danışan Kayıt';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-design-system.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 50%, #4facfe 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -142,13 +139,15 @@ $pageTitle = 'Danışan Kayıt';
             overflow: hidden;
         }
 
+        /* Animated Orbs */
         body::before {
             content: '';
             position: absolute;
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            filter: blur(80px);
             top: -300px;
             right: -200px;
             animation: float 20s ease-in-out infinite;
@@ -157,18 +156,14 @@ $pageTitle = 'Danışan Kayıt';
         body::after {
             content: '';
             position: absolute;
-            width: 400px;
-            height: 400px;
+            width: 500px;
+            height: 500px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.2) 0%, transparent 70%);
+            filter: blur(80px);
             bottom: -200px;
             left: -100px;
             animation: float 15s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(30px, 30px) rotate(180deg); }
         }
 
         .register-container {
@@ -206,7 +201,7 @@ $pageTitle = 'Danışan Kayıt';
         .brand-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
@@ -214,12 +209,8 @@ $pageTitle = 'Danışan Kayıt';
             color: white;
             font-size: 2.5rem;
             margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4);
             animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .page-title {
@@ -248,8 +239,9 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .form-floating input:focus {
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #56ab2f;
+            box-shadow: 0 0 0 4px rgba(86, 171, 47, 0.15);
+            transform: translateY(-2px);
         }
 
         .form-floating label {
@@ -272,7 +264,7 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .password-toggle:hover {
-            color: #0ea5e9;
+            color: #56ab2f;
         }
 
         .password-strength {
@@ -301,8 +293,8 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .form-check-input:checked {
-            background-color: #0ea5e9;
-            border-color: #0ea5e9;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            border-color: #56ab2f;
         }
 
         .form-check-label {
@@ -312,8 +304,9 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .form-check-label a {
-            color: #0ea5e9;
+            color: #56ab2f;
             text-decoration: none;
+            font-weight: 600;
         }
 
         .form-check-label a:hover {
@@ -321,22 +314,43 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .btn-register {
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border: none;
             color: white;
-            padding: 15px 30px;
+            padding: 16px 30px;
             font-size: 1.1rem;
             font-weight: 600;
             border-radius: 12px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(86, 171, 47, 0.4);
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-register:hover::before {
+            left: 100%;
         }
 
         .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(86, 171, 47, 0.6);
             color: white;
+        }
+
+        .btn-register:active {
+            transform: translateY(-1px) scale(1);
         }
 
         .divider {
