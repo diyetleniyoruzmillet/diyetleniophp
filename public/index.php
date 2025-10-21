@@ -1,6 +1,7 @@
 <?php
 /**
- * Diyetlenio - Ana Sayfa
+ * Diyetlenio - Modern Ana Sayfa
+ * Ultra-modern, profesyonel tasarım
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
@@ -9,7 +10,6 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 try {
     $conn = $db->getConnection();
 
-    // Toplam sayılar
     $stmt = $conn->query("
         SELECT
             (SELECT COUNT(*) FROM users WHERE user_type = 'dietitian' AND is_active = 1) as total_dietitians,
@@ -19,29 +19,17 @@ try {
     ");
     $stats = $stmt->fetch();
 
-    // Tüm aktif diyetisyenler (12 tane)
+    // Öne çıkan diyetisyenler
     $stmt = $conn->query("
         SELECT u.id, u.full_name, dp.title, dp.specialization, dp.rating_avg,
-               dp.total_clients, dp.consultation_fee, u.profile_photo, dp.about_me,
-               dp.experience_years
+               dp.total_clients, dp.consultation_fee, u.profile_photo, dp.experience_years
         FROM users u
         INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
         WHERE dp.is_approved = 1 AND u.is_active = 1
         ORDER BY dp.rating_avg DESC, dp.total_clients DESC
-        LIMIT 12
+        LIMIT 6
     ");
-    $allDietitians = $stmt->fetchAll();
-
-    // Acil nöbetçi diyetisyen (is_on_call = 1 olan varsa)
-    $stmt = $conn->query("
-        SELECT u.id, u.full_name, dp.title, dp.specialization, u.profile_photo, u.phone
-        FROM users u
-        INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-        WHERE dp.is_approved = 1 AND u.is_active = 1 AND dp.is_on_call = 1
-        ORDER BY RAND()
-        LIMIT 1
-    ");
-    $emergencyDietitian = $stmt->fetch();
+    $featuredDietitians = $stmt->fetchAll();
 
     // Son blog yazıları
     $stmt = $conn->query("
@@ -56,32 +44,33 @@ try {
     $recentArticles = $stmt->fetchAll();
 
 } catch (Exception $e) {
-    error_log('Homepage stats error: ' . $e->getMessage());
+    error_log('Homepage error: ' . $e->getMessage());
     $stats = ['total_dietitians' => 0, 'total_clients' => 0, 'completed_sessions' => 0, 'total_articles' => 0];
-    $allDietitians = [];
-    $emergencyDietitian = null;
+    $featuredDietitians = [];
     $recentArticles = [];
 }
-
-$pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 ?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
+    <title>Diyetlenio - Sağlıklı Yaşam İçin Profesyonel Beslenme Danışmanlığı</title>
     <meta name="description" content="Uzman diyetisyenlerle online görüşme, kişisel diyet programı ve beslenme danışmanlığı. Sağlıklı yaşam yolculuğunuza hemen başlayın!">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/modern-design-system.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
-            --secondary-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --accent-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #10b981;
+            --accent: #f97316;
+            --dark: #0f172a;
+            --light: #f8fafc;
         }
 
         * {
@@ -91,593 +80,351 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--dark);
             overflow-x: hidden;
         }
 
-        /* Navbar */
+        /* Modern Navbar */
         .navbar {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            box-shadow: 0 2px 30px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             padding: 1rem 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
         .navbar.scrolled {
-            padding: 0.6rem 0;
-            box-shadow: 0 4px 40px rgba(0,0,0,0.15);
-            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .navbar-brand {
-            font-size: 1.8rem;
+            font-size: 1.75rem;
             font-weight: 800;
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            transition: all 0.3s;
-        }
-
-        .navbar-brand:hover {
-            transform: scale(1.05);
         }
 
         .nav-link {
-            color: #2d3748 !important;
+            color: var(--dark) !important;
             font-weight: 500;
+            margin: 0 0.5rem;
             transition: all 0.3s;
             position: relative;
-            padding: 8px 16px !important;
-            border-radius: 8px;
-            margin: 0 4px;
-        }
-
-        .nav-link i {
-            opacity: 0.7;
-            transition: all 0.3s;
         }
 
         .nav-link:hover {
-            color: #0ea5e9 !important;
-            background: rgba(14, 165, 233, 0.08);
+            color: var(--primary) !important;
         }
 
-        .nav-link:hover i {
-            opacity: 1;
-            transform: translateY(-2px);
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 2px;
+            background: var(--primary);
+            transition: transform 0.3s;
         }
 
-        /* Emergency Link */
-        .emergency-link {
-            color: #dc2626 !important;
-            font-weight: 600;
-            background: rgba(220, 38, 38, 0.08);
-            border: 1px solid rgba(220, 38, 38, 0.2);
+        .nav-link:hover::after {
+            transform: translateX(-50%) scaleX(1);
         }
 
-        .emergency-link:hover {
-            background: rgba(220, 38, 38, 0.15);
-            color: #b91c1c !important;
-        }
-
-        .pulse-icon {
-            animation: pulse-emergency 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes pulse-emergency {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        /* Dropdown Menu */
-        .dropdown-menu {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            padding: 12px;
-            margin-top: 12px;
-            min-width: 220px;
-        }
-
-        .dropdown-item {
-            padding: 10px 16px;
-            border-radius: 10px;
-            transition: all 0.3s;
-            font-weight: 500;
-            color: #2d3748;
-        }
-
-        .dropdown-item:hover {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
-            color: #0ea5e9;
-            transform: translateX(5px);
-        }
-
-        .dropdown-item i {
-            opacity: 0.7;
-            transition: all 0.3s;
-        }
-
-        .dropdown-item:hover i {
-            opacity: 1;
-        }
-
-        .dropdown-divider {
-            margin: 8px 0;
-            opacity: 0.5;
-        }
-
-        /* User Menu */
-        .user-menu {
-            background: rgba(14, 165, 233, 0.1);
-            border: 1px solid rgba(14, 165, 233, 0.2);
-            font-weight: 600;
-            color: #0ea5e9 !important;
-        }
-
-        .user-menu:hover {
-            background: rgba(14, 165, 233, 0.15);
-        }
-
-        /* Buttons */
-        .btn-gradient {
-            background: var(--primary-gradient);
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             border: none;
             color: white;
-            font-weight: 600;
-            padding: 10px 28px;
+            padding: 0.75rem 2rem;
             border-radius: 50px;
+            font-weight: 600;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
         }
 
-        .btn-gradient:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(14, 165, 233, 0.5);
-            color: white;
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(14, 165, 233, 0.4);
         }
 
-        .btn-dietitian {
-            border-color: #10b981;
-            color: #10b981;
-            font-weight: 600;
-            padding: 10px 28px;
+        .btn-outline-custom {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.75rem 2rem;
             border-radius: 50px;
-            transition: all 0.3s;
-            border-width: 2px;
-        }
-
-        .btn-dietitian:hover {
-            background: #10b981;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-login {
             font-weight: 600;
-            color: #0ea5e9 !important;
+            transition: all 0.3s;
+            background: transparent;
         }
 
-        .btn-login:hover {
-            background: rgba(14, 165, 233, 0.1);
+        .btn-outline-custom:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
         }
 
-        /* Animations */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate.slideIn {
-            animation: slideIn 0.3s ease-out;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 991px) {
-            .navbar-nav {
-                padding: 15px 0;
-            }
-
-            .nav-link {
-                margin: 5px 0;
-            }
-
-            .dropdown-menu {
-                border: none;
-                box-shadow: none;
-                background: transparent;
-                padding-left: 15px;
-            }
-
-            .btn-gradient, .btn-dietitian {
-                width: 100%;
-                margin-top: 10px;
-            }
-        }
-
-        /* Hero Section */
-        .hero-section {
-            min-height: 100vh;
+        /* Hero Section - Ultra Modern */
+        .hero {
+            min-height: 90vh;
             display: flex;
             align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             position: relative;
-            background: var(--primary-gradient);
             overflow: hidden;
-            padding: 100px 0;
         }
 
-        .hero-section::before {
+        .hero::before {
             content: '';
             position: absolute;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            top: -300px;
-            right: -200px;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            bottom: -200px;
-            left: -100px;
-            animation: float 15s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(30px, 30px) rotate(180deg); }
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            opacity: 0.3;
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
-            color: white;
         }
 
-        .hero-title {
+        .hero h1 {
             font-size: 4rem;
             font-weight: 800;
+            color: white;
             line-height: 1.2;
             margin-bottom: 1.5rem;
-            animation: fadeInUp 1s ease;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .hero-subtitle {
-            font-size: 1.4rem;
-            opacity: 0.95;
+        .hero p {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.95);
             margin-bottom: 2.5rem;
-            font-weight: 300;
-            animation: fadeInUp 1s ease 0.2s both;
+            font-weight: 400;
         }
 
-        .hero-buttons {
-            animation: fadeInUp 1s ease 0.4s both;
+        .hero-buttons .btn {
+            margin: 0.5rem;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
         }
 
         .hero-image {
-            animation: fadeInRight 1s ease 0.3s both;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .btn-hero {
-            padding: 18px 45px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid white;
-        }
-
-        .btn-hero:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        .btn-hero-primary {
-            background: white;
-            color: #0ea5e9;
-            border-color: white;
-        }
-
-        .btn-hero-outline {
-            background: transparent;
-            color: white;
-            border-color: white;
-        }
-
-        .btn-hero-outline:hover {
-            background: white;
-            color: #0ea5e9;
-        }
-
-        /* Feature Cards */
-        .features-section {
-            padding: 120px 0;
-            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
-        }
-
-        .section-title {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            color: #2d3748;
-        }
-
-        .section-subtitle {
-            font-size: 1.2rem;
-            color: #718096;
-            font-weight: 300;
-        }
-
-        .feature-card {
-            background: white;
-            border-radius: 20px;
-            padding: 45px 35px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid #e2e8f0;
-            height: 100%;
             position: relative;
-            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
         }
 
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--primary-gradient);
-            transform: scaleX(0);
-            transition: transform 0.4s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-            border-color: transparent;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-icon {
-            width: 90px;
-            height: 90px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            font-size: 2.5rem;
-            transition: all 0.4s;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: rotateY(360deg) scale(1.1);
-        }
-
-        .feature-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: #2d3748;
-        }
-
-        .feature-desc {
-            color: #718096;
-            line-height: 1.7;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
         /* Stats Section */
         .stats-section {
-            padding: 80px 0;
-            background: var(--primary-gradient);
-            color: white;
+            background: white;
+            padding: 4rem 0;
+            margin-top: -50px;
             position: relative;
+            z-index: 2;
         }
 
-        .stat-item {
+        .stat-card {
             text-align: center;
-            padding: 30px 20px;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .stat-number {
             font-size: 3.5rem;
             font-weight: 800;
-            margin-bottom: 10px;
-            display: block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-label {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-
-        /* Dietitians Section */
-        .dietitians-section {
-            padding: 120px 0;
-            background: white;
-        }
-
-        .dietitian-card {
-            background: white;
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            transition: all 0.4s;
-            height: 100%;
-            border: 1px solid #e2e8f0;
-        }
-
-        .dietitian-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        }
-
-        .dietitian-header {
-            height: 280px;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dietitian-header::after {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            top: -50%;
-            left: -50%;
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        .dietitian-body {
-            padding: 30px;
-        }
-
-        .dietitian-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #2d3748;
-        }
-
-        .dietitian-title {
-            color: #718096;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-        }
-
-        .rating {
-            color: #fbbf24;
-            margin-bottom: 15px;
-        }
-
-        .dietitian-badge {
-            display: inline-block;
-            padding: 6px 15px;
-            background: linear-gradient(135deg, #10b98120 0%, #05966920 100%);
-            border-radius: 20px;
-            color: #10b981;
-            font-size: 0.85rem;
+            font-size: 1.1rem;
+            color: #64748b;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-top: 0.5rem;
         }
 
-        .dietitian-price {
-            font-size: 1.8rem;
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .section-title {
+            font-size: 3rem;
             font-weight: 800;
-            color: #10b981;
-            margin-bottom: 20px;
-        }
-
-        /* How It Works */
-        .how-section {
-            padding: 120px 0;
-            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
-        }
-
-        .step-card {
             text-align: center;
-            padding: 40px 20px;
-            position: relative;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .step-number {
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
             width: 80px;
             height: 80px;
-            border-radius: 50%;
-            background: var(--secondary-gradient);
-            color: white;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2rem;
-            font-weight: 800;
-            margin: 0 auto 25px;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-            transition: all 0.4s;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
         }
 
-        .step-card:hover .step-number {
-            transform: scale(1.15) rotate(360deg);
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
-        .step-title {
-            font-size: 1.3rem;
+        .feature-icon.icon-1 {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .feature-icon.icon-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .feature-icon.icon-3 {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        .feature-icon.icon-4 {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .feature-icon.icon-5 {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .feature-icon.icon-6 {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 15px;
-            color: #2d3748;
+            margin-bottom: 1rem;
+            color: var(--dark);
         }
 
-        .step-desc {
-            color: #718096;
-            line-height: 1.6;
+        .feature-text {
+            color: #64748b;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* Dietitian Cards */
+        .dietitian-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: all 0.4s;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .dietitian-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        }
+
+        .dietitian-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .dietitian-body {
+            padding: 1.5rem;
+        }
+
+        .dietitian-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .dietitian-title {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .dietitian-rating {
+            color: #f59e0b;
+            margin-bottom: 1rem;
+        }
+
+        .dietitian-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1rem;
         }
 
         /* CTA Section */
         .cta-section {
-            background: var(--accent-gradient);
-            color: white;
-            padding: 100px 0;
-            text-align: center;
+            background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            padding: 6rem 0;
             position: relative;
             overflow: hidden;
         }
@@ -685,253 +432,123 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         .cta-section::before {
             content: '';
             position: absolute;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            top: -250px;
-            right: -100px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
         }
 
-        .cta-title {
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-content h2 {
             font-size: 3rem;
             font-weight: 800;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
 
-        .cta-desc {
-            font-size: 1.3rem;
+        .cta-content p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
             opacity: 0.95;
-            margin-bottom: 40px;
         }
 
         /* Footer */
-        footer {
-            background: #1a202c;
+        .footer {
+            background: var(--dark);
             color: white;
-            padding: 80px 0 30px;
+            padding: 4rem 0 2rem;
         }
 
-        .footer-brand {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-        }
-
-        .footer-desc {
-            color: #a0aec0;
-            line-height: 1.7;
-            margin-bottom: 25px;
-        }
-
-        .footer-title {
-            font-size: 1.2rem;
+        .footer h5 {
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
 
-        .footer-links {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: #a0aec0;
+        .footer a {
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
             transition: all 0.3s;
+            display: block;
+            margin-bottom: 0.75rem;
         }
 
-        .footer-links a:hover {
+        .footer a:hover {
             color: white;
             padding-left: 5px;
         }
 
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            margin-right: 10px;
-            transition: all 0.3s;
-        }
-
-        .social-links a:hover {
-            background: var(--primary-gradient);
-            transform: translateY(-5px);
-        }
-
         .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 50px;
-            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 3rem;
+            padding-top: 2rem;
             text-align: center;
-            color: #a0aec0;
+            color: rgba(255,255,255,0.5);
         }
 
-        /* Scroll to top button */
-        .scroll-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(14, 165, 233, 0.4);
-            z-index: 1000;
-        }
-
-        .scroll-top.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .scroll-top:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .hero-title { font-size: 3.5rem; }
-            .stat-number { font-size: 3rem; }
-        }
-
-        @media (max-width: 992px) {
-            .hero-title { font-size: 3rem; }
-            .hero-subtitle { font-size: 1.2rem; }
-            .section-title { font-size: 2.5rem; }
-            .features-section { padding: 80px 0; }
-            .dietitians-section { padding: 80px 0; }
-            .how-section { padding: 80px 0; }
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .hero-section { padding: 60px 0; min-height: auto; }
-            .hero-title { font-size: 2.5rem; }
-            .hero-subtitle { font-size: 1.1rem; margin-bottom: 2rem; }
-            .btn-hero { padding: 15px 35px; font-size: 1rem; }
-            .section-title { font-size: 2rem; }
-            .section-subtitle { font-size: 1rem; }
-            .features-section { padding: 60px 0; }
-            .dietitians-section { padding: 60px 0; }
-            .how-section { padding: 60px 0; }
-            .stats-section { padding: 60px 0; }
-            .cta-section { padding: 60px 0; }
-            .cta-title { font-size: 2rem; }
-            .cta-desc { font-size: 1.1rem; }
-            .feature-card { padding: 35px 25px; }
-            .stat-number { font-size: 2.5rem; }
-            .stat-label { font-size: 1rem; }
-            footer { padding: 60px 0 30px; }
-        }
-
-        @media (max-width: 576px) {
-            .hero-title { font-size: 2rem; line-height: 1.3; }
-            .hero-subtitle { font-size: 1rem; }
-            .btn-hero { padding: 12px 25px; font-size: 0.95rem; }
-            .section-title { font-size: 1.75rem; }
-            .feature-card { padding: 30px 20px; }
-            .feature-icon { width: 70px; height: 70px; font-size: 2rem; }
-            .feature-title { font-size: 1.2rem; }
-            .dietitian-header { height: 200px; font-size: 4rem; }
-            .step-number { width: 70px; height: 70px; font-size: 1.75rem; }
-            .stat-item { padding: 20px 10px; }
-            .stat-number { font-size: 2rem; }
-            .navbar-brand { font-size: 1.4rem; }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero p {
+                font-size: 1.1rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .stat-number {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top" id="navbar">
+    <!-- Modern Navbar -->
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="fas fa-heartbeat me-2"></i>Diyetlenio
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto align-items-center">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="#features">
-                            <i class="fas fa-star me-1"></i>Özellikler
-                        </a>
+                        <a class="nav-link" href="/dietitians.php">Diyetisyenler</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#dietitians">
-                            <i class="fas fa-user-md me-1"></i>Diyetisyenler
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-book me-1"></i>Kaynaklar
-                        </a>
-                        <ul class="dropdown-menu animate slideIn" aria-labelledby="resourcesDropdown">
-                            <li><a class="dropdown-item" href="/blog"><i class="fas fa-newspaper me-2"></i>Blog</a></li>
-                            <li><a class="dropdown-item" href="/recipes"><i class="fas fa-utensils me-2"></i>Tarifler</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/faq"><i class="fas fa-question-circle me-2"></i>SSS</a></li>
-                            <li><a class="dropdown-item" href="/help"><i class="fas fa-life-ring me-2"></i>Yardım</a></li>
-                        </ul>
+                        <a class="nav-link" href="/blog.php">Blog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/pricing">
-                            <i class="fas fa-tag me-1"></i>Fiyatlar
-                        </a>
+                        <a class="nav-link" href="/recipes.php">Tarifler</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link emergency-link" href="#emergency">
-                            <i class="fas fa-ambulance me-1 pulse-icon"></i>Acil Nöbetçi
-                        </a>
+                        <a class="nav-link" href="/about.php">Hakkımızda</a>
                     </li>
-                </ul>
-                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact.php">İletişim</a>
+                    </li>
                     <?php if ($auth->check()): ?>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle user-menu" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i><?= clean($auth->user()->getFullName()) ?>
+                        <li class="nav-item">
+                            <a class="btn btn-primary-custom" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">
+                                Panel
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end animate slideIn" aria-labelledby="userDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="<?= $auth->user()->getUserType() === 'admin' ? '/admin/dashboard.php' : ($auth->user()->getUserType() === 'dietitian' ? '/dietitian/dashboard.php' : '/client/dashboard.php') ?>">
-                                        <i class="fas fa-tachometer-alt me-2"></i>Panel
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="/logout.php"><i class="fas fa-sign-out-alt me-2"></i>Çıkış</a></li>
-                            </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link btn-login" href="/login.php">
-                                <i class="fas fa-sign-in-alt me-1"></i>Giriş
-                            </a>
+                            <a class="nav-link" href="/login.php">Giriş Yap</a>
                         </li>
-                        <li class="nav-item ms-2">
-                            <a class="btn btn-gradient" href="/register-client.php">
-                                <i class="fas fa-rocket me-1"></i>Ücretsiz Başla
-                            </a>
-                        </li>
-                        <li class="nav-item ms-2">
-                            <a class="btn btn-outline-primary btn-dietitian" href="/register-dietitian.php">
-                                <i class="fas fa-user-md me-1"></i>Diyetisyen Ol
+                        <li class="nav-item">
+                            <a class="btn btn-primary-custom" href="/register-client.php">
+                                Hemen Başla
                             </a>
                         </li>
                     <?php endif; ?>
@@ -940,133 +557,25 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         </div>
     </nav>
 
-    <?php if (hasFlash()): ?>
-        <div class="container mt-3">
-            <?php if ($msg = getFlash('success')): ?>
-                <div class="alert alert-success alert-dismissible fade show">
-                    <?= clean($msg) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-            <?php if ($msg = getFlash('error')): ?>
-                <div class="alert alert-danger alert-dismissible fade show">
-                    <?= clean($msg) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="hero">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 hero-content">
-                    <h1 class="hero-title">Sağlıklı Yaşam Yolculuğunuz Burada Başlıyor</h1>
-                    <p class="hero-subtitle">
-                        Uzman diyetisyenlerle online görüşme yapın, size özel diyet programı alın ve
-                        hedeflerinize profesyonel destekle ulaşın.
-                    </p>
-                    <div class="d-flex gap-3 flex-wrap hero-buttons">
-                        <a href="/register-client.php" class="btn btn-hero btn-hero-primary">
-                            <i class="fas fa-rocket me-2"></i>Hemen Başla
+                    <h1>Sağlıklı Yaşamın <br>Başlangıcı</h1>
+                    <p>Uzman diyetisyenlerle online görüşme yapın, kişisel diyet programınızı alın ve hedeflerinize ulaşın.</p>
+                    <div class="hero-buttons">
+                        <a href="/register-client.php" class="btn btn-light btn-lg">
+                            <i class="fas fa-rocket me-2"></i>Ücretsiz Başla
                         </a>
-                        <a href="/register-dietitian.php" class="btn btn-hero btn-hero-outline">
-                            <i class="fas fa-user-md me-2"></i>Diyetisyen Katıl
+                        <a href="/dietitians.php" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user-md me-2"></i>Diyetisyenleri Keşfet
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-6 text-center hero-image d-none d-lg-block">
-                    <i class="fas fa-apple-alt" style="font-size: 20rem; opacity: 0.15;"></i>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Neden Diyetlenio?</h2>
-                <p class="section-subtitle">Size sunduğumuz eşsiz özellikler</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #0ea5e920 0%, #06b6d420 100%); color: #0ea5e9;">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h4 class="feature-title">Online Video Görüşme</h4>
-                        <p class="feature-desc">
-                            Diyetisyeninizle HD kalitesinde video konferans üzerinden yüz yüze görüşme yapın.
-                            Evinizin konforunda profesyonel destek alın.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #10b98120 0%, #05966920 100%); color: #10b981;">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <h4 class="feature-title">Kolay Randevu Sistemi</h4>
-                        <p class="feature-desc">
-                            Diyetisyenlerin müsaitlik takvimini görün, size uygun saatte hemen randevu alın.
-                            Otomatik hatırlatma bildirimleri.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #3b82f620 0%, #2563eb20 100%); color: #3b82f6;">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h4 class="feature-title">İlerleme Takibi</h4>
-                        <p class="feature-desc">
-                            Kilo, ölçü ve beslenme takibinizi detaylı yapın. Gelişiminizi interaktif
-                            grafiklerle anlık görüntüleyin.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #f9731620 0%, #ea580c20 100%); color: #f97316;">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-                        <h4 class="feature-title">Kişisel Diyet Planı</h4>
-                        <p class="feature-desc">
-                            Size özel hazırlanan günlük diyet programlarına erişin. Besin değerleri ve
-                            sağlıklı tariflerle desteklenmiş içerik.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #ec489920 0%, #d9465120 100%); color: #ec4899;">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <h4 class="feature-title">Güvenli Mesajlaşma</h4>
-                        <p class="feature-desc">
-                            Diyetisyeninizle platform üzerinden güvenli, şifreli mesajlaşma yapın.
-                            Sorularınıza hızlı cevap alın.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #6366f120 0%, #818cf820 100%); color: #6366f1;">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h4 class="feature-title">%100 Güvenli</h4>
-                        <p class="feature-desc">
-                            Kişisel ve sağlık verileriniz SSL ile şifrelenir. KVKK uyumlu,
-                            ISO sertifikalı güvenli altyapı.
-                        </p>
+                <div class="col-lg-6 text-center d-none d-lg-block">
+                    <div class="hero-image">
+                        <i class="fas fa-heartbeat" style="font-size: 20rem; color: rgba(255,255,255,0.2);"></i>
                     </div>
                 </div>
             </div>
@@ -1076,134 +585,134 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <!-- Stats Section -->
     <section class="stats-section">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-6">
-                    <div class="stat-item">
-                        <span class="stat-number counter"><?= $stats['total_dietitians'] ?? 0 ?></span>+
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number"><?= $stats['total_dietitians'] ?>+</div>
                         <div class="stat-label">Uzman Diyetisyen</div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="stat-item">
-                        <span class="stat-number counter"><?= $stats['total_clients'] ?? 0 ?></span>+
-                        <div class="stat-label">Mutlu Danışan</div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number"><?= $stats['total_clients'] ?>+</div>
+                        <div class="stat-label">Mutlu Kullanıcı</div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="stat-item">
-                        <span class="stat-number counter"><?= $stats['completed_sessions'] ?? 0 ?></span>+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number"><?= $stats['completed_sessions'] ?>+</div>
                         <div class="stat-label">Tamamlanan Seans</div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="stat-item">
-                        <span class="stat-number">4.9</span>/5
-                        <div class="stat-label">Ortalama Memnuniyet</div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Memnuniyet Oranı</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Emergency Dietitian Section -->
-    <?php if ($emergencyDietitian): ?>
-    <section id="emergency" class="emergency-section py-5" style="background: linear-gradient(135deg, #fee140 0%, #fa709a 100%);">
+    <!-- Features Section -->
+    <section class="features-section">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 text-white">
-                    <h2 class="display-5 fw-bold mb-3">
-                        <i class="fas fa-ambulance me-3"></i>Acil Nöbetçi Diyetisyen
-                    </h2>
-                    <p class="lead mb-4">
-                        Acil durumlarda 7/24 hizmetinizdeyiz! Anında destek alın.
-                    </p>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <?php if ($emergencyDietitian['profile_photo']): ?>
-                                    <img src="/assets/uploads/<?= clean($emergencyDietitian['profile_photo']) ?>"
-                                         alt="<?= clean($emergencyDietitian['full_name']) ?>"
-                                         class="rounded-circle me-3"
-                                         style="width: 80px; height: 80px; object-fit: cover; border: 4px solid #fa709a;">
-                                <?php else: ?>
-                                    <div class="rounded-circle bg-danger text-white me-3 d-flex align-items-center justify-content-center"
-                                         style="width: 80px; height: 80px; font-size: 2rem;">
-                                        <i class="fas fa-user-md"></i>
-                                    </div>
-                                <?php endif; ?>
-                                <div>
-                                    <h4 class="mb-1"><?= clean($emergencyDietitian['full_name']) ?></h4>
-                                    <p class="text-muted mb-0"><?= clean($emergencyDietitian['title']) ?></p>
-                                    <span class="badge bg-danger"><i class="fas fa-circle me-1" style="font-size: 0.6rem; animation: pulse 2s infinite;"></i>Şu an müsait</span>
-                                </div>
-                            </div>
-                            <a href="/book-appointment.php?dietitian_id=<?= $emergencyDietitian['id'] ?>&emergency=1"
-                               class="btn btn-danger w-100 py-3 fw-bold" style="border-radius: 12px;">
-                                <i class="fas fa-phone-alt me-2"></i>Hemen Ara veya Randevu Al
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <?php endif; ?>
-
-    <!-- Dietitians Section -->
-    <?php if (count($allDietitians) > 0): ?>
-    <section id="dietitians" class="dietitians-section">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Uzman Diyetisyenlerimiz</h2>
-                <p class="section-subtitle">Size en uygun diyetisyeni seçin ve sağlıklı yaşama başlayın</p>
-            </div>
+            <h2 class="section-title">Neden Diyetlenio?</h2>
+            <p class="section-subtitle">Sağlıklı yaşam yolculuğunuzda ihtiyacınız olan her şey</p>
 
             <div class="row g-4">
-                <?php foreach ($allDietitians as $dietitian): ?>
-                <div class="col-lg-4 col-md-6">
-                    <div class="dietitian-card">
-                        <div class="dietitian-header">
-                            <?php if ($dietitian['profile_photo']): ?>
-                                <img src="/assets/uploads/<?= clean($dietitian['profile_photo']) ?>"
-                                     alt="<?= clean($dietitian['full_name']) ?>"
-                                     style="width: 100%; height: 100%; object-fit: cover;">
-                            <?php else: ?>
-                                <i class="fas fa-user-md"></i>
-                            <?php endif; ?>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-1">
+                            <i class="fas fa-video"></i>
                         </div>
+                        <h3 class="feature-title">Online Görüşme</h3>
+                        <p class="feature-text">Evinizin konforunda, uzman diyetisyenlerle video görüşme yapın. Zaman ve mekan sınırı olmadan destek alın.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-2">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3 class="feature-title">Kişisel Diyet Programı</h3>
+                        <p class="feature-text">Size özel hazırlanan diyet programları ile hedeflerinize daha hızlı ulaşın. Bilimsel ve sürdürülebilir çözümler.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-3">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">İlerleme Takibi</h3>
+                        <p class="feature-text">Kilo, ölçüler ve sağlık verilerinizi takip edin. Gelişiminizi grafiklerle görselleştirin.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-4">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3 class="feature-title">Sürekli Destek</h3>
+                        <p class="feature-text">Diyetisyeninizle mesajlaşma özelliği ile 7/24 iletişimde kalın. Sorularınıza anında yanıt alın.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-5">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3 class="feature-title">Yemek Tarifleri</h3>
+                        <p class="feature-text">Sağlıklı ve lezzetli tariflerle beslenme alışkanlıklarınızı kolayca değiştirin.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-6">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Mobil Erişim</h3>
+                        <p class="feature-text">Her yerden, her cihazdan erişim. Mobil uyumlu platform ile her zaman yanınızda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Dietitians -->
+    <?php if (count($featuredDietitians) > 0): ?>
+    <section class="py-5" style="background: white;">
+        <div class="container">
+            <h2 class="section-title">Öne Çıkan Diyetisyenler</h2>
+            <p class="section-subtitle">En çok tercih edilen uzman diyetisyenlerimiz</p>
+
+            <div class="row g-4">
+                <?php foreach ($featuredDietitians as $dietitian): ?>
+                <div class="col-md-4">
+                    <div class="dietitian-card">
+                        <img src="<?= $dietitian['profile_photo'] ?: '/images/default-avatar.png' ?>"
+                             alt="<?= clean($dietitian['full_name']) ?>"
+                             class="dietitian-image">
                         <div class="dietitian-body">
-                            <h5 class="dietitian-name"><?= clean($dietitian['full_name']) ?></h5>
-                            <p class="dietitian-title"><?= clean($dietitian['title']) ?></p>
-
-                            <div class="rating mb-3">
-                                <?php
-                                $rating = $dietitian['rating_avg'] ?? 0;
-                                for($i = 1; $i <= 5; $i++):
-                                    echo $i <= $rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
-                                endfor; ?>
-                                <span class="text-muted ms-2">(<?= number_format($rating, 1) ?>)</span>
-                            </div>
-
-                            <span class="dietitian-badge">
-                                <i class="fas fa-users me-1"></i><?= $dietitian['total_clients'] ?> Danışan
-                            </span>
-
-                            <span class="badge bg-light text-dark mb-2">
-                                <i class="fas fa-briefcase me-1"></i><?= $dietitian['experience_years'] ?? 0 ?> Yıl Deneyim
-                            </span>
-
-                            <p class="text-muted small mb-3" style="line-height: 1.6;">
-                                <?= clean(mb_substr($dietitian['about_me'] ?? $dietitian['specialization'], 0, 80)) ?>...
+                            <h3 class="dietitian-name"><?= clean($dietitian['full_name']) ?></h3>
+                            <p class="dietitian-title">
+                                <?= clean($dietitian['title']) ?>
+                                <?php if ($dietitian['specialization']): ?>
+                                    <br><small><?= clean($dietitian['specialization']) ?></small>
+                                <?php endif; ?>
                             </p>
-
-                            <div class="dietitian-price"><?= number_format($dietitian['consultation_fee'], 0) ?> ₺
-                                <span class="fs-6 text-muted">/seans</span>
+                            <div class="dietitian-rating">
+                                <?php for ($i = 0; $i < 5; $i++): ?>
+                                    <i class="fas fa-star<?= $i < round($dietitian['rating_avg']) ? '' : '-o' ?>"></i>
+                                <?php endfor; ?>
+                                <span class="ms-2"><?= number_format($dietitian['rating_avg'], 1) ?></span>
                             </div>
-
-                            <a href="/dietitian-profile.php?id=<?= $dietitian['id'] ?>" class="btn btn-gradient w-100">
-                                Profili Görüntüle <i class="fas fa-arrow-right ms-2"></i>
+                            <div class="dietitian-price">
+                                <?= number_format($dietitian['consultation_fee']) ?> ₺
+                                <small style="font-size: 0.9rem; color: #64748b;">/seans</small>
+                            </div>
+                            <a href="/dietitian-profile.php?id=<?= $dietitian['id'] ?>" class="btn btn-primary-custom w-100">
+                                Profili Görüntüle
                             </a>
                         </div>
                     </div>
@@ -1211,246 +720,90 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
                 <?php endforeach; ?>
             </div>
 
-            <?php if (count($allDietitians) >= 12): ?>
             <div class="text-center mt-5">
-                <a href="/dietitians.php" class="btn btn-gradient" style="padding: 15px 50px; font-size: 1.1rem;">
-                    Daha Fazla Diyetisyen Göster <i class="fas fa-arrow-right ms-2"></i>
+                <a href="/dietitians.php" class="btn btn-outline-custom btn-lg">
+                    Tüm Diyetisyenleri Gör <i class="fas fa-arrow-right ms-2"></i>
                 </a>
             </div>
-            <?php endif; ?>
         </div>
     </section>
     <?php endif; ?>
 
-    <!-- How It Works -->
-    <section id="how-it-works" class="how-section">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title">Nasıl Çalışır?</h2>
-                <p class="section-subtitle">4 basit adımda sağlıklı yaşama başlayın</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="step-card">
-                        <div class="step-number">1</div>
-                        <h5 class="step-title">Ücretsiz Kayıt Olun</h5>
-                        <p class="step-desc">
-                            Hızlı ve kolay kayıt formu ile hesap oluşturun. Sağlık bilgilerinizi ekleyin.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <div class="step-card">
-                        <div class="step-number">2</div>
-                        <h5 class="step-title">Diyetisyen Seçin</h5>
-                        <p class="step-desc">
-                            Uzmanlık alanlarına göre filtreleyin, size en uygun diyetisyeni bulun.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <div class="step-card">
-                        <div class="step-number">3</div>
-                        <h5 class="step-title">Randevu Alın</h5>
-                        <p class="step-desc">
-                            Müsait saatlerden size uygun olanı seçin, online görüşme yapın.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <div class="step-card">
-                        <div class="step-number">4</div>
-                        <h5 class="step-title">Hedefinize Ulaşın</h5>
-                        <p class="step-desc">
-                            Özel programınızla, profesyonel destekle sağlıklı yaşam yolculuğunuza başlayın.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
-            <h2 class="cta-title">Sağlıklı Yaşam Yolculuğunuza Bugün Başlayın!</h2>
-            <p class="cta-desc">
-                Binlerce kişi Diyetlenio ile hedeflerine ulaştı. Şimdi sıra sizde!
-            </p>
-            <div class="d-flex gap-3 justify-content-center flex-wrap">
-                <a href="/register-client.php" class="btn btn-hero btn-hero-primary">
-                    <i class="fas fa-user-plus me-2"></i>Ücretsiz Kayıt Ol
-                </a>
-                <a href="/register-dietitian.php" class="btn btn-hero btn-hero-outline">
-                    <i class="fas fa-user-md me-2"></i>Diyetisyen Olarak Katıl
-                </a>
+            <div class="cta-content">
+                <h2>Sağlıklı Yaşam Yolculuğunuza Bugün Başlayın!</h2>
+                <p>Hemen kayıt olun, uzman diyetisyeninizi bulun ve hedeflerinize ulaşın.</p>
+                <div>
+                    <a href="/register-client.php" class="btn btn-light btn-lg me-3">
+                        <i class="fas fa-user-plus me-2"></i>Ücretsiz Kayıt Ol
+                    </a>
+                    <a href="/dietitians.php" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-search me-2"></i>Diyetisyen Bul
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer>
+    <footer class="footer">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="footer-brand">
-                        <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-                    </div>
-                    <p class="footer-desc">
-                        Sağlıklı yaşam için profesyonel diyetisyen desteği.
-                        Online görüşme, kişisel diyet programları ve daha fazlası ile
-                        hedeflerinize ulaşın.
-                    </p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-heartbeat me-2"></i>Diyetlenio</h5>
+                    <p class="text-white-50">Sağlıklı yaşam için profesyonel beslenme danışmanlığı platformu.</p>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-sm btn-outline-light me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-light me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-light me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-light"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-
-                <div class="col-lg-2 col-md-4">
-                    <h5 class="footer-title">Platform</h5>
-                    <ul class="footer-links">
-                        <li><a href="/dietitians.php">Diyetisyenler</a></li>
-                        <li><a href="/blog">Blog</a></li>
-                        <li><a href="/recipes">Tarifler</a></li>
-                        <li><a href="/about">Hakkımızda</a></li>
-                        <li><a href="/pricing">Fiyatlar</a></li>
-                    </ul>
+                <div class="col-md-2 mb-4">
+                    <h5>Hızlı Linkler</h5>
+                    <a href="/about.php">Hakkımızda</a>
+                    <a href="/dietitians.php">Diyetisyenler</a>
+                    <a href="/blog.php">Blog</a>
+                    <a href="/recipes.php">Tarifler</a>
                 </div>
-
-                <div class="col-lg-2 col-md-4">
-                    <h5 class="footer-title">Destek</h5>
-                    <ul class="footer-links">
-                        <li><a href="/help">Yardım Merkezi</a></li>
-                        <li><a href="/contact">İletişim</a></li>
-                        <li><a href="/faq">SSS</a></li>
-                        <li><a href="/feedback">Geri Bildirim</a></li>
-                    </ul>
+                <div class="col-md-2 mb-4">
+                    <h5>Destek</h5>
+                    <a href="/faq.php">SSS</a>
+                    <a href="/contact.php">İletişim</a>
+                    <a href="/help.php">Yardım</a>
                 </div>
-
-                <div class="col-lg-2 col-md-4">
-                    <h5 class="footer-title">Yasal</h5>
-                    <ul class="footer-links">
-                        <li><a href="/terms">Kullanım Şartları</a></li>
-                        <li><a href="/privacy">Gizlilik Politikası</a></li>
-                        <li><a href="/kvkk">KVKK</a></li>
-                        <li><a href="/cookies">Çerez Politikası</a></li>
-                    </ul>
+                <div class="col-md-2 mb-4">
+                    <h5>Yasal</h5>
+                    <a href="/privacy-policy.php">Gizlilik Politikası</a>
+                    <a href="/terms.php">Kullanım Şartları</a>
+                    <a href="/kvkk.php">KVKK</a>
                 </div>
-
-                <div class="col-lg-2 col-md-4">
-                    <h5 class="footer-title">İletişim</h5>
-                    <ul class="footer-links">
-                        <li>
-                            <i class="fas fa-envelope me-2"></i>
-                            info@diyetlenio.com
-                        </li>
-                        <li>
-                            <i class="fas fa-phone me-2"></i>
-                            0850 123 4567
-                        </li>
-                        <li>
-                            <i class="fas fa-map-marker-alt me-2"></i>
-                            İstanbul, Türkiye
-                        </li>
-                    </ul>
+                <div class="col-md-2 mb-4">
+                    <h5>Kayıt</h5>
+                    <a href="/register-client.php">Danışan Kayıt</a>
+                    <a href="/register-dietitian.php">Diyetisyen Kayıt</a>
+                    <a href="/login.php">Giriş Yap</a>
                 </div>
             </div>
-
             <div class="footer-bottom">
-                <p class="mb-0">
-                    &copy; <?= date('Y') ?> Diyetlenio. Tüm hakları saklıdır. | v<?= APP_VERSION ?>
-                </p>
+                <p>&copy; 2024 Diyetlenio. Tüm hakları saklıdır.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Scroll to Top -->
-    <div class="scroll-top" id="scrollTop">
-        <i class="fas fa-arrow-up"></i>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
+            const navbar = document.querySelector('.navbar');
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
         });
-
-        // Scroll to top button
-        const scrollTop = document.getElementById('scrollTop');
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                scrollTop.classList.add('show');
-            } else {
-                scrollTop.classList.remove('show');
-            }
-        });
-
-        scrollTop.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        // Counter animation
-        const counters = document.querySelectorAll('.counter');
-        const speed = 200;
-
-        const animateCounters = () => {
-            counters.forEach(counter => {
-                const updateCount = () => {
-                    const target = +counter.innerText;
-                    const count = +counter.getAttribute('data-count') || 0;
-                    const inc = target / speed;
-
-                    if (count < target) {
-                        counter.setAttribute('data-count', Math.ceil(count + inc));
-                        counter.innerText = Math.ceil(count + inc);
-                        setTimeout(updateCount, 1);
-                    } else {
-                        counter.innerText = target;
-                    }
-                };
-                updateCount();
-            });
-        };
-
-        // Trigger animation when stats section is in view
-        const statsSection = document.querySelector('.stats-section');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        if (statsSection) {
-            observer.observe(statsSection);
-        }
     </script>
 </body>
 </html>
