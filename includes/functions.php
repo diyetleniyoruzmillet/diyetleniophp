@@ -512,19 +512,40 @@ function jsonSuccess($data = null, ?string $message = null): void
 }
 
 /**
+ * CSRF token oluşturur ve döndürür
+ *
+ * @return string
+ */
+function getCsrfToken(): string
+{
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+/**
+ * CSRF token doğrular
+ *
+ * @param string $token
+ * @return bool
+ */
+function verifyCsrfToken(string $token): bool
+{
+    if (!isset($_SESSION['csrf_token'])) {
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+/**
  * CSRF token HTML inputu oluşturur
  *
  * @return string
  */
 function csrfField(): string
 {
-    global $auth;
-
-    if (!$auth) {
-        return '';
-    }
-
-    $token = $auth->generateCsrfToken();
+    $token = getCsrfToken();
     return '<input type="hidden" name="csrf_token" value="' . $token . '">';
 }
 
