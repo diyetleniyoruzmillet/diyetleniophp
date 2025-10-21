@@ -19,7 +19,7 @@ $stmt = $conn->prepare("
     SELECT
         (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'completed') as completed_appointments,
         (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'scheduled' AND appointment_date >= NOW()) as upcoming_appointments,
-        (SELECT COUNT(*) FROM diet_plans WHERE client_id = ? AND status = 'active') as active_plans,
+        (SELECT COUNT(*) FROM diet_plans WHERE client_id = ? AND is_active = 1) as active_plans,
         (SELECT COUNT(DISTINCT dietitian_id) FROM appointments WHERE client_id = ?) as dietitians_worked_with
 ");
 $stmt->execute([$userId, $userId, $userId, $userId]);
@@ -56,7 +56,7 @@ $stmt = $conn->prepare("
     SELECT dp.*, u.full_name as dietitian_name
     FROM diet_plans dp
     INNER JOIN users u ON dp.dietitian_id = u.id
-    WHERE dp.client_id = ? AND dp.status = 'active'
+    WHERE dp.client_id = ? AND dp.is_active = 1
     ORDER BY dp.start_date DESC
     LIMIT 1
 ");
@@ -74,16 +74,24 @@ $stmt->execute([$userId]);
 $weightHistory = $stmt->fetchAll();
 
 // Bugünün öğünleri (aktif plandan)
+// NOT: diet_plan_meals tablosu henüz oluşturulmadı, gelecek sürümde eklenecek
 $todayMeals = [];
+/*
 if ($activePlan) {
-    $stmt = $conn->prepare("
-        SELECT * FROM diet_plan_meals
-        WHERE plan_id = ? AND day_of_week = DAYOFWEEK(NOW())
-        ORDER BY meal_time ASC
-    ");
-    $stmt->execute([$activePlan['id']]);
-    $todayMeals = $stmt->fetchAll();
+    try {
+        $stmt = $conn->prepare("
+            SELECT * FROM diet_plan_meals
+            WHERE plan_id = ? AND day_of_week = DAYOFWEEK(NOW())
+            ORDER BY meal_time ASC
+        ");
+        $stmt->execute([$activePlan['id']]);
+        $todayMeals = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        // Tablo henüz oluşturulmamış, boş array döndür
+        $todayMeals = [];
+    }
 }
+*/
 
 $pageTitle = 'Danışan Paneli';
 ?>
