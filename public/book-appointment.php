@@ -95,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $appointmentId = $conn->lastInsertId();
                 $success = true;
-                setFlash('success', 'Randevunuz başarıyla oluşturuldu!');
 
                 // Bildirim gönder
                 try {
@@ -103,8 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $notification->notifyAppointmentCreated($appointmentId);
                 } catch (Exception $notifError) {
                     error_log('Notification error: ' . $notifError->getMessage());
-                    // Bildirim hatası randevu oluşturmayı engellemez
                 }
+
+                // Ödeme bilgileri sayfasına yönlendir
+                setFlash('success', 'Randevunuz başarıyla oluşturuldu! Lütfen ödeme bilgilerini kontrol edin.');
+                redirect('/payment-info.php?appointment=' . $appointmentId);
 
             } catch (Exception $e) {
                 error_log('Appointment creation error: ' . $e->getMessage());

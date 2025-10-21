@@ -19,17 +19,29 @@ try {
     ");
     $stats = $stmt->fetch();
 
-    // Popüler diyetisyenler (en yüksek puanlı, onaylı)
+    // Tüm aktif diyetisyenler (12 tane)
     $stmt = $conn->query("
         SELECT u.id, u.full_name, dp.title, dp.specialization, dp.rating_avg,
-               dp.total_clients, dp.consultation_fee, u.profile_photo, dp.about_me
+               dp.total_clients, dp.consultation_fee, u.profile_photo, dp.about_me,
+               dp.experience_years
         FROM users u
         INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
         WHERE dp.is_approved = 1 AND u.is_active = 1
         ORDER BY dp.rating_avg DESC, dp.total_clients DESC
-        LIMIT 3
+        LIMIT 12
     ");
-    $topDietitians = $stmt->fetchAll();
+    $allDietitians = $stmt->fetchAll();
+
+    // Acil nöbetçi diyetisyen (is_on_call = 1 olan varsa)
+    $stmt = $conn->query("
+        SELECT u.id, u.full_name, dp.title, dp.specialization, u.profile_photo, u.phone
+        FROM users u
+        INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
+        WHERE dp.is_approved = 1 AND u.is_active = 1 AND dp.is_on_call = 1
+        ORDER BY RAND()
+        LIMIT 1
+    ");
+    $emergencyDietitian = $stmt->fetch();
 
     // Son blog yazıları
     $stmt = $conn->query("
@@ -46,7 +58,8 @@ try {
 } catch (Exception $e) {
     error_log('Homepage stats error: ' . $e->getMessage());
     $stats = ['total_dietitians' => 0, 'total_clients' => 0, 'completed_sessions' => 0, 'total_articles' => 0];
-    $topDietitians = [];
+    $allDietitians = [];
+    $emergencyDietitian = null;
     $recentArticles = [];
 }
 
@@ -715,6 +728,11 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
                         <a class="nav-link" href="#dietitians">Diyetisyenler</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-danger fw-bold" href="#emergency">
+                            <i class="fas fa-ambulance me-1"></i>Acil Nöbetçi
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#how-it-works">Nasıl Çalışır</a>
                     </li>
                     <?php if ($auth->check()): ?>
@@ -904,17 +922,63 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         </div>
     </section>
 
+    <!-- Emergency Dietitian Section -->
+    <?php if ($emergencyDietitian): ?>
+    <section id="emergency" class="emergency-section py-5" style="background: linear-gradient(135deg, #fee140 0%, #fa709a 100%);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-white">
+                    <h2 class="display-5 fw-bold mb-3">
+                        <i class="fas fa-ambulance me-3"></i>Acil Nöbetçi Diyetisyen
+                    </h2>
+                    <p class="lead mb-4">
+                        Acil durumlarda 7/24 hizmetinizdeyiz! Anında destek alın.
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <?php if ($emergencyDietitian['profile_photo']): ?>
+                                    <img src="/assets/uploads/<?= clean($emergencyDietitian['profile_photo']) ?>"
+                                         alt="<?= clean($emergencyDietitian['full_name']) ?>"
+                                         class="rounded-circle me-3"
+                                         style="width: 80px; height: 80px; object-fit: cover; border: 4px solid #fa709a;">
+                                <?php else: ?>
+                                    <div class="rounded-circle bg-danger text-white me-3 d-flex align-items-center justify-content-center"
+                                         style="width: 80px; height: 80px; font-size: 2rem;">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                <?php endif; ?>
+                                <div>
+                                    <h4 class="mb-1"><?= clean($emergencyDietitian['full_name']) ?></h4>
+                                    <p class="text-muted mb-0"><?= clean($emergencyDietitian['title']) ?></p>
+                                    <span class="badge bg-danger"><i class="fas fa-circle me-1" style="font-size: 0.6rem; animation: pulse 2s infinite;"></i>Şu an müsait</span>
+                                </div>
+                            </div>
+                            <a href="/book-appointment.php?dietitian_id=<?= $emergencyDietitian['id'] ?>&emergency=1"
+                               class="btn btn-danger w-100 py-3 fw-bold" style="border-radius: 12px;">
+                                <i class="fas fa-phone-alt me-2"></i>Hemen Ara veya Randevu Al
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
+
     <!-- Dietitians Section -->
-    <?php if (count($topDietitians) > 0): ?>
+    <?php if (count($allDietitians) > 0): ?>
     <section id="dietitians" class="dietitians-section">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="section-title">Popüler Diyetisyenlerimiz</h2>
-                <p class="section-subtitle">En çok tercih edilen uzman diyetisyenlerimiz</p>
+                <h2 class="section-title">Uzman Diyetisyenlerimiz</h2>
+                <p class="section-subtitle">Size en uygun diyetisyeni seçin ve sağlıklı yaşama başlayın</p>
             </div>
 
             <div class="row g-4">
-                <?php foreach ($topDietitians as $dietitian): ?>
+                <?php foreach ($allDietitians as $dietitian): ?>
                 <div class="col-lg-4 col-md-6">
                     <div class="dietitian-card">
                         <div class="dietitian-header">
@@ -943,11 +1007,17 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
                                 <i class="fas fa-users me-1"></i><?= $dietitian['total_clients'] ?> Danışan
                             </span>
 
+                            <span class="badge bg-light text-dark mb-2">
+                                <i class="fas fa-briefcase me-1"></i><?= $dietitian['experience_years'] ?? 0 ?> Yıl Deneyim
+                            </span>
+
                             <p class="text-muted small mb-3" style="line-height: 1.6;">
-                                <?= clean(mb_substr($dietitian['about_me'] ?? $dietitian['specialization'], 0, 100)) ?>...
+                                <?= clean(mb_substr($dietitian['about_me'] ?? $dietitian['specialization'], 0, 80)) ?>...
                             </p>
 
-                            <div class="dietitian-price"><?= number_format($dietitian['consultation_fee'], 0) ?> ₺</div>
+                            <div class="dietitian-price"><?= number_format($dietitian['consultation_fee'], 0) ?> ₺
+                                <span class="fs-6 text-muted">/seans</span>
+                            </div>
 
                             <a href="/dietitian-profile.php?id=<?= $dietitian['id'] ?>" class="btn btn-gradient w-100">
                                 Profili Görüntüle <i class="fas fa-arrow-right ms-2"></i>
@@ -958,11 +1028,13 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
                 <?php endforeach; ?>
             </div>
 
+            <?php if (count($allDietitians) >= 12): ?>
             <div class="text-center mt-5">
                 <a href="/dietitians.php" class="btn btn-gradient" style="padding: 15px 50px; font-size: 1.1rem;">
-                    Tüm Diyetisyenleri Keşfet <i class="fas fa-arrow-right ms-2"></i>
+                    Daha Fazla Diyetisyen Göster <i class="fas fa-arrow-right ms-2"></i>
                 </a>
             </div>
+            <?php endif; ?>
         </div>
     </section>
     <?php endif; ?>
