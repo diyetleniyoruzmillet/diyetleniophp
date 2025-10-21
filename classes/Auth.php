@@ -78,6 +78,24 @@ class Auth
     }
 
     /**
+     * Kullanıcı giriş denemesi yapar (login metodunun alias'ı)
+     *
+     * @param string $email
+     * @param string $password
+     * @param bool $remember
+     * @return bool
+     */
+    public function attempt(string $email, string $password, bool $remember = false): bool
+    {
+        try {
+            return $this->login($email, $password, $remember);
+        } catch (Exception $e) {
+            // Exception'ı yakalamadan geri döndür (login.php'de yakalanacak)
+            return false;
+        }
+    }
+
+    /**
      * Kullanıcı girişi yapar
      *
      * @param string $email
