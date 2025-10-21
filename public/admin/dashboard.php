@@ -97,65 +97,347 @@ $pageTitle = 'Admin Dashboard';
     <title><?= clean($pageTitle) ?> - Diyetlenio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-design-system.css">
     <style>
         body {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
         }
+
+        /* Modern Sidebar with Glassmorphism */
         .sidebar {
             min-height: 100vh;
-            background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 4px 0 30px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
         }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .sidebar-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
         .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 8px;
-            transition: all 0.3s;
+            color: rgba(255,255,255,0.85);
+            padding: 14px 20px;
+            margin: 6px 0;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
         }
-        .sidebar .nav-link:hover,
+
+        .sidebar .nav-link i {
+            font-size: 1.1rem;
+            min-width: 20px;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
         .sidebar .nav-link.active {
             color: #fff;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            font-weight: 600;
         }
+
+        .sidebar .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 70%;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .sidebar .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Modern Content Area */
+        .content-wrapper {
+            padding: 35px;
+            position: relative;
+        }
+
+        /* Page Header with Glassmorphism */
+        .page-header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .page-header h2 {
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .page-header .text-muted {
+            color: #718096 !important;
+            font-weight: 400;
+        }
+
+        /* Ultra-Modern Stat Cards */
         .stat-card {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            transition: transform 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+            animation: fadeInUp 0.6s ease both;
         }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border-color: rgba(102, 126, 234, 0.3);
         }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-card-1 { animation-delay: 0.1s; }
+        .stat-card-2 { animation-delay: 0.2s; }
+        .stat-card-3 { animation-delay: 0.3s; }
+        .stat-card-4 { animation-delay: 0.4s; }
+
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
+            transition: all 0.4s;
+            position: relative;
+            z-index: 1;
         }
-        .content-wrapper {
-            padding: 30px;
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
         }
-        .page-header {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+        /* Icon Gradient Backgrounds */
+        .icon-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
+
+        .icon-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            box-shadow: 0 8px 20px rgba(86, 171, 47, 0.3);
+        }
+
+        .icon-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .icon-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
+        }
+
+        /* Modern Table Card */
         .table-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+            animation: fadeInUp 0.6s ease 0.5s both;
         }
+
+        .table-card h5 {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border: none;
+            color: #2d3748;
+            font-weight: 600;
+            padding: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
+        }
+
+        .table tbody td {
+            padding: 18px 15px;
+            vertical-align: middle;
+            border: none;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.3px;
+        }
+
         .badge-pending {
-            background: #ffc107;
-            color: #000;
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: #fff;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 15px;
+            border: none;
+            backdrop-filter: blur(10px);
+            animation: fadeInDown 0.5s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 20px;
+            }
+
+            .page-header {
+                padding: 20px;
+            }
+
+            .stat-card {
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
@@ -165,10 +447,10 @@ $pageTitle = 'Admin Dashboard';
             <!-- Sidebar -->
             <div class="col-md-2 sidebar p-0">
                 <div class="p-4">
-                    <h4 class="text-white mb-4">
+                    <h4 class="sidebar-brand">
                         <i class="fas fa-heartbeat me-2"></i>Diyetlenio
                     </h4>
-                    <p class="text-white-50 small mb-4">Admin Panel</p>
+                    <p class="sidebar-subtitle mb-4">Admin Panel</p>
 
                     <nav class="nav flex-column">
                         <a class="nav-link active" href="/admin/dashboard.php">
@@ -240,10 +522,10 @@ $pageTitle = 'Admin Dashboard';
                     <div class="row g-4 mb-4">
                         <!-- Toplam Kullanıcılar -->
                         <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card">
+                            <div class="card stat-card stat-card-1">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
-                                        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                        <div class="stat-icon icon-primary text-white">
                                             <i class="fas fa-users"></i>
                                         </div>
                                         <div class="ms-3 flex-grow-1">
@@ -261,10 +543,10 @@ $pageTitle = 'Admin Dashboard';
 
                         <!-- Diyetisyenler -->
                         <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card">
+                            <div class="card stat-card stat-card-2">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
-                                        <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                        <div class="stat-icon icon-success text-white">
                                             <i class="fas fa-user-md"></i>
                                         </div>
                                         <div class="ms-3 flex-grow-1">
@@ -284,10 +566,10 @@ $pageTitle = 'Admin Dashboard';
 
                         <!-- Danışanlar -->
                         <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card">
+                            <div class="card stat-card stat-card-3">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
-                                        <div class="stat-icon bg-info bg-opacity-10 text-info">
+                                        <div class="stat-icon icon-info text-white">
                                             <i class="fas fa-user-friends"></i>
                                         </div>
                                         <div class="ms-3 flex-grow-1">
@@ -304,10 +586,10 @@ $pageTitle = 'Admin Dashboard';
 
                         <!-- Randevular -->
                         <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card">
+                            <div class="card stat-card stat-card-4">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
-                                        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                        <div class="stat-icon icon-warning text-white">
                                             <i class="fas fa-calendar-check"></i>
                                         </div>
                                         <div class="ms-3 flex-grow-1">

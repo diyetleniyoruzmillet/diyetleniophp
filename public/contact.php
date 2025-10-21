@@ -48,8 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $success = true;
 
-                // TODO: Admin'e bildirim gönder
-                error_log("New contact message from: {$email}");
+                // Admin'e bildirim gönder
+                Mail::sendContactNotification([
+                    'name' => $name,
+                    'email' => $email,
+                    'subject' => $subject,
+                    'message' => $message
+                ]);
 
             } catch (Exception $e) {
                 error_log('Contact form error: ' . $e->getMessage());

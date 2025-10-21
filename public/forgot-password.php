@@ -49,14 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ");
                     $stmt->execute([$email, $token, $expiresAt]);
 
-                    // Reset linki
-                    $resetLink = url('/reset-password.php?token=' . $token);
-
-                    // Email gönder (gerçek uygulamada mail fonksiyonu kullanılır)
-                    error_log("Password reset link for {$email}: {$resetLink}");
-
-                    // TODO: Gerçek email gönderimi
-                    // sendMail($email, 'Şifre Sıfırlama', "Şifrenizi sıfırlamak için: {$resetLink}");
+                    // Email gönder
+                    Mail::sendPasswordReset($email, $token, $user['first_name']);
                 }
 
             } catch (Exception $e) {

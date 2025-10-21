@@ -76,6 +76,7 @@ $pageTitle = 'Giriş Yap';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-design-system.css">
     <style>
         * {
             margin: 0;
@@ -85,7 +86,9 @@ $pageTitle = 'Giriş Yap';
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -95,13 +98,15 @@ $pageTitle = 'Giriş Yap';
             overflow: hidden;
         }
 
+        /* Animated Orbs */
         body::before {
             content: '';
             position: absolute;
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            filter: blur(80px);
             top: -300px;
             right: -200px;
             animation: float 20s ease-in-out infinite;
@@ -110,18 +115,14 @@ $pageTitle = 'Giriş Yap';
         body::after {
             content: '';
             position: absolute;
-            width: 400px;
-            height: 400px;
+            width: 500px;
+            height: 500px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
+            background: radial-gradient(circle, rgba(86, 171, 47, 0.2) 0%, transparent 70%);
+            filter: blur(80px);
             bottom: -200px;
             left: -100px;
             animation: float 15s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(30px, 30px) rotate(180deg); }
         }
 
         .login-container {
@@ -152,7 +153,7 @@ $pageTitle = 'Giriş Yap';
         }
 
         .brand-section {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 60px 40px;
             display: flex;
@@ -165,18 +166,27 @@ $pageTitle = 'Giriş Yap';
         .brand-section::before {
             content: '';
             position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            top: -150px;
+            right: -150px;
+            animation: pulse 4s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        .brand-section::after {
+            content: '';
+            position: absolute;
             width: 300px;
             height: 300px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            top: -100px;
-            right: -100px;
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+            background: radial-gradient(circle, rgba(86, 171, 47, 0.1) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            animation: pulse 6s ease-in-out infinite reverse;
+            filter: blur(40px);
         }
 
         .brand-icon {
@@ -253,8 +263,9 @@ $pageTitle = 'Giriş Yap';
         }
 
         .form-floating input:focus {
-            border-color: #11998e;
-            box-shadow: 0 0 0 4px rgba(17, 153, 142, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
         }
 
         .form-floating label {
@@ -277,7 +288,7 @@ $pageTitle = 'Giriş Yap';
         }
 
         .password-toggle:hover {
-            color: #11998e;
+            color: #667eea;
         }
 
         .form-check {
@@ -293,8 +304,8 @@ $pageTitle = 'Giriş Yap';
         }
 
         .form-check-input:checked {
-            background-color: #11998e;
-            border-color: #11998e;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
         }
 
         .form-check-label {
@@ -304,22 +315,43 @@ $pageTitle = 'Giriş Yap';
         }
 
         .btn-login {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             color: white;
-            padding: 15px 30px;
+            padding: 16px 30px;
             font-size: 1.1rem;
             font-weight: 600;
             border-radius: 12px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
         }
 
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(17, 153, 142, 0.5);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
             color: white;
+        }
+
+        .btn-login:active {
+            transform: translateY(-1px) scale(1);
         }
 
         .forgot-link {
@@ -328,15 +360,30 @@ $pageTitle = 'Giriş Yap';
         }
 
         .forgot-link a {
-            color: #11998e;
+            color: #667eea;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
+            position: relative;
+        }
+
+        .forgot-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+
+        .forgot-link a:hover::after {
+            width: 100%;
         }
 
         .forgot-link a:hover {
-            color: #0f8478;
-            text-decoration: underline;
+            color: #764ba2;
         }
 
         .divider {
@@ -384,10 +431,11 @@ $pageTitle = 'Giriş Yap';
         }
 
         .btn-register:hover {
-            border-color: #11998e;
-            color: #11998e;
-            background: rgba(17, 153, 142, 0.05);
-            transform: translateY(-2px);
+            border-color: #667eea;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
 
         .back-home {

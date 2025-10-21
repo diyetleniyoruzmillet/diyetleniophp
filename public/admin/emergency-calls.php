@@ -1,4 +1,4 @@
 <?php
 require_once __DIR__ . '/../../includes/bootstrap.php';
 $auth->requireAdmin();
-echo "<h1>Genel Raporlar - Yakında Gelecek</h1>";
+echo "<h1>Acil Nöbetçi Yönetimi - Yakında Gelecek</h1>";
