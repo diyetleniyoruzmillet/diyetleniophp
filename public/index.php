@@ -64,10 +64,10 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            --secondary-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --accent-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
 
         * {
@@ -98,7 +98,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         .navbar-brand {
             font-size: 1.6rem;
             font-weight: 800;
-            background: var(--success-gradient);
+            background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -112,7 +112,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         }
 
         .nav-link:hover {
-            color: #11998e !important;
+            color: #0ea5e9 !important;
         }
 
         .nav-link::after {
@@ -122,7 +122,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--success-gradient);
+            background: var(--primary-gradient);
             transition: width 0.3s;
         }
 
@@ -131,19 +131,19 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         }
 
         .btn-gradient {
-            background: var(--success-gradient);
+            background: var(--primary-gradient);
             border: none;
             color: white;
             font-weight: 600;
             padding: 12px 30px;
             border-radius: 50px;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
         }
 
         .btn-gradient:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(17, 153, 142, 0.5);
+            box-shadow: 0 6px 25px rgba(14, 165, 233, 0.5);
             color: white;
         }
 
@@ -153,7 +153,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             display: flex;
             align-items: center;
             position: relative;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             overflow: hidden;
             padding: 100px 0;
         }
@@ -255,7 +255,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
         .btn-hero-primary {
             background: white;
-            color: #667eea;
+            color: #0ea5e9;
             border-color: white;
         }
 
@@ -267,7 +267,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
         .btn-hero-outline:hover {
             background: white;
-            color: #667eea;
+            color: #0ea5e9;
         }
 
         /* Feature Cards */
@@ -308,7 +308,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             left: 0;
             width: 100%;
             height: 5px;
-            background: var(--success-gradient);
+            background: var(--primary-gradient);
             transform: scaleX(0);
             transition: transform 0.4s;
         }
@@ -451,9 +451,9 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         .dietitian-badge {
             display: inline-block;
             padding: 6px 15px;
-            background: linear-gradient(135deg, #11998e20 0%, #38ef7d20 100%);
+            background: linear-gradient(135deg, #10b98120 0%, #05966920 100%);
             border-radius: 20px;
-            color: #11998e;
+            color: #10b981;
             font-size: 0.85rem;
             font-weight: 600;
             margin-bottom: 15px;
@@ -462,7 +462,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         .dietitian-price {
             font-size: 1.8rem;
             font-weight: 800;
-            color: #11998e;
+            color: #10b981;
             margin-bottom: 20px;
         }
 
@@ -482,7 +482,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--success-gradient);
+            background: var(--secondary-gradient);
             color: white;
             display: flex;
             align-items: center;
@@ -490,7 +490,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             font-size: 2rem;
             font-weight: 800;
             margin: 0 auto 25px;
-            box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
             transition: all 0.4s;
         }
 
@@ -512,7 +512,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
         /* CTA Section */
         .cta-section {
-            background: var(--warning-gradient);
+            background: var(--accent-gradient);
             color: white;
             padding: 100px 0;
             text-align: center;
@@ -602,7 +602,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
         }
 
         .social-links a:hover {
-            background: var(--success-gradient);
+            background: var(--primary-gradient);
             transform: translateY(-5px);
         }
 
@@ -622,7 +622,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: var(--success-gradient);
+            background: var(--primary-gradient);
             color: white;
             display: flex;
             align-items: center;
@@ -631,7 +631,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
+            box-shadow: 0 5px 20px rgba(14, 165, 233, 0.4);
             z-index: 1000;
         }
 
@@ -644,9 +644,54 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             transform: translateY(-5px);
         }
 
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero-title { font-size: 3.5rem; }
+            .stat-number { font-size: 3rem; }
+        }
+
+        @media (max-width: 992px) {
+            .hero-title { font-size: 3rem; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .section-title { font-size: 2.5rem; }
+            .features-section { padding: 80px 0; }
+            .dietitians-section { padding: 80px 0; }
+            .how-section { padding: 80px 0; }
+        }
+
         @media (max-width: 768px) {
+            .hero-section { padding: 60px 0; min-height: auto; }
             .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.1rem; margin-bottom: 2rem; }
+            .btn-hero { padding: 15px 35px; font-size: 1rem; }
             .section-title { font-size: 2rem; }
+            .section-subtitle { font-size: 1rem; }
+            .features-section { padding: 60px 0; }
+            .dietitians-section { padding: 60px 0; }
+            .how-section { padding: 60px 0; }
+            .stats-section { padding: 60px 0; }
+            .cta-section { padding: 60px 0; }
+            .cta-title { font-size: 2rem; }
+            .cta-desc { font-size: 1.1rem; }
+            .feature-card { padding: 35px 25px; }
+            .stat-number { font-size: 2.5rem; }
+            .stat-label { font-size: 1rem; }
+            footer { padding: 60px 0 30px; }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title { font-size: 2rem; line-height: 1.3; }
+            .hero-subtitle { font-size: 1rem; }
+            .btn-hero { padding: 12px 25px; font-size: 0.95rem; }
+            .section-title { font-size: 1.75rem; }
+            .feature-card { padding: 30px 20px; }
+            .feature-icon { width: 70px; height: 70px; font-size: 2rem; }
+            .feature-title { font-size: 1.2rem; }
+            .dietitian-header { height: 200px; font-size: 4rem; }
+            .step-number { width: 70px; height: 70px; font-size: 1.75rem; }
+            .stat-item { padding: 20px 10px; }
+            .stat-number { font-size: 2rem; }
+            .navbar-brand { font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -747,7 +792,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); color: #667eea;">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #0ea5e920 0%, #06b6d420 100%); color: #0ea5e9;">
                             <i class="fas fa-video"></i>
                         </div>
                         <h4 class="feature-title">Online Video Görüşme</h4>
@@ -760,7 +805,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
                 <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #11998e20 0%, #38ef7d20 100%); color: #11998e;">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #10b98120 0%, #05966920 100%); color: #10b981;">
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <h4 class="feature-title">Kolay Randevu Sistemi</h4>
@@ -773,7 +818,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
                 <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe20 0%, #00f2fe20 100%); color: #4facfe;">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #3b82f620 0%, #2563eb20 100%); color: #3b82f6;">
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <h4 class="feature-title">İlerleme Takibi</h4>
@@ -786,7 +831,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
                 <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #fbbf2420 0%, #f5961520 100%); color: #fbbf24;">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #f9731620 0%, #ea580c20 100%); color: #f97316;">
                             <i class="fas fa-utensils"></i>
                         </div>
                         <h4 class="feature-title">Kişisel Diyet Planı</h4>
@@ -799,7 +844,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
                 <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb20 0%, #f5576c20 100%); color: #f093fb;">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #ec489920 0%, #d9465120 100%); color: #ec4899;">
                             <i class="fas fa-comments"></i>
                         </div>
                         <h4 class="feature-title">Güvenli Mesajlaşma</h4>
@@ -812,7 +857,7 @@ $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Destek';
 
                 <div class="col-lg-4 col-md-6">
                     <div class="feature-card">
-                        <div class="feature-icon" style="background: linear-gradient(135deg, #a8edea20 0%, #fed6e320 100%); color: #6dd5ed;">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #6366f120 0%, #818cf820 100%); color: #6366f1;">
                             <i class="fas fa-shield-alt"></i>
                         </div>
                         <h4 class="feature-title">%100 Güvenli</h4>

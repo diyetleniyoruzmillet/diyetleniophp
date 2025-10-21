@@ -132,7 +132,7 @@ $pageTitle = 'Danışan Kayıt';
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -206,7 +206,7 @@ $pageTitle = 'Danışan Kayıt';
         .brand-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
@@ -248,7 +248,7 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .form-floating input:focus {
-            border-color: #667eea;
+            border-color: #0ea5e9;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
@@ -272,7 +272,7 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .password-toggle:hover {
-            color: #667eea;
+            color: #0ea5e9;
         }
 
         .password-strength {
@@ -301,8 +301,8 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .form-check-input:checked {
-            background-color: #667eea;
-            border-color: #667eea;
+            background-color: #0ea5e9;
+            border-color: #0ea5e9;
         }
 
         .form-check-label {
@@ -312,7 +312,7 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .form-check-label a {
-            color: #667eea;
+            color: #0ea5e9;
             text-decoration: none;
         }
 
@@ -321,7 +321,7 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .btn-register {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
             border: none;
             color: white;
             padding: 15px 30px;
@@ -380,8 +380,8 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .btn-link:hover {
-            border-color: #667eea;
-            color: #667eea;
+            border-color: #0ea5e9;
+            color: #0ea5e9;
             background: rgba(102, 126, 234, 0.05);
             transform: translateY(-2px);
         }
