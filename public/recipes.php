@@ -1,15 +1,38 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
 
+// Arama parametresi
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $perPage = 12;
 $offset = ($page - 1) * $perPage;
 
-$stmt = $db->prepare("SELECT * FROM recipes WHERE status = 'published' ORDER BY created_at DESC LIMIT ? OFFSET ?");
-$stmt->execute([$perPage, $offset]);
-$recipes = $stmt->fetchAll();
+// Arama varsa filtrele
+if (!empty($search)) {
+    $stmt = $db->prepare("
+        SELECT *,
+               MATCH(title, description, ingredients) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance
+        FROM recipes
+        WHERE status = 'published'
+        AND (title LIKE ? OR description LIKE ? OR ingredients LIKE ? OR MATCH(title, description, ingredients) AGAINST(? IN NATURAL LANGUAGE MODE))
+        ORDER BY relevance DESC, created_at DESC
+        LIMIT ? OFFSET ?
+    ");
+    $searchParam = '%' . $search . '%';
+    $stmt->execute([$search, $searchParam, $searchParam, $searchParam, $search, $perPage, $offset]);
 
-$totalRecipes = $db->query("SELECT COUNT(*) FROM recipes WHERE status = 'published'")->fetchColumn();
+    $totalStmt = $db->prepare("SELECT COUNT(*) FROM recipes WHERE status = 'published' AND (title LIKE ? OR description LIKE ? OR ingredients LIKE ?)");
+    $totalStmt->execute([$searchParam, $searchParam, $searchParam]);
+    $totalRecipes = $totalStmt->fetchColumn();
+} else {
+    $stmt = $db->prepare("SELECT * FROM recipes WHERE status = 'published' ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    $stmt->execute([$perPage, $offset]);
+
+    $totalRecipes = $db->query("SELECT COUNT(*) FROM recipes WHERE status = 'published'")->fetchColumn();
+}
+
+$recipes = $stmt->fetchAll();
 $totalPages = ceil($totalRecipes / $perPage);
 ?>
 <!DOCTYPE html>
@@ -53,11 +76,28 @@ $totalPages = ceil($totalRecipes / $perPage);
         <div class="container">
             <h1>Sağlıklı Tarifler</h1>
             <p>Lezzetli ve besleyici tariflerle sağlıklı beslenin</p>
+            <div class="mt-4" style="max-width: 600px; margin-left: auto; margin-right: auto;">
+                <form method="GET" action="/recipes.php" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Tariflerde ara..." value="<?= clean($search) ?>" style="border-radius: 12px; padding: 12px 20px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.9);">
+                    <button type="submit" class="btn btn-light" style="border-radius: 12px; padding: 12px 30px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </section>
 
     <section class="py-5">
         <div class="container">
+            <?php if (!empty($search)): ?>
+                <div class="mb-4">
+                    <h5 class="text-muted">"<?= clean($search) ?>" için <?= $totalRecipes ?> tarif bulundu
+                        <a href="/recipes.php" class="btn btn-sm btn-outline-secondary ms-2">
+                            <i class="fas fa-times me-1"></i>Aramayı Temizle
+                        </a>
+                    </h5>
+                </div>
+            <?php endif; ?>
             <?php if (empty($recipes)): ?>
                 <div class="text-center"><p class="text-muted">Henüz tarif bulunmuyor.</p></div>
             <?php else: ?>

@@ -1,24 +1,48 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
 
+// Arama parametresi
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
 // Blog yazılarını çek
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $perPage = 9;
 $offset = ($page - 1) * $perPage;
 
-$stmt = $db->prepare("
-    SELECT a.*, u.first_name, u.last_name, 
-           (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count
-    FROM articles a
-    LEFT JOIN users u ON a.author_id = u.id
-    WHERE a.status = 'published'
-    ORDER BY a.published_at DESC
-    LIMIT ? OFFSET ?
-");
-$stmt->execute([$perPage, $offset]);
-$articles = $stmt->fetchAll();
+// Arama varsa FULLTEXT search kullan, yoksa normal sorgu
+if (!empty($search)) {
+    $stmt = $db->prepare("
+        SELECT a.*, u.first_name, u.last_name,
+               (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count,
+               MATCH(a.title, a.content) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance
+        FROM articles a
+        LEFT JOIN users u ON a.author_id = u.id
+        WHERE a.status = 'published'
+        AND (a.title LIKE ? OR a.content LIKE ? OR MATCH(a.title, a.content) AGAINST(? IN NATURAL LANGUAGE MODE))
+        ORDER BY relevance DESC, a.published_at DESC
+        LIMIT ? OFFSET ?
+    ");
+    $searchParam = '%' . $search . '%';
+    $stmt->execute([$search, $searchParam, $searchParam, $search, $perPage, $offset]);
 
-$totalStmt = $db->query("SELECT COUNT(*) FROM articles WHERE status = 'published'");
+    $totalStmt = $db->prepare("SELECT COUNT(*) FROM articles WHERE status = 'published' AND (title LIKE ? OR content LIKE ?)");
+    $totalStmt->execute([$searchParam, $searchParam]);
+} else {
+    $stmt = $db->prepare("
+        SELECT a.*, u.first_name, u.last_name,
+               (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count
+        FROM articles a
+        LEFT JOIN users u ON a.author_id = u.id
+        WHERE a.status = 'published'
+        ORDER BY a.published_at DESC
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$perPage, $offset]);
+
+    $totalStmt = $db->query("SELECT COUNT(*) FROM articles WHERE status = 'published'");
+}
+
+$articles = $stmt->fetchAll();
 $totalArticles = $totalStmt->fetchColumn();
 $totalPages = ceil($totalArticles / $perPage);
 
@@ -68,11 +92,28 @@ $pageTitle = 'Blog';
         <div class="container">
             <h1>Blog</h1>
             <p>Sağlıklı yaşam, beslenme ve diyet hakkında her şey</p>
+            <div class="mt-4" style="max-width: 600px; margin-left: auto; margin-right: auto;">
+                <form method="GET" action="/blog.php" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Blog yazılarında ara..." value="<?= clean($search) ?>" style="border-radius: 12px; padding: 12px 20px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.9);">
+                    <button type="submit" class="btn btn-light" style="border-radius: 12px; padding: 12px 30px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </section>
 
     <section class="section">
         <div class="container">
+            <?php if (!empty($search)): ?>
+                <div class="mb-4">
+                    <h5 class="text-muted">"<?= clean($search) ?>" için <?= $totalArticles ?> sonuç bulundu
+                        <a href="/blog.php" class="btn btn-sm btn-outline-secondary ms-2">
+                            <i class="fas fa-times me-1"></i>Aramayı Temizle
+                        </a>
+                    </h5>
+                </div>
+            <?php endif; ?>
             <?php if (empty($articles)): ?>
                 <div class="text-center">
                     <p class="text-muted">Henüz yazı bulunmuyor.</p>

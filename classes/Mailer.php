@@ -95,9 +95,41 @@ class Mailer
      */
     public function sendAppointmentConfirmation(string $to, array $appointmentData): bool
     {
-        $subject = 'Randevu Onayı';
+        $subject = 'Randevu Onayı - Diyetlenio';
         $body = $this->getTemplate('appointment-confirmation', $appointmentData);
         return $this->send($to, $subject, $body);
+    }
+
+    /**
+     * Randevu hatırlatma e-postası
+     */
+    public function sendAppointmentReminder(string $to, array $appointmentData): bool
+    {
+        $subject = 'Randevu Hatırlatma - Diyetlenio';
+        $body = $this->getTemplate('appointment-reminder', $appointmentData);
+        return $this->send($to, $subject, $body);
+    }
+
+    /**
+     * Ödeme onay e-postası
+     */
+    public function sendPaymentApproved(string $to, array $paymentData): bool
+    {
+        $subject = 'Ödeme Onaylandı - Diyetlenio';
+        $body = $this->getTemplate('payment-approved', $paymentData);
+        return $this->send($to, $subject, $body);
+    }
+
+    /**
+     * Toplu email gönderir
+     */
+    public function sendBulk(array $recipients, string $subject, string $body, bool $isHtml = true): array
+    {
+        $results = [];
+        foreach ($recipients as $email) {
+            $results[$email] = $this->send($email, $subject, $body, $isHtml);
+        }
+        return $results;
     }
 
     /**

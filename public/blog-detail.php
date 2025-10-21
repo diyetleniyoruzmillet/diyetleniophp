@@ -2,6 +2,44 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$errors = [];
+$success = false;
+
+// Yorum ekleme
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $errors[] = 'Geçersiz form gönderimi.';
+    } else {
+        $comment = trim($_POST['comment'] ?? '');
+        $guestName = trim($_POST['guest_name'] ?? '');
+        $guestEmail = trim($_POST['guest_email'] ?? '');
+
+        if (empty($comment)) {
+            $errors[] = 'Yorum yazınız.';
+        }
+
+        if (!$auth->check()) {
+            if (empty($guestName)) $errors[] = 'İsminizi yazın.';
+            if (empty($guestEmail)) $errors[] = 'Email adresinizi yazın.';
+            elseif (!filter_var($guestEmail, FILTER_VALIDATE_EMAIL)) $errors[] = 'Geçerli email girin.';
+        }
+
+        if (empty($errors)) {
+            try {
+                $userId = $auth->check() ? $auth->user()->getId() : null;
+                $stmt = $db->prepare("
+                    INSERT INTO article_comments (article_id, user_id, guest_name, guest_email, comment, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, 'pending', NOW())
+                ");
+                $stmt->execute([$id, $userId, $guestName, $guestEmail, $comment]);
+                $success = true;
+            } catch (Exception $e) {
+                $errors[] = 'Yorum eklenirken hata oluştu.';
+                error_log('Comment error: ' . $e->getMessage());
+            }
+        }
+    }
+}
 
 $stmt = $db->prepare("
     SELECT a.*, u.first_name, u.last_name
@@ -16,6 +54,17 @@ if (!$article) {
     header('Location: /blog.php');
     exit;
 }
+
+// Yorumları çek
+$commentsStmt = $db->prepare("
+    SELECT c.*, u.first_name, u.last_name
+    FROM article_comments c
+    LEFT JOIN users u ON c.user_id = u.id
+    WHERE c.article_id = ? AND c.status = 'approved'
+    ORDER BY c.created_at DESC
+");
+$commentsStmt->execute([$id]);
+$comments = $commentsStmt->fetchAll();
 
 $pageTitle = $article['title'];
 ?>
@@ -72,7 +121,75 @@ $pageTitle = $article['title'];
             <div><?= nl2br(clean($article['content'])) ?></div>
         </article>
 
-        <div class="text-center mb-5">
+        <!-- Yorumlar Bölümü -->
+        <div class="article-content mt-5">
+            <h3 class="mb-4"><i class="fas fa-comments me-2"></i>Yorumlar (<?= count($comments) ?>)</h3>
+
+            <?php if (!empty($errors)): ?>
+                <div class="alert alert-danger">
+                    <?php foreach ($errors as $error): ?><div><?= clean($error) ?></div><?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($success): ?>
+                <div class="alert alert-success">Yorumunuz onay bekliyor. Teşekkürler!</div>
+            <?php endif; ?>
+
+            <!-- Yorum Ekleme Formu -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Yorum Yaz</h5>
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
+
+                        <?php if (!$auth->check()): ?>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <input type="text" name="guest_name" class="form-control" placeholder="Adınız" value="<?= clean($_POST['guest_name'] ?? '') ?>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" name="guest_email" class="form-control" placeholder="Email" value="<?= clean($_POST['guest_email'] ?? '') ?>" required>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="mb-3">
+                            <textarea name="comment" class="form-control" rows="4" placeholder="Yorumunuzu yazın..." required><?= clean($_POST['comment'] ?? '') ?></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Gönder
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Yorumlar Listesi -->
+            <?php if (empty($comments)): ?>
+                <p class="text-muted">Henüz yorum yok. İlk yorumu siz yapın!</p>
+            <?php else: ?>
+                <?php foreach ($comments as $comment): ?>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-user-circle me-2 text-primary"></i>
+                                    <?php if ($comment['user_id']): ?>
+                                        <?= clean($comment['first_name'] . ' ' . $comment['last_name']) ?>
+                                    <?php else: ?>
+                                        <?= clean($comment['guest_name']) ?>
+                                    <?php endif; ?>
+                                </h6>
+                                <small class="text-muted"><?= date('d.m.Y H:i', strtotime($comment['created_at'])) ?></small>
+                            </div>
+                            <p class="mb-0" style="color: #4a5568;"><?= nl2br(clean($comment['comment'])) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <div class="text-center mb-5 mt-4">
             <a href="/blog.php" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Tüm Yazılar</a>
         </div>
     </div>
