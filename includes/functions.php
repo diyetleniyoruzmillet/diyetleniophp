@@ -512,6 +512,34 @@ function jsonSuccess($data = null, ?string $message = null): void
 }
 
 /**
+ * CSRF token oluşturur
+ *
+ * @return string
+ */
+if (!function_exists('generateCsrfToken')) {
+    function generateCsrfToken(): string
+    {
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+}
+
+/**
+ * CSRF token doğrular
+ *
+ * @param string $token
+ * @return bool
+ */
+if (!function_exists('verifyCsrfToken')) {
+    function verifyCsrfToken(string $token): bool
+    {
+        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    }
+}
+
+/**
  * CSRF token oluşturur ve döndürür (wrapper for generateCsrfToken)
  *
  * @return string
