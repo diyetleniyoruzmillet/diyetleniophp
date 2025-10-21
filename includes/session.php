@@ -261,13 +261,15 @@ function clearOldInput(): void
  *
  * @return string
  */
-function generateCsrfToken(): string
-{
-    if (!isset($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
+if (!function_exists('generateCsrfToken')) {
+    function generateCsrfToken(): string
+    {
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
 
-    return $_SESSION['csrf_token'];
+        return $_SESSION['csrf_token'];
+    }
 }
 
 /**
@@ -276,9 +278,11 @@ function generateCsrfToken(): string
  * @param string $token
  * @return bool
  */
-function verifyCsrfToken(string $token): bool
-{
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+if (!function_exists('verifyCsrfToken')) {
+    function verifyCsrfToken(string $token): bool
+    {
+        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    }
 }
 
 /**
