@@ -499,7 +499,7 @@ $pageTitle = 'Giriş Yap';
                         <?php endif; ?>
 
                         <form method="POST" action="/login.php">
-                            <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+                            <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
 
                             <div class="form-floating">
                                 <input
