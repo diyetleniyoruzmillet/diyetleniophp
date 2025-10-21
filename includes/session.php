@@ -8,8 +8,8 @@
 // Session zaten başlatılmışsa tekrar başlatma
 if (session_status() === PHP_SESSION_NONE) {
 
-    // Session yapılandırması
-    $sessionConfig = config('session', []);
+    // Session yapılandırması (config fonksiyonu varsa kullan, yoksa default değerler)
+    $sessionConfig = function_exists('config') ? config('session', []) : [];
 
     // Session cookie parametreleri
     $cookieParams = [

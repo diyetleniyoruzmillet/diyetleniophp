@@ -5,32 +5,29 @@
  * Tüm sayfalarda kullanılacak temel dosyaları yükler
  */
 
-// Hata raporlamayı etkinleştir (geliştirme aşamasında)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Sabitleri yükle (constants.php'de dizinler tanımlanıyor)
+require_once dirname(__DIR__) . '/config/constants.php';
 
-// Temel dizinleri tanımla
-define('ROOT_DIR', dirname(__DIR__));
-define('CONFIG_DIR', ROOT_DIR . '/config');
-define('CLASSES_DIR', ROOT_DIR . '/classes');
-define('INCLUDES_DIR', ROOT_DIR . '/includes');
-define('PUBLIC_DIR', ROOT_DIR . '/public');
-define('ASSETS_DIR', ROOT_DIR . '/assets');
-define('UPLOAD_DIR', ASSETS_DIR . '/uploads');
-define('STORAGE_DIR', ROOT_DIR . '/storage');
-define('LOGS_DIR', ROOT_DIR . '/logs');
-define('VIEWS_DIR', ROOT_DIR . '/views');
+// Hata raporlamayı yapılandır
+if (defined('DEBUG_MODE') && DEBUG_MODE) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    if (defined('LOGS_DIR')) {
+        ini_set('error_log', LOGS_DIR . '/error.log');
+    }
+}
 
 // Storage ve logs dizinlerini oluştur
 if (!is_dir(STORAGE_DIR . '/sessions')) {
-    mkdir(STORAGE_DIR . '/sessions', 0700, true);
+    @mkdir(STORAGE_DIR . '/sessions', 0700, true);
 }
 if (!is_dir(LOGS_DIR)) {
-    mkdir(LOGS_DIR, 0755, true);
+    @mkdir(LOGS_DIR, 0755, true);
 }
-
-// Sabitleri yükle
-require_once CONFIG_DIR . '/constants.php';
 
 // Yardımcı fonksiyonları yükle
 require_once INCLUDES_DIR . '/functions.php';
