@@ -309,18 +309,19 @@ $pageTitle = 'Diyetisyen Kayıt';
         .brand-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 20px 10px rgba(102, 126, 234, 0); }
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6); }
         }
 
         .brand-icon i {
@@ -366,8 +367,9 @@ $pageTitle = 'Diyetisyen Kayıt';
         .form-floating-custom select:focus,
         .form-floating-custom textarea:focus {
             outline: none;
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
         }
 
         .form-floating-custom label {
@@ -390,7 +392,7 @@ $pageTitle = 'Diyetisyen Kayıt';
         .form-floating-custom textarea:not(:placeholder-shown) + label {
             top: -8px;
             font-size: 12px;
-            color: #0ea5e9;
+            color: #667eea;
             font-weight: 600;
         }
 
@@ -413,7 +415,7 @@ $pageTitle = 'Diyetisyen Kayıt';
         }
 
         .password-toggle:hover {
-            color: #0ea5e9;
+            color: #667eea;
         }
 
         /* Password Strength Indicator */
@@ -465,7 +467,10 @@ $pageTitle = 'Diyetisyen Kayıt';
 
         .section-title i {
             margin-right: 10px;
-            color: #0ea5e9;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .section-title:first-of-type {
@@ -494,8 +499,8 @@ $pageTitle = 'Diyetisyen Kayıt';
         }
 
         .file-upload-label:hover {
-            border-color: #0ea5e9;
-            background: #edf2f7;
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
         }
 
         .file-upload-label.has-file {
@@ -527,21 +532,42 @@ $pageTitle = 'Diyetisyen Kayıt';
 
         /* Buttons */
         .btn-gradient {
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             color: white;
-            padding: 15px;
+            padding: 16px;
             border-radius: 12px;
             font-weight: 600;
             font-size: 16px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-gradient:hover::before {
+            left: 100%;
         }
 
         .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
             color: white;
+        }
+
+        .btn-gradient:active {
+            transform: translateY(-1px) scale(1);
         }
 
         .btn-outline-custom {
