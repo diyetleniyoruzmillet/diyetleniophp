@@ -157,6 +157,123 @@ class Mail
     }
 
     /**
+     * Send verification email to new dietitian
+     *
+     * @param string $email
+     * @param string $token
+     * @param string $firstName
+     * @return bool
+     */
+    public static function sendDietitianVerification(string $email, string $token, string $firstName): bool
+    {
+        $verifyLink = url('/verify-email.php?token=' . $token);
+        $subject = 'Email Doğrulama - Diyetlenio';
+
+        $body = "
+            <h2>Merhaba {$firstName},</h2>
+            <p>Diyetlenio'ya hoş geldiniz! Email adresinizi doğrulamak için aşağıdaki linke tıklayın:</p>
+            <p style='margin: 30px 0;'>
+                <a href='{$verifyLink}'
+                   style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                          color: white;
+                          padding: 15px 30px;
+                          text-decoration: none;
+                          border-radius: 8px;
+                          display: inline-block;'>
+                    Email Adresimi Doğrula
+                </a>
+            </p>
+            <p>Email adresinizi doğruladıktan sonra, başvurunuz admin tarafından incelenecek ve onaylanacaktır.</p>
+            <p><strong>Sonraki Adımlar:</strong></p>
+            <ul>
+                <li>Email adresinizi doğrulayın</li>
+                <li>Profil bilgilerinizi tamamlayın</li>
+                <li>Admin onayını bekleyin</li>
+            </ul>
+        ";
+
+        return self::send($email, $subject, $body);
+    }
+
+    /**
+     * Notify admin about new dietitian registration
+     *
+     * @param int $userId
+     * @param array $data Dietitian data
+     * @return bool
+     */
+    public static function notifyAdminNewDietitian(int $userId, array $data): bool
+    {
+        $adminEmail = 'admin@diyetlenio.com'; // TODO: Get from config
+        $subject = 'Yeni Diyetisyen Başvurusu - ' . $data['full_name'];
+
+        $approveLink = url('/admin/dietitians.php?id=' . $userId);
+
+        $body = "
+            <h2>Yeni Diyetisyen Başvurusu</h2>
+            <p><strong>Ad Soyad:</strong> {$data['full_name']}</p>
+            <p><strong>Email:</strong> {$data['email']}</p>
+            <p><strong>Telefon:</strong> {$data['phone']}</p>
+            <p><strong>Diploma No:</strong> {$data['diploma_no']}</p>
+            <p><strong>Deneyim:</strong> {$data['experience_years']} yıl</p>
+            <p><strong>Uzmanlık:</strong> {$data['specialization']}</p>
+            <p style='margin: 30px 0;'>
+                <a href='{$approveLink}'
+                   style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                          color: white;
+                          padding: 15px 30px;
+                          text-decoration: none;
+                          border-radius: 8px;
+                          display: inline-block;'>
+                    Başvuruyu İncele
+                </a>
+            </p>
+            <p>Bu başvuruyu admin panelinden onaylayabilir veya reddedebilirsiniz.</p>
+        ";
+
+        return self::send($adminEmail, $subject, $body);
+    }
+
+    /**
+     * Send welcome email to approved dietitian
+     *
+     * @param string $email
+     * @param string $firstName
+     * @return bool
+     */
+    public static function sendDietitianApprovalEmail(string $email, string $firstName): bool
+    {
+        $subject = 'Başvurunuz Onaylandı - Diyetlenio';
+        $dashboardLink = url('/dietitian/dashboard.php');
+
+        $body = "
+            <h2>Tebrikler {$firstName}!</h2>
+            <p>Diyetlenio'ya katılımınız onaylandı. Artık platformumuzda danışan kabul etmeye başlayabilirsiniz.</p>
+            <p style='margin: 30px 0;'>
+                <a href='{$dashboardLink}'
+                   style='background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                          color: white;
+                          padding: 15px 30px;
+                          text-decoration: none;
+                          border-radius: 8px;
+                          display: inline-block;'>
+                    Panelime Git
+                </a>
+            </p>
+            <p><strong>Yapabilecekleriniz:</strong></p>
+            <ul>
+                <li>Müsaitlik saatlerinizi ayarlayın</li>
+                <li>Danışan randevularını yönetin</li>
+                <li>Diyet planları oluşturun</li>
+                <li>Mesajlaşma ile danışanlarınızla iletişimde kalın</li>
+            </ul>
+            <p>Başarılar dileriz!</p>
+        ";
+
+        return self::send($email, $subject, $body);
+    }
+
+    /**
      * Wrap email body in HTML template
      *
      * @param string $content

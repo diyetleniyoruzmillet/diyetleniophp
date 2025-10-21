@@ -191,9 +191,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $conn->commit();
                 $success = true;
 
-                // TODO: Email gönderme ve admin bildirimi
-                // sendVerificationEmail($email, $verificationToken);
-                // notifyAdminNewDietitian($userId);
+                // Email gönderme ve admin bildirimi
+                try {
+                    // Diyetisyene doğrulama emaili gönder
+                    Mail::sendDietitianVerification($email, $verificationToken, $fullName);
+
+                    // Admin'e yeni başvuru bildirimi gönder
+                    Mail::notifyAdminNewDietitian($userId, [
+                        'full_name' => $fullName,
+                        'email' => $email,
+                        'phone' => $phone,
+                        'diploma_no' => $diplomaNo,
+                        'experience_years' => $experienceYears,
+                        'specialization' => $specialization
+                    ]);
+                } catch (Exception $mailError) {
+                    error_log('Email sending error: ' . $mailError->getMessage());
+                    // Email hatası kayıt işlemini etkilemez
+                }
 
             } catch (Exception $e) {
                 if ($conn->inTransaction()) {

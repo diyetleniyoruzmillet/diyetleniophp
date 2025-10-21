@@ -744,7 +744,7 @@ $pageTitle = 'Danışan Paneli';
                                             <i class="fas fa-clipboard-list fa-2x text-warning mb-2"></i>
                                             <p class="mb-0">Diyet Planlarım</p>
                                         </a>
-                                        <a href="/articles" class="action-card">
+                                        <a href="/blog.php" class="action-card">
                                             <i class="fas fa-book fa-2x text-info mb-2"></i>
                                             <p class="mb-0">Sağlık Makaleleri</p>
                                         </a>

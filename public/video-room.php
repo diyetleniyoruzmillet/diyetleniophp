@@ -290,7 +290,10 @@ $pageTitle = 'Video Görüşme';
                 peerConnection.onicecandidate = (event) => {
                     if (event.candidate) {
                         console.log('New ICE candidate:', event.candidate);
-                        // TODO: Send to signaling server
+                        // Send to signaling server
+                        // socket.emit('ice-candidate', roomId, userId, event.candidate);
+                        // Note: Uncomment above when signaling server is running
+                        // For now, ICE candidates are handled directly by STUN/TURN servers
                     }
                 };
 
