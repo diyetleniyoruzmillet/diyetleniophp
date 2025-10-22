@@ -5,6 +5,12 @@
 
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
+// Sadece client erişebilir
+if (!$auth->check() || $auth->user()->getUserType() !== 'client') {
+    setFlash('error', 'Bu sayfaya erişim yetkiniz yok.');
+    redirect('/login.php');
+}
+
 $conn = $db->getConnection();
 
 // Filtreleme
