@@ -13,17 +13,23 @@ if (!$auth->check() || $auth->user()->getUserType() !== 'admin') {
 $conn = $db->getConnection();
 
 // Ödemeleri çek
-$stmt = $conn->query("
-    SELECT p.*,
-           c.full_name as client_name,
-           d.full_name as dietitian_name
-    FROM payments p
-    INNER JOIN users c ON p.client_id = c.id
-    INNER JOIN users d ON p.dietitian_id = d.id
-    ORDER BY p.payment_date DESC
-    LIMIT 100
-");
-$payments = $stmt->fetchAll();
+try {
+    $stmt = $conn->query("
+        SELECT p.*,
+               c.full_name as client_name,
+               d.full_name as dietitian_name
+        FROM payments p
+        INNER JOIN users c ON p.client_id = c.id
+        INNER JOIN users d ON p.dietitian_id = d.id
+        ORDER BY p.payment_date DESC
+        LIMIT 100
+    ");
+    $payments = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // payments tablosu yoksa boş array
+    $payments = [];
+    $tableNotExists = true;
+}
 
 $pageTitle = 'Ödeme Yönetimi';
 ?>
@@ -46,12 +52,20 @@ $pageTitle = 'Ödeme Yönetimi';
                 <div class="content-wrapper">
                     <h2 class="mb-4">Ödeme Yönetimi</h2>
 
+                    <?php if (isset($tableNotExists)): ?>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Uyarı:</strong> Payments tablosu henüz oluşturulmamış. Bu özellik yakında aktif olacak.
+                        </div>
+                    <?php endif; ?>
+
                     <div class="card">
                         <div class="card-body">
                             <?php if (count($payments) === 0): ?>
                                 <div class="text-center py-5">
                                     <i class="fas fa-money-bill-wave fa-4x text-muted mb-3"></i>
                                     <h4 class="text-muted">Henüz ödeme yok</h4>
+                                    <p class="text-muted">Ödemeler buradan yönetilecek</p>
                                 </div>
                             <?php else: ?>
                                 <div class="table-responsive">

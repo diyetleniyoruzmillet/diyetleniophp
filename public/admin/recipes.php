@@ -42,7 +42,7 @@ $pageTitle = 'Tarif Yönetimi';
                 <div class="content-wrapper">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>Tarif Yönetimi</h2>
-                        <button class="btn btn-success">
+                        <button class="btn btn-success" onclick="alert('Tarif ekleme özelliği yakında aktif olacak!')">
                             <i class="fas fa-plus me-2"></i>Yeni Tarif
                         </button>
                     </div>
@@ -82,10 +82,10 @@ $pageTitle = 'Tarif Yönetimi';
                                                     </td>
                                                     <td><?= date('d.m.Y', strtotime($recipe['created_at'])) ?></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-primary">
+                                                        <button class="btn btn-sm btn-primary" onclick="alert('Düzenleme özelliği yakında aktif olacak!')" title="Düzenle">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
-                                                        <button class="btn btn-sm btn-danger">
+                                                        <button class="btn btn-sm btn-danger" onclick="if(confirm('Bu tarifi silmek istediğinizden emin misiniz?')) alert('Silme özelliği yakında aktif olacak!')" title="Sil">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </td>

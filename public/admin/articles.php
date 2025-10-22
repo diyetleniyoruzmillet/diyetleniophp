@@ -42,7 +42,7 @@ $pageTitle = 'Makale Yönetimi';
                 <div class="content-wrapper">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>Makale Yönetimi</h2>
-                        <button class="btn btn-success">
+                        <button class="btn btn-success" onclick="alert('Makale ekleme özelliği yakında aktif olacak!')">
                             <i class="fas fa-plus me-2"></i>Yeni Makale
                         </button>
                     </div>
@@ -82,10 +82,10 @@ $pageTitle = 'Makale Yönetimi';
                                                     </td>
                                                     <td><?= date('d.m.Y', strtotime($article['created_at'])) ?></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-primary">
+                                                        <button class="btn btn-sm btn-primary" onclick="alert('Düzenleme özelliği yakında aktif olacak!')" title="Düzenle">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
-                                                        <button class="btn btn-sm btn-danger">
+                                                        <button class="btn btn-sm btn-danger" onclick="if(confirm('Bu makaleyi silmek istediğinizden emin misiniz?')) alert('Silme özelliği yakında aktif olacak!')" title="Sil">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </td>
