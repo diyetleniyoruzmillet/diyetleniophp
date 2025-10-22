@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
         $subject = trim($_POST['subject'] ?? '');
         $message = trim($_POST['message'] ?? '');
 
@@ -29,6 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Geçerli bir email adresi girin.';
         }
 
+        // Telefon opsiyonel ama girilmişse formatı kontrol et
+        if (!empty($phone) && !preg_match('/^[0-9\s\+\-\(\)]+$/', $phone)) {
+            $errors[] = 'Geçerli bir telefon numarası girin.';
+        }
+
         if (empty($subject)) {
             $errors[] = 'Konu gereklidir.';
         }
@@ -40,11 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Mesaj kaydetme
         if (empty($errors)) {
             try {
-                $stmt = $db->prepare("
-                    INSERT INTO contact_messages (name, email, subject, message, created_at)
-                    VALUES (?, ?, ?, ?, NOW())
+                $conn = $db->getConnection();
+                $stmt = $conn->prepare("
+                    INSERT INTO contact_messages (name, email, phone, subject, message, created_at)
+                    VALUES (?, ?, ?, ?, ?, NOW())
                 ");
-                $stmt->execute([$name, $email, $subject, $message]);
+                $stmt->execute([$name, $email, $phone, $subject, $message]);
 
                 $success = true;
 
@@ -52,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Mail::sendContactNotification([
                     'name' => $name,
                     'email' => $email,
+                    'phone' => $phone,
                     'subject' => $subject,
                     'message' => $message
                 ]);
@@ -373,6 +381,21 @@ $pageTitle = 'İletişim';
                                             required
                                         >
                                     </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">
+                                        <i class="fas fa-phone me-2"></i>Telefon Numarası
+                                        <span class="text-muted small">(Opsiyonel)</span>
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        class="form-control"
+                                        id="phone"
+                                        value="<?= clean($_POST['phone'] ?? '') ?>"
+                                        placeholder="+90 (5XX) XXX XX XX"
+                                    >
                                 </div>
 
                                 <div class="mb-3">
