@@ -97,23 +97,33 @@ $pageTitle = 'Diyetisyenlerimiz';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background: #f8f9fa; font-family: 'Inter', sans-serif; }
-        .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .hero-section { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 80px 0 60px; }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 80px 0 60px; }
         .hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 15px; }
         .hero-subtitle { font-size: 1.2rem; opacity: 0.95; }
         .filter-section { background: white; padding: 30px; border-radius: 15px; margin-top: -40px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         .dietitian-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 3px 15px rgba(0,0,0,0.1); transition: all 0.3s; height: 100%; }
         .dietitian-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
-        .dietitian-image { height: 250px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; }
+        .dietitian-image { height: 250px; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; }
         .dietitian-image img { width: 100%; height: 100%; object-fit: cover; }
         .dietitian-body { padding: 25px; }
         .dietitian-name { font-size: 1.4rem; font-weight: 700; color: #2d3748; margin-bottom: 5px; }
         .dietitian-title { color: #718096; font-size: 0.95rem; margin-bottom: 15px; }
         .rating { color: #fbbf24; margin-bottom: 10px; }
-        .badge-custom { background: #e6fffa; color: #11998e; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; margin: 3px; display: inline-block; }
-        .price { font-size: 1.8rem; font-weight: 800; color: #11998e; margin: 15px 0; }
-        .btn-view { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 600; transition: all 0.3s; }
-        .btn-view:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(17, 153, 142, 0.3); color: white; }
+        .badge-custom { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; margin: 3px; display: inline-block; border: 1px solid #0ea5e9; }
+        .price { font-size: 1.8rem; font-weight: 800; color: #0ea5e9; margin: 15px 0; }
+        .btn-view { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 600; transition: all 0.3s; }
+        .btn-view:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3); color: white; }
         .pagination { margin-top: 40px; }
     </style>
 </head>
@@ -282,5 +292,16 @@ $pageTitle = 'Diyetisyenlerimiz';
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>

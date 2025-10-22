@@ -81,10 +81,37 @@ try {
     ");
     $pendingDietitiansList = $stmt->fetchAll();
 
+    // Acil nöbetçi diyetisyen talepleri (contact_messages tablosundan)
+    try {
+        $stmt = $conn->query("
+            SELECT id, name, email, phone, subject, message, status, created_at
+            FROM contact_messages
+            WHERE subject LIKE '%Acil%' OR message LIKE '%🚨%'
+            ORDER BY created_at DESC
+            LIMIT 5
+        ");
+        $emergencyRequests = $stmt->fetchAll();
+
+        // Okunmamış acil talep sayısı
+        $stmt = $conn->query("
+            SELECT COUNT(*) as unread_emergency
+            FROM contact_messages
+            WHERE (subject LIKE '%Acil%' OR message LIKE '%🚨%')
+            AND status = 'new'
+        ");
+        $unreadEmergency = $stmt->fetch()['unread_emergency'];
+    } catch (Exception $e) {
+        error_log('Emergency requests error: ' . $e->getMessage());
+        $emergencyRequests = [];
+        $unreadEmergency = 0;
+    }
+
 } catch (Exception $e) {
     error_log('Admin Dashboard Error: ' . $e->getMessage());
     $userStats = $appointmentStats = $contentStats = [];
     $recentUsers = $pendingDietitiansList = [];
+    $emergencyRequests = [];
+    $unreadEmergency = 0;
 }
 
 $pageTitle = 'Admin Dashboard';
@@ -271,6 +298,150 @@ $pageTitle = 'Admin Dashboard';
                             </div>
                         </div>
                     </div>
+
+                    <!-- Acil Nöbetçi Diyetisyen Talepleri -->
+                    <?php if (count($emergencyRequests) > 0): ?>
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="card border-danger">
+                                <div class="card-header bg-danger text-white">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-phone-volume me-2"></i>
+                                            Acil Nöbetçi Diyetisyen Talepleri
+                                            <?php if ($unreadEmergency > 0): ?>
+                                                <span class="badge bg-warning text-dark ms-2">
+                                                    <?= $unreadEmergency ?> Yeni
+                                                </span>
+                                            <?php endif; ?>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ad Soyad</th>
+                                                    <th>İletişim</th>
+                                                    <th>Mesaj</th>
+                                                    <th>Tarih</th>
+                                                    <th>Durum</th>
+                                                    <th>İşlem</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($emergencyRequests as $request): ?>
+                                                <tr class="<?= $request['status'] === 'new' ? 'table-danger' : '' ?>">
+                                                    <td>
+                                                        <strong><?= clean($request['name']) ?></strong>
+                                                        <?php if ($request['status'] === 'new'): ?>
+                                                            <br><span class="badge bg-danger">YENİ</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <small>
+                                                            <i class="fas fa-envelope me-1"></i><?= clean($request['email']) ?><br>
+                                                            <i class="fas fa-phone me-1"></i><?= clean($request['phone']) ?>
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <small><?= mb_substr(clean(str_replace('🚨 ACİL TALEP 🚨', '', $request['message'])), 0, 100) ?>...</small>
+                                                    </td>
+                                                    <td>
+                                                        <small><?= date('d.m.Y H:i', strtotime($request['created_at'])) ?></small>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $statusLabels = [
+                                                            'new' => ['badge' => 'danger', 'label' => 'Yeni', 'icon' => 'circle'],
+                                                            'read' => ['badge' => 'warning', 'label' => 'Okundu', 'icon' => 'eye'],
+                                                            'replied' => ['badge' => 'success', 'label' => 'Cevaplandı', 'icon' => 'check-circle']
+                                                        ];
+                                                        $status = $statusLabels[$request['status']] ?? $statusLabels['new'];
+                                                        ?>
+                                                        <span class="badge bg-<?= $status['badge'] ?>">
+                                                            <i class="fas fa-<?= $status['icon'] ?> me-1"></i><?= $status['label'] ?>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                                    data-bs-target="#emergencyDetailModal<?= $request['id'] ?>">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <a href="mailto:<?= $request['email'] ?>?subject=Re: <?= urlencode($request['subject']) ?>"
+                                                               class="btn btn-success">
+                                                                <i class="fas fa-reply"></i>
+                                                            </a>
+                                                            <a href="tel:<?= $request['phone'] ?>" class="btn btn-info">
+                                                                <i class="fas fa-phone"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Detail Modal -->
+                                                <div class="modal fade" id="emergencyDetailModal<?= $request['id'] ?>" tabindex="-1">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-danger text-white">
+                                                                <h5 class="modal-title">
+                                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                    Acil Talep Detayı
+                                                                </h5>
+                                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-6">
+                                                                        <strong>Ad Soyad:</strong><br>
+                                                                        <?= clean($request['name']) ?>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <strong>Tarih:</strong><br>
+                                                                        <?= date('d.m.Y H:i', strtotime($request['created_at'])) ?>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-6">
+                                                                        <strong>Email:</strong><br>
+                                                                        <a href="mailto:<?= $request['email'] ?>"><?= clean($request['email']) ?></a>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <strong>Telefon:</strong><br>
+                                                                        <a href="tel:<?= $request['phone'] ?>"><?= clean($request['phone']) ?></a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <strong>Mesaj:</strong>
+                                                                    <div class="alert alert-light mt-2">
+                                                                        <?= nl2br(clean($request['message'])) ?>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                                                                <a href="mailto:<?= $request['email'] ?>?subject=Re: <?= urlencode($request['subject']) ?>"
+                                                                   class="btn btn-primary">
+                                                                    <i class="fas fa-reply me-2"></i>Email Gönder
+                                                                </a>
+                                                                <a href="tel:<?= $request['phone'] ?>" class="btn btn-success">
+                                                                    <i class="fas fa-phone me-2"></i>Ara
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="row g-4">
                         <!-- Bekleyen Diyetisyen Onayları -->

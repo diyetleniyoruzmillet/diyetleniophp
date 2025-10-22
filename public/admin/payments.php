@@ -14,15 +14,38 @@ $conn = $db->getConnection();
 
 // Handle payment approval/rejection
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
+    // CSRF kontrolü
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/admin/payments.php');
+    }
+
+    // Input sanitization
+    $paymentId = sanitizeInt($_POST['payment_id'] ?? 0);
+    $newStatus = sanitizeString($_POST['status'] ?? '', 20);
+    $adminNote = sanitizeString($_POST['admin_note'] ?? '', 500);
+
+    // Validation
+    if ($paymentId <= 0) {
+        setFlash('error', 'Geçersiz ödeme ID.');
+        redirect('/admin/payments.php');
+    }
+
+    if (!in_array($newStatus, ['approved', 'rejected'], true)) {
+        setFlash('error', 'Geçersiz durum.');
+        redirect('/admin/payments.php');
+    }
+
+    // Rate limiting
+    $rateLimiter = new RateLimiter($db);
+    $adminUserId = $auth->user()->getId();
+    if ($rateLimiter->tooManyAttempts('admin_payment_action', 'user_' . $adminUserId, 30, 1)) {
+        setFlash('error', 'Çok fazla işlem yaptınız. Lütfen bekleyin.');
+        redirect('/admin/payments.php');
+    }
+    $rateLimiter->hit(hash('sha256', 'admin_payment_action|user_' . $adminUserId), 1);
+
     try {
-        $paymentId = (int)$_POST['payment_id'];
-        $newStatus = $_POST['status'];
-        $adminNote = $_POST['admin_note'] ?? '';
-
-        if (!in_array($newStatus, ['approved', 'rejected'])) {
-            throw new Exception('Geçersiz durum');
-        }
-
         $stmt = $conn->prepare("
             UPDATE payments
             SET status = ?,
@@ -37,7 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         redirect('/admin/payments.php');
 
     } catch (Exception $e) {
-        setFlash('error', $e->getMessage());
+        error_log('Payment update error: ' . $e->getMessage());
+        setFlash('error', 'Bir hata oluştu. Lütfen tekrar deneyin.');
+        redirect('/admin/payments.php');
     }
 }
 

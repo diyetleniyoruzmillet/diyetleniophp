@@ -29,9 +29,18 @@ $pageTitle = 'Hakkımızda';
         }
 
         .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .navbar-brand {
@@ -238,9 +247,17 @@ $pageTitle = 'Hakkımızda';
                     <li class="nav-item">
                         <a class="nav-link" href="/contact.php">İletişim</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
-                    </li>
+                    <?php if ($auth->check()): ?>
+                        <li class="nav-item">
+                            <a class="btn btn-primary ms-2" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">
+                                Panel
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -400,5 +417,16 @@ $pageTitle = 'Hakkımızda';
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>

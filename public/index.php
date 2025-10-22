@@ -459,6 +459,129 @@ try {
             opacity: 0.95;
         }
 
+        /* Emergency On-Call Section */
+        .emergency-section {
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .emergency-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: pulse-border 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% {
+                box-shadow: 0 10px 40px rgba(239, 68, 68, 0.3), 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 15px 50px rgba(239, 68, 68, 0.5), 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .emergency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(239, 68, 68, 0.4);
+        }
+
+        .emergency-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .emergency-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .emergency-content {
+            flex: 1;
+        }
+
+        .emergency-content h3 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .emergency-content p {
+            color: #64748b;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .emergency-arrow {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .emergency-arrow i {
+            font-size: 1.5rem;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .emergency-card:hover .emergency-arrow {
+            transform: scale(1.1);
+        }
+
+        .emergency-card:hover .emergency-arrow i {
+            transform: translateX(5px);
+        }
+
+        /* Emergency Modal */
+        .emergency-modal .modal-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            border: none;
+            padding: 2rem;
+        }
+
+        .emergency-modal .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .emergency-modal .modal-body {
+            padding: 2rem;
+        }
+
+        .emergency-modal .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
         /* Footer */
         .footer {
             background: var(--dark);
@@ -577,6 +700,24 @@ try {
                     <div class="hero-image">
                         <i class="fas fa-heartbeat" style="font-size: 20rem; color: rgba(255,255,255,0.2);"></i>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency On-Call Dietitian Section -->
+    <section class="emergency-section">
+        <div class="container">
+            <div class="emergency-card" data-bs-toggle="modal" data-bs-target="#emergencyModal">
+                <div class="emergency-icon">
+                    <i class="fas fa-phone-volume"></i>
+                </div>
+                <div class="emergency-content">
+                    <h3>Acil Nöbetçi Diyetisyen</h3>
+                    <p>Acil beslenme danışmanlığına mı ihtiyacınız var? Hemen bizimle iletişime geçin!</p>
+                </div>
+                <div class="emergency-arrow">
+                    <i class="fas fa-arrow-right"></i>
                 </div>
             </div>
         </div>
@@ -746,6 +887,86 @@ try {
             </div>
         </div>
     </section>
+
+    <!-- Emergency On-Call Modal -->
+    <div class="modal fade emergency-modal" id="emergencyModal" tabindex="-1" aria-labelledby="emergencyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h4 class="modal-title" id="emergencyModalLabel">
+                            <i class="fas fa-phone-volume me-3"></i>Acil Nöbetçi Diyetisyen
+                        </h4>
+                        <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.95;">
+                            Acil beslenme danışmanlığı için formu doldurun, en kısa sürede size dönüş yapalım.
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="emergencyForm" method="POST" action="/emergency-contact.php">
+                        <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+                        <input type="hidden" name="subject" value="Acil Nöbetçi Diyetisyen Talebi">
+
+                        <div class="mb-3">
+                            <label for="emergency_name" class="form-label fw-bold">
+                                <i class="fas fa-user me-2 text-danger"></i>Adınız Soyadınız *
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="emergency_name" name="name" required
+                                   placeholder="Örn: Ahmet Yılmaz">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="emergency_email" class="form-label fw-bold">
+                                    <i class="fas fa-envelope me-2 text-danger"></i>Email Adresiniz *
+                                </label>
+                                <input type="email" class="form-control form-control-lg" id="emergency_email" name="email" required
+                                       placeholder="ornek@email.com">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="emergency_phone" class="form-label fw-bold">
+                                    <i class="fas fa-phone me-2 text-danger"></i>Telefon Numaranız *
+                                </label>
+                                <input type="tel" class="form-control form-control-lg" id="emergency_phone" name="phone" required
+                                       placeholder="0555 555 55 55">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="emergency_message" class="form-label fw-bold">
+                                <i class="fas fa-comment-medical me-2 text-danger"></i>Acil Durum Detayları *
+                            </label>
+                            <textarea class="form-control form-control-lg" id="emergency_message" name="message" rows="5" required
+                                      placeholder="Lütfen acil durumunuzu detaylı bir şekilde açıklayın..."></textarea>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Mesajınız admin ekibine iletilecek ve en kısa sürede sizinle iletişime geçilecektir.
+                            </small>
+                        </div>
+
+                        <div class="alert alert-warning d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                            <div>
+                                <strong>Önemli Bilgilendirme:</strong><br>
+                                Bu acil destek hattı, hayati tehlike oluşturan durumlar için değildir.
+                                Acil tıbbi durumlarda lütfen 112'yi arayın.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Acil Talep Gönder
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>İptal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

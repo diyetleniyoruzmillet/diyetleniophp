@@ -1,228 +1,181 @@
 #!/usr/bin/env php
 <?php
 /**
- * Demo Diyetisyenler Ekle
- * Run: php scripts/add-demo-dietitians.php
+ * Demo Diyetisyen Ekleme Scripti
  */
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require_once __DIR__ . '/../includes/bootstrap.php';
 
-echo "🏥 Demo Diyetisyenler Ekleniyor...\n";
-echo "═══════════════════════════════════════\n\n";
-
-// Load .env
-$envFile = __DIR__ . '/../.env';
-if (!file_exists($envFile)) {
-    die("❌ .env dosyası bulunamadı\n");
-}
-
-$env = parse_ini_file($envFile);
-
-// Direct database connection
 try {
-    $dsn = sprintf(
-        'mysql:host=%s;port=%s;dbname=%s;charset=%s',
-        $env['DB_HOST'] ?? 'localhost',
-        $env['DB_PORT'] ?? '3306',
-        $env['DB_DATABASE'] ?? 'diyetlenio_db',
-        $env['DB_CHARSET'] ?? 'utf8mb4'
-    );
+    $conn = $db->getConnection();
 
-    $conn = new PDO($dsn, $env['DB_USERNAME'], $env['DB_PASSWORD'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-
-    echo "✅ Veritabanı bağlantısı başarılı\n\n";
+    echo "=== Demo Diyetisyen Ekleme Scripti ===\n\n";
 
     // Demo diyetisyenler
-    $demoDietitians = [
+    $dietitians = [
         [
-            'full_name' => 'Ayşe Yılmaz',
+            'full_name' => 'Dr. Ayşe Yılmaz',
             'email' => 'ayse.yilmaz@diyetlenio.com',
-            'phone' => '05321234567',
-            'title' => 'Dyt. Ayşe Yılmaz',
+            'password' => 'Demo123!',
+            'phone' => '0532 111 11 11',
+            'title' => 'Diyetisyen, Beslenme Uzmanı',
             'specialization' => 'Spor Beslenmesi',
-            'about_me' => 'Spor beslenmesi alanında 8 yıllık deneyime sahibim. Özellikle sporcuların performans artırıcı beslenme programları konusunda uzmanım. Kilo kaybı ve kas kazanımı için kişiye özel programlar hazırlıyorum.',
+            'about_me' => 'Spor beslenmesi alanında 8 yıllık deneyime sahip, çok sayıda profesyonel sporcu ile çalışmış uzman diyetisyenim. Kişiye özel beslenme programları ile spor performansınızı artırmanıza yardımcı oluyorum.',
+            'education' => 'Hacettepe Üniversitesi Beslenme ve Diyetetik Bölümü',
+            'certifications' => 'Spor Beslenmesi Sertifikası, İleri Diyetetik Eğitimi',
             'experience_years' => 8,
-            'education' => 'Hacettepe Üniversitesi Beslenme ve Diyetetik, Spor Beslenmesi Yüksek Lisans',
-            'certifications' => 'ISSN Spor Beslenmesi Sertifikası, Klinik Beslenme Destek Uzmanı',
-            'consultation_fee' => 500.00,
-            'online_consultation_fee' => 350.00,
+            'consultation_fee' => 500,
             'rating_avg' => 4.8,
-            'total_clients' => 127
+            'rating_count' => 45,
+            'total_clients' => 120
         ],
         [
             'full_name' => 'Mehmet Demir',
             'email' => 'mehmet.demir@diyetlenio.com',
-            'phone' => '05339876543',
-            'title' => 'Dyt. Mehmet Demir',
+            'password' => 'Demo123!',
+            'phone' => '0533 222 22 22',
+            'title' => 'Uzman Diyetisyen',
             'specialization' => 'Klinik Beslenme',
-            'about_me' => 'Diyabet, metabolik sendrom ve kardiyovasküler hastalıklar için özel diyet programları hazırlıyorum. 10 yılı aşkın klinik deneyimim ile hastalarıma sağlıklı yaşam yolunda rehberlik ediyorum.',
+            'about_me' => 'Klinik beslenme ve metabolik hastalıklar konusunda uzmanım. Diyabet, kolesterol, tiroid hastalıkları gibi kronik rahatsızlıkların beslenmesi ile ilgili profesyonel destek sağlıyorum.',
+            'education' => 'Ankara Üniversitesi Beslenme ve Diyetetik',
+            'certifications' => 'Klinik Beslenme Uzmanlığı, Diyabet Eğitimi Sertifikası',
             'experience_years' => 12,
-            'education' => 'Ankara Üniversitesi Beslenme ve Diyetetik, Klinik Beslenme Doktora',
-            'certifications' => 'Diyabet Eğiticisi Sertifikası, Klinik Beslenme Uzmanı',
-            'consultation_fee' => 600.00,
-            'online_consultation_fee' => 400.00,
+            'consultation_fee' => 600,
             'rating_avg' => 4.9,
-            'total_clients' => 213
+            'rating_count' => 78,
+            'total_clients' => 200
         ],
         [
             'full_name' => 'Zeynep Kaya',
             'email' => 'zeynep.kaya@diyetlenio.com',
-            'phone' => '05357654321',
-            'title' => 'Dyt. Zeynep Kaya',
+            'password' => 'Demo123!',
+            'phone' => '0534 333 33 33',
+            'title' => 'Diyetisyen',
             'specialization' => 'Çocuk Beslenmesi',
-            'about_me' => 'Bebek, çocuk ve ergen beslenmesi konusunda uzmanım. Ailelerle birlikte çalışarak çocuklarınızın sağlıklı beslenme alışkanlıkları kazanmasına yardımcı oluyorum. Seçici yeme, obezite ve büyüme-gelişme sorunlarında deneyimliyim.',
+            'about_me' => 'Bebek ve çocuk beslenmesi konusunda uzmanlaşmış diyetisyenim. Aileler için pratik ve sağlıklı beslenme çözümleri üretiyorum. Çocuğunuzun sağlıklı büyümesi için yanınızdayım.',
+            'education' => 'Ege Üniversitesi Beslenme ve Diyetetik',
+            'certifications' => 'Çocuk Beslenmesi Sertifikası, Ek Gıdaya Geçiş Eğitimi',
             'experience_years' => 6,
-            'education' => 'Başkent Üniversitesi Beslenme ve Diyetetik, Çocuk Beslenmesi Sertifika Programı',
-            'certifications' => 'Çocuk Beslenmesi Uzmanı, Beslenme Koçu',
-            'consultation_fee' => 450.00,
-            'online_consultation_fee' => 300.00,
+            'consultation_fee' => 450,
             'rating_avg' => 4.7,
-            'total_clients' => 89
+            'rating_count' => 52,
+            'total_clients' => 90
         ],
         [
             'full_name' => 'Ahmet Öztürk',
             'email' => 'ahmet.ozturk@diyetlenio.com',
-            'phone' => '05364567890',
-            'title' => 'Dyt. Ahmet Öztürk',
+            'password' => 'Demo123!',
+            'phone' => '0535 444 44 44',
+            'title' => 'Klinik Diyetisyen',
             'specialization' => 'Obezite ve Kilo Yönetimi',
-            'about_me' => 'Obezite tedavisi ve sağlıklı kilo yönetimi alanında uzmanlaşmış bir diyetisyenim. Davranış değişikliği ve sürdürülebilir yaşam tarzı değişiklikleri ile kalıcı sonuçlar elde etmenize yardımcı oluyorum.',
+            'about_me' => 'Obezite tedavisi ve sağlıklı kilo kaybı konusunda uzmanım. Yoyo etkisi olmadan, sürdürülebilir kilo kaybı programları ile hedeflerinize ulaşmanıza yardımcı oluyorum.',
+            'education' => 'İstanbul Üniversitesi Beslenme ve Diyetetik',
+            'certifications' => 'Obezite Tedavisi Sertifikası, Davranışsal Beslenme Terapisi',
             'experience_years' => 9,
-            'education' => 'Gazi Üniversitesi Beslenme ve Diyetetik, Obezite Tedavisi Sertifika',
-            'certifications' => 'Bariatrik Cerrahi Beslenme Uzmanı, Motivasyonel Görüşme Sertifikası',
-            'consultation_fee' => 550.00,
-            'online_consultation_fee' => 375.00,
+            'consultation_fee' => 550,
             'rating_avg' => 4.8,
-            'total_clients' => 156
+            'rating_count' => 65,
+            'total_clients' => 150
         ],
         [
             'full_name' => 'Elif Şahin',
             'email' => 'elif.sahin@diyetlenio.com',
-            'phone' => '05372345678',
-            'title' => 'Dyt. Elif Şahin',
+            'password' => 'Demo123!',
+            'phone' => '0536 555 55 55',
+            'title' => 'Beslenme Uzmanı',
             'specialization' => 'Vejetaryen ve Vegan Beslenme',
-            'about_me' => 'Bitkisel beslenme, vejetaryen ve vegan diyetler konusunda uzmanım. Dengeli ve sağlıklı bitkisel beslenme ile yaşam kalitenizi artırmanıza yardımcı oluyorum. Protein, vitamin ve mineral dengesine özel önem veriyorum.',
+            'about_me' => 'Bitkisel beslenme konusunda uzmanım. Vejetaryen ve vegan yaşam tarzını benimseyen bireyler için dengeli ve sağlıklı beslenme programları hazırlıyorum.',
+            'education' => 'Gazi Üniversitesi Beslenme ve Diyetetik',
+            'certifications' => 'Vegan Beslenme Sertifikası, Bitkisel Protein Kaynakları Eğitimi',
             'experience_years' => 5,
-            'education' => 'İstanbul Üniversitesi Beslenme ve Diyetetik, Bitkisel Beslenme Sertifikası',
-            'certifications' => 'Vejetaryen Beslenme Uzmanı, Beslenme Koçluğu Sertifikası',
-            'consultation_fee' => 400.00,
-            'online_consultation_fee' => 275.00,
+            'consultation_fee' => 400,
             'rating_avg' => 4.6,
-            'total_clients' => 73
+            'rating_count' => 38,
+            'total_clients' => 75
         ],
         [
             'full_name' => 'Can Yıldırım',
             'email' => 'can.yildirim@diyetlenio.com',
-            'phone' => '05383456789',
-            'title' => 'Dyt. Can Yıldırım',
+            'password' => 'Demo123!',
+            'phone' => '0537 666 66 66',
+            'title' => 'Uzman Diyetisyen',
             'specialization' => 'Fonksiyonel Beslenme',
-            'about_me' => 'Fonksiyonel tıp yaklaşımı ile beslenme programları hazırlıyorum. Bağırsak sağlığı, hormon dengesi, otoimmün hastalıklar ve kronik inflamasyon konularında danışmanlık veriyorum.',
+            'about_me' => 'Fonksiyonel beslenme ve bağırsak sağlığı konusunda uzmanım. Vücudunuzun optimal performans göstermesi için kişiselleştirilmiş beslenme programları sunuyorum.',
+            'education' => 'Başkent Üniversitesi Beslenme ve Diyetetik',
+            'certifications' => 'Fonksiyonel Beslenme Sertifikası, Probiyotik Tedavi Eğitimi',
             'experience_years' => 7,
-            'education' => 'Ege Üniversitesi Beslenme ve Diyetetik, Fonksiyonel Tıp Sertifikası',
-            'certifications' => 'Fonksiyonel Beslenme Uzmanı, Bağırsak Sağlığı Sertifikası',
-            'consultation_fee' => 650.00,
-            'online_consultation_fee' => 450.00,
-            'rating_avg' => 4.9,
-            'total_clients' => 94
+            'consultation_fee' => 500,
+            'rating_avg' => 4.7,
+            'rating_count' => 42,
+            'total_clients' => 95
         ]
     ];
 
-    $created = 0;
-    $skipped = 0;
+    $addedCount = 0;
+    $skippedCount = 0;
 
-    foreach ($demoDietitians as $dietitian) {
-        echo "👤 {$dietitian['full_name']} ekleniyor...\n";
-
-        // Check if user already exists
+    foreach ($dietitians as $dietitian) {
+        // Email kontrolü
         $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$dietitian['email']]);
-
         if ($stmt->fetch()) {
-            echo "   ⊘ Zaten var, atlanıyor\n\n";
-            $skipped++;
+            echo "⏭️  {$dietitian['full_name']} zaten var, atlanıyor...\n";
+            $skippedCount++;
             continue;
         }
 
-        // Create password hash (Demo123!)
-        $passwordHash = password_hash('Demo123!', PASSWORD_DEFAULT);
-
-        // Insert user
+        // Kullanıcı oluştur
+        $hashedPassword = password_hash($dietitian['password'], PASSWORD_BCRYPT);
         $stmt = $conn->prepare("
-            INSERT INTO users (email, password, full_name, phone, user_type, is_active, is_email_verified, created_at, updated_at)
-            VALUES (?, ?, ?, ?, 'dietitian', 1, 1, NOW(), NOW())
+            INSERT INTO users (full_name, email, password, phone, user_type, is_active, created_at)
+            VALUES (?, ?, ?, ?, 'dietitian', 1, NOW())
         ");
-
         $stmt->execute([
-            $dietitian['email'],
-            $passwordHash,
             $dietitian['full_name'],
+            $dietitian['email'],
+            $hashedPassword,
             $dietitian['phone']
         ]);
-
         $userId = $conn->lastInsertId();
 
-        // Insert dietitian profile
+        // Diyetisyen profili oluştur
         $stmt = $conn->prepare("
             INSERT INTO dietitian_profiles (
-                user_id, title, specialization, about_me, experience_years,
-                education, certifications, consultation_fee, online_consultation_fee,
-                rating_avg, total_clients, is_verified, created_at, updated_at
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
+                user_id, title, specialization, about_me, education,
+                certifications, experience_years, consultation_fee,
+                rating_avg, rating_count, total_clients, is_approved, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW())
         ");
-
         $stmt->execute([
             $userId,
             $dietitian['title'],
             $dietitian['specialization'],
             $dietitian['about_me'],
-            $dietitian['experience_years'],
             $dietitian['education'],
             $dietitian['certifications'],
+            $dietitian['experience_years'],
             $dietitian['consultation_fee'],
-            $dietitian['online_consultation_fee'],
             $dietitian['rating_avg'],
+            $dietitian['rating_count'],
             $dietitian['total_clients']
         ]);
 
-        echo "   ✅ Başarıyla eklendi (ID: {$userId})\n";
-        echo "   📧 Email: {$dietitian['email']}\n";
-        echo "   🔒 Şifre: Demo123!\n";
-        echo "   💼 Uzmanlık: {$dietitian['specialization']}\n\n";
-
-        $created++;
+        echo "✅ {$dietitian['full_name']} eklendi (ID: {$userId})\n";
+        $addedCount++;
     }
 
-    echo "═══════════════════════════════════════\n";
-    echo "🎉 TAMAMLANDI!\n";
-    echo "═══════════════════════════════════════\n\n";
-    echo "📊 Sonuç:\n";
-    echo "   ✅ Eklenen: {$created}\n";
-    echo "   ⊘ Atlanan: {$skipped}\n";
-    echo "   📝 Toplam: " . ($created + $skipped) . "\n\n";
+    echo "\n" . str_repeat("=", 50) . "\n";
+    echo "Özet:\n";
+    echo "  ✅ Eklenen: {$addedCount}\n";
+    echo "  ⏭️  Atlanan: {$skippedCount}\n";
+    echo "\n🎉 İşlem tamamlandı!\n\n";
 
-    if ($created > 0) {
-        echo "🔑 Demo Diyetisyen Giriş Bilgileri:\n";
-        echo "   Şifre (hepsi için): Demo123!\n\n";
-
-        echo "📧 Email Adresleri:\n";
-        foreach ($demoDietitians as $dietitian) {
-            echo "   - {$dietitian['email']} ({$dietitian['specialization']})\n";
-        }
-        echo "\n";
-
-        echo "🌐 Test için:\n";
-        echo "   1. http://localhost:8080/login.php\n";
-        echo "   2. Yukarıdaki email'lerden birini kullan\n";
-        echo "   3. Şifre: Demo123!\n\n";
-    }
+    echo "Demo Giriş Bilgileri:\n";
+    echo "Email: ayse.yilmaz@diyetlenio.com\n";
+    echo "Şifre: Demo123!\n";
+    echo "(Tüm demo diyetisyenler için aynı şifre)\n";
 
 } catch (Exception $e) {
-    echo "\n❌ Hata: " . $e->getMessage() . "\n";
-    echo "\nDetay:\n";
-    echo $e->getTraceAsString() . "\n";
+    echo "❌ Hata: " . $e->getMessage() . "\n";
     exit(1);
 }

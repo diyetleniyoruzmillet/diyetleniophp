@@ -22,14 +22,41 @@ if (!$recipe) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-        .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
-        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: #0ea5e9 !important; }
-        .recipe-header { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; padding: 80px 0 60px; }
-        .recipe-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .recipe-header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 100px 0 80px; position: relative; overflow: hidden; }
+        .recipe-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            opacity: 0.3;
+        }
+        .recipe-title { font-size: 3rem; font-weight: 800; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; z-index: 1; }
         .recipe-content { background: white; border-radius: 20px; padding: 50px; margin: -50px auto 50px; max-width: 900px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .nutrition-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 30px 0; }
         .nutrition-item { text-align: center; padding: 20px; background: #f7fafc; border-radius: 15px; }
-        .nutrition-value { font-size: 1.5rem; font-weight: 700; color: #0ea5e9; }
+        .nutrition-value { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .footer { background: #1e293b; color: white; padding: 40px 0; text-align: center; }
     </style>
 </head>
@@ -39,7 +66,11 @@ if (!$recipe) {
             <a class="navbar-brand" href="/"><i class="fas fa-heartbeat me-2"></i>Diyetlenio</a>
             <div class="ms-auto">
                 <a href="/recipes.php" class="btn btn-outline-primary me-2">Tarifler</a>
-                <a href="/login.php" class="btn btn-primary">Giriş Yap</a>
+                <?php if ($auth->check()): ?>
+                    <a href="/<?= $auth->user()->getUserType() ?>/dashboard.php" class="btn btn-primary">Panel</a>
+                <?php else: ?>
+                    <a href="/login.php" class="btn btn-primary">Giriş Yap</a>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
@@ -89,12 +120,39 @@ if (!$recipe) {
         </article>
 
         <div class="text-center mb-5">
-            <a href="/recipes.php" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Tüm Tarifler</a>
+            <button onclick="printRecipe()" class="btn btn-outline-success me-2">
+                <i class="fas fa-print me-2"></i>Tarifi Yazdır
+            </button>
+            <a href="/recipes.php" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>Tüm Tarifler
+            </a>
         </div>
     </div>
 
     <footer class="footer">
         <div class="container"><p>&copy; 2024 Diyetlenio. Tüm hakları saklıdır.</p></div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Print recipe
+        function printRecipe() {
+            window.print();
+        }
+    </script>
+    <style media="print">
+        .navbar, .footer, .btn { display: none !important; }
+        .recipe-content { box-shadow: none; }
+    </style>
 </body>
 </html>

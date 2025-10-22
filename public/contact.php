@@ -9,15 +9,23 @@ $errors = [];
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Rate limiting kontrolü (3 mesaj / 10 dakika)
+    $rateLimiter = new RateLimiter($db);
+    if ($rateLimiter->tooManyAttempts('contact_form', null, 3, 10)) {
+        $remainingSeconds = $rateLimiter->availableIn('contact_form', null, 10);
+        $remainingMinutes = ceil($remainingSeconds / 60);
+        $errors[] = "Çok fazla mesaj gönderdiniz. Lütfen {$remainingMinutes} dakika sonra tekrar deneyin.";
+    }
     // CSRF kontrolü
-    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    elseif (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
-    } else {
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $subject = trim($_POST['subject'] ?? '');
-        $message = trim($_POST['message'] ?? '');
+    }
+    else {
+        $name = sanitizeString($_POST['name'] ?? '', 100);
+        $email = sanitizeString($_POST['email'] ?? '', 100);
+        $phone = sanitizeString($_POST['phone'] ?? '', 20);
+        $subject = sanitizeString($_POST['subject'] ?? '', 200);
+        $message = sanitizeString($_POST['message'] ?? '', 2000);
 
         // Validasyon
         if (empty($name)) {
@@ -53,16 +61,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
                 $stmt->execute([$name, $email, $phone, $subject, $message]);
 
+                // Rate limit'e kaydet (başarılı gönderim)
+                $rateLimiter->hit(hash('sha256', 'contact_form|ip_' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')), 10);
+
                 $success = true;
 
-                // Admin'e bildirim gönder
-                Mail::sendContactNotification([
-                    'name' => $name,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'subject' => $subject,
-                    'message' => $message
-                ]);
+                // Admin'e bildirim gönder (hata olsa bile devam et)
+                try {
+                    Mail::sendContactNotification([
+                        'name' => $name,
+                        'email' => $email,
+                        'phone' => $phone,
+                        'subject' => $subject,
+                        'message' => $message
+                    ]);
+                } catch (Exception $mailError) {
+                    // Mail gönderim hatası - logla ama kullanıcıya gösterme
+                    error_log('Contact mail error: ' . $mailError->getMessage());
+                }
 
             } catch (Exception $e) {
                 error_log('Contact form error: ' . $e->getMessage());
@@ -96,9 +112,18 @@ $pageTitle = 'İletişim';
         }
 
         .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .navbar-brand {
@@ -261,9 +286,17 @@ $pageTitle = 'İletişim';
                     <li class="nav-item">
                         <a class="nav-link active" href="/contact.php">İletişim</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
-                    </li>
+                    <?php if ($auth->check()): ?>
+                        <li class="nav-item">
+                            <a class="btn btn-primary ms-2" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">
+                                Panel
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -450,5 +483,16 @@ $pageTitle = 'İletişim';
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 </body>
 </html>

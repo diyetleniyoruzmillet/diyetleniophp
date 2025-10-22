@@ -14,75 +14,66 @@ $errors = [];
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Rate limiting kontrolü (3 kayıt denemesi / 10 dakika)
+    $rateLimiter = new RateLimiter($db);
+    if ($rateLimiter->tooManyAttempts('register_client', null, 3, 10)) {
+        $remainingSeconds = $rateLimiter->availableIn('register_client', null, 10);
+        $remainingMinutes = ceil($remainingSeconds / 60);
+        $errors[] = "Çok fazla kayıt denemesi yaptınız. Lütfen {$remainingMinutes} dakika sonra tekrar deneyin.";
+    }
     // CSRF kontrolü
-    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    elseif (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
-    } else {
-        $fullName = trim($_POST['full_name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $passwordConfirm = $_POST['password_confirm'] ?? '';
-        $terms = isset($_POST['terms']);
+    }
+    else {
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
 
-        // Validasyon
-        if (empty($fullName)) {
-            $errors[] = 'Ad Soyad gereklidir.';
-        } elseif (strlen($fullName) < 3) {
-            $errors[] = 'Ad Soyad en az 3 karakter olmalıdır.';
+        $validator
+            ->required(['full_name', 'email', 'phone', 'password', 'password_confirm'])
+            ->min('full_name', 3)
+            ->max('full_name', 100)
+            ->email('email')
+            ->unique('email', 'users', 'email')
+            ->phone('phone')
+            ->min('password', 8)
+            ->match('password_confirm', 'password');
+
+        // Şifre güçlülük kontrolü
+        $validator->custom('password', function($value) {
+            return preg_match('/[A-Z]/', $value) &&
+                   preg_match('/[a-z]/', $value) &&
+                   preg_match('/[0-9]/', $value);
+        }, 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.');
+
+        // Şartlar kabul edildi mi?
+        if (!isset($_POST['terms'])) {
+            $validator->errors()['terms'][] = 'Kullanım şartlarını kabul etmelisiniz.';
         }
 
-        if (empty($email)) {
-            $errors[] = 'Email adresi gereklidir.';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Geçerli bir email adresi girin.';
-        }
-
-        if (empty($phone)) {
-            $errors[] = 'Telefon numarası gereklidir.';
-        } elseif (!preg_match('/^[0-9]{10,11}$/', preg_replace('/\D/', '', $phone))) {
-            $errors[] = 'Geçerli bir telefon numarası girin.';
-        }
-
-        if (empty($password)) {
-            $errors[] = 'Şifre gereklidir.';
-        } elseif (strlen($password) < 8) {
-            $errors[] = 'Şifre en az 8 karakter olmalıdır.';
-        } elseif (!preg_match('/[A-Z]/', $password)) {
-            $errors[] = 'Şifre en az bir büyük harf içermelidir.';
-        } elseif (!preg_match('/[a-z]/', $password)) {
-            $errors[] = 'Şifre en az bir küçük harf içermelidir.';
-        } elseif (!preg_match('/[0-9]/', $password)) {
-            $errors[] = 'Şifre en az bir rakam içermelidir.';
-        }
-
-        if ($password !== $passwordConfirm) {
-            $errors[] = 'Şifreler eşleşmiyor.';
-        }
-
-        if (!$terms) {
-            $errors[] = 'Kullanım şartlarını kabul etmelisiniz.';
-        }
-
-        // Email kontrolü
-        if (empty($errors)) {
-            $conn = $db->getConnection();
-            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            if ($stmt->fetch()) {
-                $errors[] = 'Bu email adresi zaten kayıtlı.';
+        if ($validator->fails()) {
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errors[] = $error;
+                }
             }
         }
 
         // Kayıt işlemi
         if (empty($errors)) {
             try {
+                // Rate limit'e kaydet (başarılı deneme öncesi)
+                $rateLimiter->hit(hash('sha256', 'register_client|ip_' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')), 10);
+
+                // Validated data al
+                $data = $validator->validated();
+
                 $conn = $db->getConnection();
                 $conn->beginTransaction();
 
                 // Email doğrulama token'ı oluştur
                 $verificationToken = bin2hex(random_bytes(32));
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
                 // Kullanıcıyı kaydet
                 $stmt = $conn->prepare("
@@ -93,10 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
 
                 $stmt->execute([
-                    $email,
+                    $data['email'],
                     $hashedPassword,
-                    $fullName,
-                    $phone,
+                    $data['full_name'],
+                    $data['phone'],
                     $verificationToken
                 ]);
 
@@ -104,7 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $success = true;
 
             } catch (Exception $e) {
-                $conn->rollBack();
+                if (isset($conn) && $conn->inTransaction()) {
+                    $conn->rollBack();
+                }
                 $errors[] = 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.';
                 error_log('Registration error: ' . $e->getMessage());
             }
@@ -506,7 +499,7 @@ $pageTitle = 'Danışan Kayıt';
                 <?php endif; ?>
 
                 <form method="POST" action="/register-client.php">
-                    <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
 
                     <div class="form-floating">
                         <input

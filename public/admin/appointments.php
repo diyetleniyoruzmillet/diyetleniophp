@@ -70,6 +70,236 @@ $pageTitle = 'Randevu Yönetimi';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <?php include __DIR__ . '/../../includes/admin-styles.php'; ?>
+    <style>
+        /* Modern Stats Cards */
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transition: transform 0.5s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats-card:hover::before {
+            transform: translate(-25%, -25%);
+        }
+
+        .stats-card.scheduled-card {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 8px 20px rgba(250, 112, 154, 0.3);
+        }
+
+        .stats-card.completed-card {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            box-shadow: 0 8px 20px rgba(67, 233, 123, 0.3);
+        }
+
+        .stats-card.cancelled-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
+        }
+
+        .stats-card i {
+            font-size: 2.5rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stats-card p {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Filter Card */
+        .filter-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-filter {
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .btn-filter.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Modern Table */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .modern-table {
+            margin: 0;
+        }
+
+        .modern-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modern-table thead th {
+            padding: 18px 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .modern-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modern-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: scale(1.01);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .modern-table tbody td {
+            padding: 18px 15px;
+            vertical-align: middle;
+        }
+
+        /* Modern Badges */
+        .badge-modern {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-scheduled {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 3px 10px rgba(250, 112, 154, 0.3);
+        }
+
+        .badge-completed {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            box-shadow: 0 3px 10px rgba(67, 233, 123, 0.3);
+        }
+
+        .badge-cancelled {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 3px 10px rgba(245, 87, 108, 0.3);
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            border-radius: 25px;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-box input:focus {
+            border-color: white;
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+            background: rgba(255,255,255,0.3);
+        }
+
+        .search-box .btn-search {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            background: white;
+            color: #667eea;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: #d0d0d0;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: #999;
+            font-size: 1.2rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container-fluid">
@@ -79,83 +309,81 @@ $pageTitle = 'Randevu Yönetimi';
             <div class="col-md-10">
                 <div class="content-wrapper">
                     <!-- Stats -->
-                    <div class="row g-3 mb-4">
+                    <div class="row g-3 mb-4 fade-in-up">
                         <div class="col-md-3">
-                            <div class="stat-card">
-                                <i class="fas fa-calendar fa-2x text-primary mb-2"></i>
+                            <div class="stats-card">
+                                <i class="fas fa-calendar-alt"></i>
                                 <h3><?= number_format($stats['total']) ?></h3>
-                                <p class="text-muted mb-0">Toplam Randevu</p>
+                                <p class="mb-0">Toplam Randevu</p>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="stat-card">
-                                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <div class="stats-card scheduled-card">
+                                <i class="fas fa-clock"></i>
                                 <h3><?= number_format($stats['scheduled']) ?></h3>
-                                <p class="text-muted mb-0">Planlanmış</p>
+                                <p class="mb-0">Planlanmış</p>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="stat-card">
-                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                            <div class="stats-card completed-card">
+                                <i class="fas fa-check-circle"></i>
                                 <h3><?= number_format($stats['completed']) ?></h3>
-                                <p class="text-muted mb-0">Tamamlanan</p>
+                                <p class="mb-0">Tamamlanan</p>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="stat-card">
-                                <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+                            <div class="stats-card cancelled-card">
+                                <i class="fas fa-times-circle"></i>
                                 <h3><?= number_format($stats['cancelled']) ?></h3>
-                                <p class="text-muted mb-0">İptal Edilen</p>
+                                <p class="mb-0">İptal Edilen</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Filters -->
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <div class="btn-group w-100">
-                                        <a href="?status=all" class="btn btn-sm <?= $status === 'all' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                                            Tümü
-                                        </a>
-                                        <a href="?status=scheduled" class="btn btn-sm <?= $status === 'scheduled' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                                            Planlandı
-                                        </a>
-                                        <a href="?status=completed" class="btn btn-sm <?= $status === 'completed' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                                            Tamamlandı
-                                        </a>
-                                        <a href="?status=cancelled" class="btn btn-sm <?= $status === 'cancelled' ? 'btn-primary' : 'btn-outline-primary' ?>">
-                                            İptal
-                                        </a>
-                                    </div>
+                    <div class="filter-card fade-in-up">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-5">
+                                <div class="btn-group w-100">
+                                    <a href="?status=all" class="btn btn-filter <?= $status === 'all' ? 'active' : '' ?>">
+                                        <i class="fas fa-list me-2"></i>Tümü
+                                    </a>
+                                    <a href="?status=scheduled" class="btn btn-filter <?= $status === 'scheduled' ? 'active' : '' ?>">
+                                        <i class="fas fa-clock me-2"></i>Planlandı
+                                    </a>
+                                    <a href="?status=completed" class="btn btn-filter <?= $status === 'completed' ? 'active' : '' ?>">
+                                        <i class="fas fa-check me-2"></i>Tamamlandı
+                                    </a>
+                                    <a href="?status=cancelled" class="btn btn-filter <?= $status === 'cancelled' ? 'active' : '' ?>">
+                                        <i class="fas fa-times me-2"></i>İptal
+                                    </a>
                                 </div>
-                                <div class="col-md-8">
-                                    <form method="GET" class="d-flex">
-                                        <input type="hidden" name="status" value="<?= $status ?>">
-                                        <input type="text" name="search" class="form-control me-2"
-                                               placeholder="Danışan veya diyetisyen adı..."
-                                               value="<?= clean($search) ?>">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <form method="GET" class="search-box">
+                                    <input type="hidden" name="status" value="<?= $status ?>">
+                                    <input type="text" name="search" class="form-control"
+                                           placeholder="🔍 Danışan veya diyetisyen adı ile ara..."
+                                           value="<?= clean($search) ?>">
+                                    <button type="submit" class="btn btn-search">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
 
                     <!-- Appointments Table -->
-                    <div class="card">
-                        <div class="card-body">
-                            <?php if (count($appointments) === 0): ?>
-                                <div class="text-center py-5">
-                                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
-                                    <h4 class="text-muted">Randevu bulunamadı</h4>
-                                </div>
-                            <?php else: ?>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
+                    <div class="table-container fade-in-up">
+                        <?php if (count($appointments) === 0): ?>
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <p>Randevu bulunamadı</p>
+                                <small class="text-muted">Arama kriterlerinizi değiştirmeyi deneyin</small>
+                            </div>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table modern-table">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -182,34 +410,42 @@ $pageTitle = 'Randevu Yönetimi';
                                                     </td>
                                                     <td>
                                                         <?php if ($apt['is_online']): ?>
-                                                            <span class="badge bg-info">
+                                                            <span class="badge badge-modern" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);">
                                                                 <i class="fas fa-video me-1"></i>Online
                                                             </span>
                                                         <?php else: ?>
-                                                            <span class="badge bg-secondary">
+                                                            <span class="badge badge-modern" style="background: linear-gradient(135deg, #a8a8a8 0%, #757575 100%); box-shadow: 0 3px 10px rgba(168, 168, 168, 0.3);">
                                                                 <i class="fas fa-clinic-medical me-1"></i>Yüz Yüze
                                                             </span>
                                                         <?php endif; ?>
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        $badges = [
-                                                            'scheduled' => 'warning',
-                                                            'completed' => 'success',
-                                                            'cancelled' => 'danger'
+                                                        $badgeClasses = [
+                                                            'scheduled' => 'badge-scheduled',
+                                                            'completed' => 'badge-completed',
+                                                            'cancelled' => 'badge-cancelled'
                                                         ];
                                                         $labels = [
                                                             'scheduled' => 'Planlandı',
                                                             'completed' => 'Tamamlandı',
                                                             'cancelled' => 'İptal'
                                                         ];
+                                                        $icons = [
+                                                            'scheduled' => 'fa-clock',
+                                                            'completed' => 'fa-check-circle',
+                                                            'cancelled' => 'fa-times-circle'
+                                                        ];
                                                         ?>
-                                                        <span class="badge bg-<?= $badges[$apt['status']] ?>">
+                                                        <span class="badge badge-modern <?= $badgeClasses[$apt['status']] ?>">
+                                                            <i class="fas <?= $icons[$apt['status']] ?> me-1"></i>
                                                             <?= $labels[$apt['status']] ?>
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <strong><?= number_format($apt['consultation_fee'], 0) ?> ₺</strong>
+                                                        <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 1rem; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);">
+                                                            <?= number_format($apt['consultation_fee'], 0) ?> ₺
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>

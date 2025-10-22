@@ -12,10 +12,21 @@ if (session_status() === PHP_SESSION_NONE) {
     $sessionConfig = function_exists('config') ? config('session', []) : [];
 
     // Session cookie parametreleri
+    // Domain'i boş bırakıyoruz - böylece subdomain sorunları önleniyor
+    // Port numarasını da temizliyoruz
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $domain = '';  // Boş bırakırsak mevcut domain'de çalışır
+
+    // Localhost değilse ve gerçek domain ise ayarla
+    if ($host && $host !== 'localhost' && strpos($host, 'localhost:') !== 0) {
+        // Port numarasını temizle
+        $domain = preg_replace('/:\d+$/', '', $host);
+    }
+
     $cookieParams = [
         'lifetime' => $sessionConfig['lifetime'] ?? 7200, // 2 saat
         'path'     => $sessionConfig['cookie_path'] ?? '/',
-        'domain'   => $_SERVER['HTTP_HOST'] ?? '',
+        'domain'   => $domain,
         'secure'   => $sessionConfig['secure'] ?? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'),
         'httponly' => $sessionConfig['http_only'] ?? true,
         'samesite' => $sessionConfig['same_site'] ?? 'Lax'
