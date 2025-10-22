@@ -18,6 +18,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         setFlash('error', 'Geçersiz form gönderimi.');
     } else {
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['dietitian_id', 'action'])
+            ->numeric('dietitian_id')
+            ->in('action', ['approve', 'reject']);
+
+        // Reject action için rejection_reason kontrolü
+        if ($_POST['action'] === 'reject') {
+            $validator->required(['rejection_reason'])->min('rejection_reason', 10);
+        }
+
+        if ($validator->fails()) {
+            $errorMessages = [];
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errorMessages[] = $error;
+                }
+            }
+            setFlash('error', implode('<br>', $errorMessages));
+            redirect('/admin/dietitians.php');
+        }
+
         $dietitianId = (int)$_POST['dietitian_id'];
         $action = $_POST['action'];
 

@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     // CSRF kontrolü
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/admin/users.php');
     } else {
         // Input sanitization
         $userId = sanitizeInt($_POST['user_id'] ?? 0);
@@ -33,11 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $rateLimiter = new RateLimiter($db);
         if (in_array($action, ['delete', 'deactivate'])) {
             $adminUserId = $auth->user()->getId();
-            if ($rateLimiter->tooManyAttempts('admin_critical_action', 'user_' . $adminUserId, 20, 1)) {
+            $rateLimitKey = 'admin_critical_action';
+            $rateLimitIdentifier = 'user_' . $adminUserId;
+
+            if ($rateLimiter->tooManyAttempts($rateLimitKey, $rateLimitIdentifier, 20, 1)) {
                 setFlash('error', 'Çok fazla işlem yaptınız. Lütfen bekleyin.');
                 redirect('/admin/users.php');
             }
-            $rateLimiter->hit(hash('sha256', 'admin_critical_action|user_' . $adminUserId), 1);
+            $rateLimiter->hit(hash('sha256', $rateLimitKey . '|' . $rateLimitIdentifier), 1);
         }
 
         try {
@@ -50,23 +54,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $stmt->execute([$userId]);
                 setFlash('success', 'Kullanıcı başarıyla deaktif edildi.');
             } elseif ($action === 'delete') {
-                // Önce aktif diyetisyen atamalarını kaldır
-                $stmt = $conn->prepare("
-                    UPDATE client_dietitian_assignments
-                    SET is_active = 0
-                    WHERE (client_id = ? OR dietitian_id = ?) AND is_active = 1
-                ");
-                $stmt->execute([$userId, $userId]);
+                // Transaction başlat - atomic operation
+                $conn->beginTransaction();
 
-                // Soft delete - is_active = 0 ve email başına "deleted_" ekle
-                $stmt = $conn->prepare("
-                    UPDATE users
-                    SET is_active = 0,
-                        email = CONCAT('deleted_', UNIX_TIMESTAMP(), '_', email)
-                    WHERE id = ?
-                ");
-                $stmt->execute([$userId]);
-                setFlash('success', 'Kullanıcı başarıyla silindi.');
+                try {
+                    // Önce kullanıcının zaten silinmemiş olduğunu kontrol et (FOR UPDATE ile lock)
+                    $stmt = $conn->prepare("SELECT id, email FROM users WHERE id = ? AND email NOT LIKE 'deleted_%' FOR UPDATE");
+                    $stmt->execute([$userId]);
+                    $user = $stmt->fetch();
+
+                    if (!$user) {
+                        $conn->rollBack();
+                        setFlash('error', 'Kullanıcı bulunamadı veya zaten silinmiş.');
+                        redirect('/admin/users.php');
+                    }
+
+                    error_log("Deleting user ID: $userId, Email: {$user['email']}");
+
+                    // Önce aktif diyetisyen atamalarını kaldır
+                    $stmt = $conn->prepare("
+                        UPDATE client_dietitian_assignments
+                        SET is_active = 0
+                        WHERE (client_id = ? OR dietitian_id = ?) AND is_active = 1
+                    ");
+                    $stmt->execute([$userId, $userId]);
+
+                    // Soft delete - is_active = 0 ve email başına "deleted_" ekle
+                    $stmt = $conn->prepare("
+                        UPDATE users
+                        SET is_active = 0,
+                            email = CONCAT('deleted_', UNIX_TIMESTAMP(), '_', email),
+                            updated_at = NOW()
+                        WHERE id = ? AND email NOT LIKE 'deleted_%'
+                    ");
+                    $stmt->execute([$userId]);
+
+                    // Affected rows kontrolü
+                    $affectedRows = $stmt->rowCount();
+                    if ($affectedRows === 0) {
+                        $conn->rollBack();
+                        error_log("Delete failed for user ID: $userId - no rows affected");
+                        setFlash('error', 'Kullanıcı silinemedi. Kullanıcı bulunamadı veya zaten silinmiş.');
+                        redirect('/admin/users.php');
+                    }
+
+                    // Verify the update
+                    $stmt = $conn->prepare("SELECT email FROM users WHERE id = ?");
+                    $stmt->execute([$userId]);
+                    $updatedUser = $stmt->fetch();
+
+                    if ($updatedUser && strpos($updatedUser['email'], 'deleted_') === 0) {
+                        $conn->commit();
+                        error_log("User deleted successfully: ID $userId, New Email: {$updatedUser['email']}");
+                        setFlash('success', 'Kullanıcı başarıyla silindi.');
+                    } else {
+                        $conn->rollBack();
+                        error_log("Delete verification failed for user ID: $userId");
+                        setFlash('error', 'Kullanıcı silme işlemi doğrulanamadı.');
+                        redirect('/admin/users.php');
+                    }
+                } catch (Exception $e) {
+                    $conn->rollBack();
+                    error_log("Delete transaction failed for user ID: $userId - " . $e->getMessage());
+                    setFlash('error', 'Kullanıcı silinirken bir hata oluştu.');
+                    redirect('/admin/users.php');
+                }
             } elseif ($action === 'assign_dietitian') {
                 $dietitianId = sanitizeInt($_POST['dietitian_id'] ?? 0);
                 $notes = sanitizeString($_POST['notes'] ?? '', 500);
