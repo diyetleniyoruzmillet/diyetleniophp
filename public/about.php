@@ -215,9 +215,33 @@ $pageTitle = 'Hakkımızda';
             <a class="navbar-brand" href="/">
                 <i class="fas fa-heartbeat me-2"></i>Diyetlenio
             </a>
-            <div class="ms-auto">
-                <a href="/" class="btn btn-outline-primary me-2">Ana Sayfa</a>
-                <a href="/login.php" class="btn btn-primary">Giriş Yap</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dietitians.php">Diyetisyenler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog.php">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/recipes.php">Tarifler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/about.php">Hakkımızda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact.php">İletişim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>

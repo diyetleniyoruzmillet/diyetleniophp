@@ -10,8 +10,10 @@ $perPage = 9;
 $offset = ($page - 1) * $perPage;
 
 // Arama varsa FULLTEXT search kullan, yoksa normal sorgu
+$conn = $db->getConnection();
+
 if (!empty($search)) {
-    $stmt = $db->prepare("
+    $stmt = $conn->prepare("
         SELECT a.*, u.first_name, u.last_name,
                (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count,
                MATCH(a.title, a.content) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance
@@ -25,10 +27,10 @@ if (!empty($search)) {
     $searchParam = '%' . $search . '%';
     $stmt->execute([$search, $searchParam, $searchParam, $search, $perPage, $offset]);
 
-    $totalStmt = $db->prepare("SELECT COUNT(*) FROM articles WHERE status = 'published' AND (title LIKE ? OR content LIKE ?)");
+    $totalStmt = $conn->prepare("SELECT COUNT(*) FROM articles WHERE status = 'published' AND (title LIKE ? OR content LIKE ?)");
     $totalStmt->execute([$searchParam, $searchParam]);
 } else {
-    $stmt = $db->prepare("
+    $stmt = $conn->prepare("
         SELECT a.*, u.first_name, u.last_name,
                (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count
         FROM articles a
@@ -39,7 +41,7 @@ if (!empty($search)) {
     ");
     $stmt->execute([$perPage, $offset]);
 
-    $totalStmt = $db->query("SELECT COUNT(*) FROM articles WHERE status = 'published'");
+    $totalStmt = $conn->query("SELECT COUNT(*) FROM articles WHERE status = 'published'");
 }
 
 $articles = $stmt->fetchAll();
@@ -81,9 +83,33 @@ $pageTitle = 'Blog';
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="/"><i class="fas fa-heartbeat me-2"></i>Diyetlenio</a>
-            <div class="ms-auto">
-                <a href="/" class="btn btn-outline-primary me-2">Ana Sayfa</a>
-                <a href="/login.php" class="btn btn-primary">Giriş Yap</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dietitians.php">Diyetisyenler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/blog.php">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/recipes.php">Tarifler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about.php">Hakkımızda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact.php">İletişim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
