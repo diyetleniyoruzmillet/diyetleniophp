@@ -17,16 +17,27 @@ if ($auth->check()) {
 }
 
 $errors = [];
-$rateLimiter = new RateLimiter($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Rate limiting kontrolü (5 deneme / 15 dakika)
-    if ($rateLimiter->tooManyAttempts('login', null, 5, 15)) {
-        $remainingSeconds = $rateLimiter->availableIn('login', null, 15);
-        $remainingMinutes = ceil($remainingSeconds / 60);
-        $errors[] = "Çok fazla giriş denemesi yaptınız. Lütfen {$remainingMinutes} dakika sonra tekrar deneyin.";
+    // Rate limiting kontrolü (5 deneme / 15 dakika) - with error handling
+    $rateLimitExceeded = false;
+    try {
+        $rateLimiter = new RateLimiter($db);
+        if ($rateLimiter->tooManyAttempts('login', null, 5, 15)) {
+            $remainingSeconds = $rateLimiter->availableIn('login', null, 15);
+            $remainingMinutes = ceil($remainingSeconds / 60);
+            $errors[] = "Çok fazla giriş denemesi yaptınız. Lütfen {$remainingMinutes} dakika sonra tekrar deneyin.";
+            $rateLimitExceeded = true;
+        }
+    } catch (Exception $e) {
+        // Rate limiter hatası - ignore and continue
+        error_log('Rate limiter error: ' . $e->getMessage());
     }
+
     // CSRF kontrolü
+    if ($rateLimitExceeded) {
+        // Already set error above
+    }
     elseif (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     }
@@ -67,7 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     redirect($redirectUrl);
                 } else {
                     // Başarısız giriş - rate limit'e kaydet
-                    $rateLimiter->hit(hash('sha256', 'login|ip_' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')), 15);
+                    try {
+                        if (isset($rateLimiter)) {
+                            $rateLimiter->hit(hash('sha256', 'login|ip_' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')), 15);
+                        }
+                    } catch (Exception $e) {
+                        error_log('Rate limiter hit error: ' . $e->getMessage());
+                    }
                     $errors[] = 'Email veya şifre hatalı.';
                 }
             } catch (Exception $e) {
