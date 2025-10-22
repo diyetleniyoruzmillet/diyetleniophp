@@ -14,7 +14,7 @@ $conn = $db->getConnection();
 
 if (!empty($search)) {
     $stmt = $conn->prepare("
-        SELECT a.*, u.first_name, u.last_name,
+        SELECT a.*, u.full_name as author_name,
                (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count,
                MATCH(a.title, a.content) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance
         FROM articles a
@@ -31,7 +31,7 @@ if (!empty($search)) {
     $totalStmt->execute([$searchParam, $searchParam]);
 } else {
     $stmt = $conn->prepare("
-        SELECT a.*, u.first_name, u.last_name,
+        SELECT a.*, u.full_name as author_name,
                (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count
         FROM articles a
         LEFT JOIN users u ON a.author_id = u.id
@@ -161,7 +161,7 @@ $pageTitle = 'Blog';
                                     <h3 class="article-title"><?= clean($article['title']) ?></h3>
                                     <p class="article-excerpt"><?= clean(truncate($article['content'], 150)) ?></p>
                                     <div class="article-meta">
-                                        <span><i class="fas fa-user me-2"></i><?= clean($article['first_name'] . ' ' . $article['last_name']) ?></span>
+                                        <span><i class="fas fa-user me-2"></i><?= clean($article['author_name'] ?? 'Anonim') ?></span>
                                         <span><i class="fas fa-comment me-2"></i><?= $article['comment_count'] ?></span>
                                     </div>
                                     <a href="/blog-detail.php?id=<?= $article['id'] ?>" class="btn btn-primary w-100 mt-3">Devamını Oku</a>
