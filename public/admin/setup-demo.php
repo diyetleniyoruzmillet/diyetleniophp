@@ -257,16 +257,16 @@ $recipesCount = $conn->query("SELECT COUNT(*) FROM recipes")->fetchColumn();
             </h3>
 
             <div class="list-group">
-                <a href="/dietitians.php" class="list-group-item list-group-item-action" target="_blank">
+                <a href="https://www.diyetlenio.com/dietitians.php" class="list-group-item list-group-item-action" target="_blank">
                     <i class="fas fa-user-md"></i> Diyetisyenler Sayfası
                 </a>
-                <a href="/blog.php" class="list-group-item list-group-item-action" target="_blank">
+                <a href="https://www.diyetlenio.com/blog.php" class="list-group-item list-group-item-action" target="_blank">
                     <i class="fas fa-newspaper"></i> Blog Sayfası
                 </a>
-                <a href="/recipes.php" class="list-group-item list-group-item-action" target="_blank">
+                <a href="https://www.diyetlenio.com/recipes.php" class="list-group-item list-group-item-action" target="_blank">
                     <i class="fas fa-utensils"></i> Tarifler Sayfası
                 </a>
-                <a href="/admin/dashboard.php" class="list-group-item list-group-item-action" target="_blank">
+                <a href="https://www.diyetlenio.com/admin/dashboard.php" class="list-group-item list-group-item-action" target="_blank">
                     <i class="fas fa-tachometer-alt"></i> Admin Dashboard
                 </a>
             </div>
