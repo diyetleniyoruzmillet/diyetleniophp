@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_setup'])) {
             $stmt->execute([$d['email'], $passwordHash, $d['full_name'], $d['phone']]);
             $userId = $conn->lastInsertId();
 
-            $stmt = $conn->prepare("INSERT INTO dietitian_profiles (user_id, title, specialization, about_me, experience_years, education, certifications, consultation_fee, online_consultation_fee, rating_avg, total_clients, is_verified, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())");
-            $stmt->execute([$userId, $d['title'], $d['specialization'], $d['about_me'], $d['experience_years'], $d['education'], $d['certifications'], $d['consultation_fee'], $d['online_consultation_fee'], $d['rating_avg'], $d['total_clients']]);
+            $stmt = $conn->prepare("INSERT INTO dietitian_profiles (user_id, title, specialization, about_me, experience_years, education, consultation_fee, online_consultation_fee, rating_avg, total_clients, is_verified, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())");
+            $stmt->execute([$userId, $d['title'], $d['specialization'], $d['about_me'], $d['experience_years'], $d['education'], $d['consultation_fee'], $d['online_consultation_fee'], $d['rating_avg'], $d['total_clients']]);
             $created++;
         }
         $output .= "✅ {$created} diyetisyen eklendi\n\n";
