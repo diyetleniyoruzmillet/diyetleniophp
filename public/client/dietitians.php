@@ -35,7 +35,7 @@ if (!empty($search)) {
 $stmt = $conn->prepare("
     SELECT u.id, u.full_name, u.profile_photo, dp.title, dp.specialization,
            dp.about_me, dp.rating_avg, dp.total_clients, dp.consultation_fee,
-           dp.experience_years, dp.accepts_online_sessions, dp.accepts_in_person
+           dp.experience_years
     FROM users u
     INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
     {$whereClause}
