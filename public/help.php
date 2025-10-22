@@ -232,7 +232,7 @@ $pageTitle = 'Yardım Merkezi';
                     </li>
                     <?php if ($auth->check()): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= $auth->user()->getUserType() === 'admin' ? '/admin/dashboard.php' : ($auth->user()->getUserType() === 'dietitian' ? '/dietitian/dashboard.php' : '/client/dashboard.php') ?>">
+                            <a class="nav-link" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">
                                 Panel
                             </a>
                         </li>
