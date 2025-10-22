@@ -55,6 +55,9 @@ $migrations = [
     'database/migrations/009_create_article_comments_table.sql',
     'database/migrations/010_add_search_indexes.sql',
     'database/migrations/011_create_notifications_table.sql',
+    'database/migrations/012_add_phone_to_contact_messages.sql',
+    'database/migrations/013_create_weight_tracking_table.sql',
+    'database/migrations/014_create_client_profiles_table.sql',
     'database/migrations/add_is_on_call_column.sql',
     'database/add_diet_plan_meals.sql',
     'database/add_iban_to_dietitians.sql',
@@ -102,6 +105,33 @@ foreach ($migrations as $file) {
             $failed++;
         }
     }
+}
+
+// Extra: Capitalize user names
+echo "\n=== Additional Tasks ===\n";
+echo "Capitalizing user names... ";
+flush();
+
+try {
+    $stmt = $pdo->query("SELECT id, full_name FROM users WHERE full_name IS NOT NULL AND full_name != ''");
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $updateStmt = $pdo->prepare("UPDATE users SET full_name = ? WHERE id = ?");
+    $updated = 0;
+
+    foreach ($users as $user) {
+        $oldName = $user['full_name'];
+        $newName = mb_convert_case($oldName, MB_CASE_TITLE, 'UTF-8');
+
+        if ($oldName !== $newName) {
+            $updateStmt->execute([$newName, $user['id']]);
+            $updated++;
+        }
+    }
+
+    echo "<span class='success'>✓ Updated {$updated} names (out of " . count($users) . " total)</span>\n";
+} catch (PDOException $e) {
+    echo "<span class='error'>✗ Failed: " . htmlspecialchars($e->getMessage()) . "</span>\n";
 }
 
 echo "\n=== Migration Summary ===\n";
