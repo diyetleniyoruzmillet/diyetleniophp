@@ -41,6 +41,9 @@ function isDietitianPage($page) {
             <a class="nav-link <?= isDietitianPage('payments.php') ? 'active' : '' ?>" href="/dietitian/payments.php">
                 <i class="fas fa-money-bill me-2"></i>Ödemeler
             </a>
+            <a class="nav-link <?= isDietitianPage('commission-payments.php') ? 'active' : '' ?>" href="/dietitian/commission-payments.php">
+                <i class="fas fa-percentage me-2"></i>Komisyonlar
+            </a>
             <a class="nav-link <?= isDietitianPage('analytics.php') ? 'active' : '' ?>" href="/dietitian/analytics.php">
                 <i class="fas fa-chart-bar me-2"></i>Analitik
             </a>

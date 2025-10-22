@@ -35,6 +35,9 @@ function isClientPage($page) {
             <a class="nav-link <?= isClientPage('messages.php') ? 'active' : '' ?>" href="/client/messages.php">
                 <i class="fas fa-envelope me-2"></i>Mesajlar
             </a>
+            <a class="nav-link <?= isClientPage('payment-upload.php') ? 'active' : '' ?>" href="/client/payment-upload.php">
+                <i class="fas fa-file-invoice-dollar me-2"></i>Ödemelerim
+            </a>
             <a class="nav-link <?= isClientPage('profile.php') ? 'active' : '' ?>" href="/client/profile.php">
                 <i class="fas fa-user me-2"></i>Profilim
             </a>
