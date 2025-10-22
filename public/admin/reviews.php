@@ -12,6 +12,27 @@ if (!$auth->check() || $auth->user()->getUserType() !== 'admin') {
 
 $conn = $db->getConnection();
 
+// Silme işlemi
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+    } else {
+        $deleteId = (int)$_POST['delete_id'];
+
+        try {
+            $stmt = $conn->prepare("DELETE FROM reviews WHERE id = ?");
+            $stmt->execute([$deleteId]);
+
+            setFlash('success', 'Değerlendirme başarıyla silindi.');
+        } catch (Exception $e) {
+            error_log('Review delete error: ' . $e->getMessage());
+            setFlash('error', 'Değerlendirme silinirken bir hata oluştu.');
+        }
+    }
+
+    redirect('/admin/reviews.php');
+}
+
 // Değerlendirmeleri çek
 $stmt = $conn->query("
     SELECT r.*,
@@ -44,6 +65,20 @@ $pageTitle = 'Değerlendirme Yönetimi';
             <div class="col-md-10">
                 <div class="content-wrapper">
                     <h2 class="mb-4">Değerlendirme Yönetimi</h2>
+
+                    <?php if ($msg = getFlash('success')): ?>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="fas fa-check-circle me-2"></i><?= clean($msg) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($msg = getFlash('error')): ?>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="fas fa-exclamation-circle me-2"></i><?= clean($msg) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="card">
                         <div class="card-body">
@@ -83,9 +118,13 @@ $pageTitle = 'Değerlendirme Yönetimi';
                                                     </td>
                                                     <td><?= clean(substr($review['review'], 0, 50)) ?>...</td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-danger">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
+                                                        <form method="POST" class="d-inline" onsubmit="return confirm('Bu değerlendirmeyi silmek istediğinizden emin misiniz?')">
+                                                            <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+                                                            <input type="hidden" name="delete_id" value="<?= $review['id'] ?>">
+                                                            <button type="submit" class="btn btn-sm btn-danger" title="Sil">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
