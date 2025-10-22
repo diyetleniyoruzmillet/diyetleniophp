@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'full_name' => $fullName,
                         'email' => $email,
                         'phone' => $phone,
-                        'diploma_no' => $diplomaNo,
+                        'title' => $title,
                         'experience_years' => $experienceYears,
                         'specialization' => $specialization
                     ]);
