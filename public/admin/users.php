@@ -30,18 +30,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             redirect('/admin/users.php');
         }
 
-        // Rate limiting - silme ve kritik işlemler için
-        $rateLimiter = new RateLimiter($db);
-        if (in_array($action, ['delete', 'deactivate'])) {
-            $adminUserId = $auth->user()->getId();
-            $rateLimitKey = 'admin_critical_action';
-            $rateLimitIdentifier = 'user_' . $adminUserId;
+        // Rate limiting - silme ve kritik işlemler için (with error handling)
+        try {
+            $rateLimiter = new RateLimiter($db);
+            if (in_array($action, ['delete', 'deactivate'])) {
+                $adminUserId = $auth->user()->getId();
+                $rateLimitKey = 'admin_critical_action';
+                $rateLimitIdentifier = 'user_' . $adminUserId;
 
-            if ($rateLimiter->tooManyAttempts($rateLimitKey, $rateLimitIdentifier, 20, 1)) {
-                setFlash('error', 'Çok fazla işlem yaptınız. Lütfen bekleyin.');
-                redirect('/admin/users.php');
+                if ($rateLimiter->tooManyAttempts($rateLimitKey, $rateLimitIdentifier, 20, 1)) {
+                    setFlash('error', 'Çok fazla işlem yaptınız. Lütfen bekleyin.');
+                    redirect('/admin/users.php');
+                }
+                $rateLimiter->hit(hash('sha256', $rateLimitKey . '|' . $rateLimitIdentifier), 1);
             }
-            $rateLimiter->hit(hash('sha256', $rateLimitKey . '|' . $rateLimitIdentifier), 1);
+        } catch (Exception $e) {
+            error_log('Rate limiter error in users.php: ' . $e->getMessage());
+            // Continue without rate limiting
         }
 
         try {

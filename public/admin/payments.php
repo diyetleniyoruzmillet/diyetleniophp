@@ -36,14 +36,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         redirect('/admin/payments.php');
     }
 
-    // Rate limiting
-    $rateLimiter = new RateLimiter($db);
-    $adminUserId = $auth->user()->getId();
-    if ($rateLimiter->tooManyAttempts('admin_payment_action', 'user_' . $adminUserId, 30, 1)) {
-        setFlash('error', 'Çok fazla işlem yaptınız. Lütfen bekleyin.');
-        redirect('/admin/payments.php');
+    // Rate limiting (with error handling)
+    try {
+        $rateLimiter = new RateLimiter($db);
+        $adminUserId = $auth->user()->getId();
+        if ($rateLimiter->tooManyAttempts('admin_payment_action', 'user_' . $adminUserId, 30, 1)) {
+            setFlash('error', 'Çok fazla işlem yaptınız. Lütfen bekleyin.');
+            redirect('/admin/payments.php');
+        }
+        $rateLimiter->hit(hash('sha256', 'admin_payment_action|user_' . $adminUserId), 1);
+    } catch (Exception $e) {
+        error_log('Rate limiter error in payments.php: ' . $e->getMessage());
+        // Continue without rate limiting
     }
-    $rateLimiter->hit(hash('sha256', 'admin_payment_action|user_' . $adminUserId), 1);
 
     try {
         $stmt = $conn->prepare("
