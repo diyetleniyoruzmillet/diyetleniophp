@@ -35,8 +35,36 @@ try {
     die("❌ Database connection failed: " . $e->getMessage() . "\n");
 }
 
-// Step 1: Create weight_tracking table
-echo "📋 Creating weight_tracking table...\n";
+// Step 1: Create client_profiles table
+echo "📋 Step 1: Creating client_profiles table...\n";
+
+$sql = "
+CREATE TABLE IF NOT EXISTS client_profiles (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    user_id INT UNSIGNED NOT NULL UNIQUE,
+    date_of_birth DATE,
+    gender ENUM('male', 'female', 'other'),
+    height DECIMAL(5,2) COMMENT 'Santimetre',
+    target_weight DECIMAL(5,2) COMMENT 'Kilogram',
+    health_conditions TEXT,
+    allergies TEXT,
+    dietary_preferences TEXT,
+    activity_level ENUM('sedentary', 'light', 'moderate', 'active', 'very_active'),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+";
+
+try {
+    $pdo->exec($sql);
+    echo "✅ Client profiles table created\n\n";
+} catch (PDOException $e) {
+    echo "⚠️  Client profiles table error: " . $e->getMessage() . "\n\n";
+}
+
+// Step 2: Create weight_tracking table
+echo "📋 Step 2: Creating weight_tracking table...\n";
 
 $sql = "
 CREATE TABLE IF NOT EXISTS weight_tracking (
@@ -61,8 +89,8 @@ try {
     echo "⚠️  Weight tracking table error: " . $e->getMessage() . "\n\n";
 }
 
-// Step 2: Capitalize names
-echo "📋 Capitalizing user names...\n";
+// Step 3: Capitalize names
+echo "📋 Step 3: Capitalizing user names...\n";
 
 try {
     $stmt = $pdo->query("SELECT id, full_name FROM users WHERE full_name IS NOT NULL AND full_name != ''");
