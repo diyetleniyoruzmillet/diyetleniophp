@@ -22,18 +22,179 @@ function clean($string): string
 
 /**
  * HTML içeriği güvenli şekilde görüntüler (editör içeriği için)
+ * İzin verilen tag'ler dışındakileri temizler ve güvenli hale getirir
  *
  * @param string|null $html
+ * @param array|null $allowedTags İzin verilen HTML tagları
  * @return string
  */
-function cleanHtml($html): string
+function cleanHtml($html, ?array $allowedTags = null): string
 {
     if ($html === null) {
         return '';
     }
 
-    // Basit bir implementasyon - gerçek uygulamada HTML Purifier kullanılmalı
-    return strip_tags($html, '<p><br><strong><em><ul><ol><li><a><img><h1><h2><h3><h4><h5><h6>');
+    // Varsayılan izin verilen tag'ler
+    if ($allowedTags === null) {
+        $allowedTags = ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+    }
+
+    // Tag'leri HTML format'a çevir
+    $allowedTagsStr = '<' . implode('><', $allowedTags) . '>';
+
+    // Tag'leri filtrele
+    $cleaned = strip_tags($html, $allowedTagsStr);
+
+    // Tehlikeli attribute'ları temizle (onclick, onerror, vb.)
+    $cleaned = preg_replace('/\s*on\w+\s*=\s*["\'].*?["\']/i', '', $cleaned);
+
+    // javascript: protokolünü temizle
+    $cleaned = preg_replace('/href\s*=\s*["\']javascript:[^"\']*["\']/i', '', $cleaned);
+
+    // data: protokolünü temizle (XSS için kullanılabilir)
+    $cleaned = preg_replace('/src\s*=\s*["\']data:[^"\']*["\']/i', '', $cleaned);
+
+    return $cleaned;
+}
+
+/**
+ * Array içeriğini temizler (XSS koruması)
+ *
+ * @param array $data
+ * @return array
+ */
+function cleanArray(array $data): array
+{
+    $cleaned = [];
+    foreach ($data as $key => $value) {
+        if (is_array($value)) {
+            $cleaned[$key] = cleanArray($value);
+        } else {
+            $cleaned[$key] = clean($value);
+        }
+    }
+    return $cleaned;
+}
+
+/**
+ * JSON output için string'i escape eder
+ *
+ * @param string|null $string
+ * @return string
+ */
+function cleanJson($string): string
+{
+    if ($string === null) {
+        return '';
+    }
+
+    return json_encode($string, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+}
+
+/**
+ * URL'in güvenli olup olmadığını kontrol eder
+ *
+ * @param string $url
+ * @return bool
+ */
+function isValidUrl(string $url): bool
+{
+    // Boş URL
+    if (empty($url)) {
+        return false;
+    }
+
+    // filter_var ile genel validasyon
+    if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+        return false;
+    }
+
+    // Tehlikeli protokolleri engelle
+    $dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:'];
+    foreach ($dangerousProtocols as $protocol) {
+        if (stripos($url, $protocol) === 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Redirect için URL'i güvenli hale getirir
+ *
+ * @param string $url
+ * @param string $fallback Geçersiz URL durumunda kullanılacak
+ * @return string
+ */
+function sanitizeRedirectUrl(string $url, string $fallback = '/'): string
+{
+    // Boş ise fallback
+    if (empty($url)) {
+        return $fallback;
+    }
+
+    // Absolute URL kontrolü - sadece relative URL'lere izin ver
+    $parsed = parse_url($url);
+
+    // Host varsa ve kendi domain'imiz değilse engelle (open redirect)
+    if (isset($parsed['host'])) {
+        $currentHost = $_SERVER['HTTP_HOST'] ?? '';
+        if ($parsed['host'] !== $currentHost) {
+            return $fallback;
+        }
+    }
+
+    // Tehlikeli protokolleri engelle
+    if (isset($parsed['scheme']) && !in_array($parsed['scheme'], ['http', 'https'])) {
+        return $fallback;
+    }
+
+    return $url;
+}
+
+/**
+ * Input'u integer'a çevirir, geçersizse default döner
+ *
+ * @param mixed $value
+ * @param int $default
+ * @return int
+ */
+function sanitizeInt($value, int $default = 0): int
+{
+    if (is_numeric($value)) {
+        return (int) $value;
+    }
+    return $default;
+}
+
+/**
+ * Input'u float'a çevirir, geçersizse default döner
+ *
+ * @param mixed $value
+ * @param float $default
+ * @return float
+ */
+function sanitizeFloat($value, float $default = 0.0): float
+{
+    if (is_numeric($value)) {
+        return (float) $value;
+    }
+    return $default;
+}
+
+/**
+ * String'i belirli bir uzunlukta kırpar ve temizler
+ *
+ * @param string $value
+ * @param int $maxLength
+ * @return string
+ */
+function sanitizeString(string $value, int $maxLength = 255): string
+{
+    $value = trim($value);
+    $value = mb_substr($value, 0, $maxLength);
+    return $value;
 }
 
 /**
@@ -362,7 +523,7 @@ function formatNumber(?float $number, int $decimals = 0): string
 }
 
 /**
- * Resim yükler
+ * Resim yükler (Geliştirilmiş güvenlik)
  *
  * @param array $file $_FILES array'inden gelen dosya
  * @param string $directory Upload dizini
@@ -374,6 +535,22 @@ function uploadImage(array $file, string $directory, array $allowedTypes = ['jpg
 {
     // Dosya yüklendi mi?
     if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        setFlash('error', 'Dosya yükleme hatası.');
+        return false;
+    }
+
+    // Upload hatası kontrolü
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $errorMessages = [
+            UPLOAD_ERR_INI_SIZE => 'Dosya boyutu çok büyük (server limit).',
+            UPLOAD_ERR_FORM_SIZE => 'Dosya boyutu çok büyük (form limit).',
+            UPLOAD_ERR_PARTIAL => 'Dosya kısmen yüklendi.',
+            UPLOAD_ERR_NO_FILE => 'Dosya yüklenmedi.',
+            UPLOAD_ERR_NO_TMP_DIR => 'Geçici dizin bulunamadı.',
+            UPLOAD_ERR_CANT_WRITE => 'Dosya yazılamadı.',
+            UPLOAD_ERR_EXTENSION => 'PHP extension dosya yüklemeyi durdurdu.',
+        ];
+        setFlash('error', $errorMessages[$file['error']] ?? 'Bilinmeyen yükleme hatası.');
         return false;
     }
 
@@ -383,27 +560,92 @@ function uploadImage(array $file, string $directory, array $allowedTypes = ['jpg
         return false;
     }
 
-    // Dosya tipi kontrolü
+    // Boş dosya kontrolü
+    if ($file['size'] == 0) {
+        setFlash('error', 'Dosya boş olamaz.');
+        return false;
+    }
+
+    // Dosya uzantısı kontrolü
     $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     if (!in_array($extension, $allowedTypes)) {
         setFlash('error', 'Geçersiz dosya tipi. İzin verilenler: ' . implode(', ', $allowedTypes));
         return false;
     }
 
-    // Benzersiz dosya adı oluştur
-    $filename = uniqid() . '_' . time() . '.' . $extension;
+    // MIME type kontrolü (gerçek dosya tipi)
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+
+    // İzin verilen MIME type'lar
+    $allowedMimeTypes = [
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'webp' => 'image/webp',
+        'pdf' => 'application/pdf',
+        'doc' => 'application/msword',
+        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+
+    // Extension ile MIME type eşleşmesi kontrolü
+    if (isset($allowedMimeTypes[$extension]) && $mimeType !== $allowedMimeTypes[$extension]) {
+        setFlash('error', 'Dosya tipi güvenli değil. Dosya içeriği uzantısıyla eşleşmiyor.');
+        error_log("File upload security warning: Extension=$extension, MIME=$mimeType, File=" . $file['name']);
+        return false;
+    }
+
+    // Resim ise ek kontroller
+    if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+        // getimagesize ile resim dosyası doğrulama
+        $imageInfo = @getimagesize($file['tmp_name']);
+        if ($imageInfo === false) {
+            setFlash('error', 'Dosya geçerli bir resim değil.');
+            return false;
+        }
+
+        // Resim boyutları kontrolü (çok büyük resimleri engelle)
+        $maxWidth = 10000;
+        $maxHeight = 10000;
+        if ($imageInfo[0] > $maxWidth || $imageInfo[1] > $maxHeight) {
+            setFlash('error', "Resim boyutları çok büyük. Maksimum: {$maxWidth}x{$maxHeight}px");
+            return false;
+        }
+    }
+
+    // Güvenli benzersiz dosya adı oluştur
+    $randomName = bin2hex(random_bytes(16));
+    $filename = $randomName . '.' . $extension;
     $targetPath = rtrim($directory, '/') . '/' . $filename;
 
     // Dizin yoksa oluştur
     if (!is_dir($directory)) {
-        mkdir($directory, 0755, true);
+        if (!mkdir($directory, 0755, true)) {
+            setFlash('error', 'Upload dizini oluşturulamadı.');
+            error_log("Failed to create upload directory: $directory");
+            return false;
+        }
+    }
+
+    // Dizin yazılabilir mi kontrol et
+    if (!is_writable($directory)) {
+        setFlash('error', 'Upload dizini yazılabilir değil.');
+        error_log("Upload directory not writable: $directory");
+        return false;
     }
 
     // Dosyayı taşı
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+        // Dosya izinlerini güvenli hale getir (okuma + yazma, execute yok)
+        chmod($targetPath, 0644);
+
         return $filename;
     }
 
+    setFlash('error', 'Dosya yüklenemedi.');
+    error_log("Failed to move uploaded file to: $targetPath");
     return false;
 }
 
