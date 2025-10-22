@@ -17,7 +17,7 @@ $user = $auth->user();
 try {
     $conn = $db->getConnection();
 
-    // Toplam kullanıcı sayıları
+    // Toplam kullanıcı sayıları (silinmiş kullanıcılar hariç)
     $stmt = $conn->query("
         SELECT
             COUNT(*) as total,
@@ -27,6 +27,7 @@ try {
             SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_count,
             SUM(CASE WHEN DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) as today_count
         FROM users
+        WHERE email NOT LIKE 'deleted_%'
     ");
     $userStats = $stmt->fetch();
 
@@ -60,22 +61,23 @@ try {
     ");
     $contentStats = $stmt->fetch();
 
-    // Son kayıt olan kullanıcılar
+    // Son kayıt olan kullanıcılar (silinmiş kullanıcılar hariç)
     $stmt = $conn->query("
         SELECT id, full_name, email, user_type, created_at
         FROM users
+        WHERE email NOT LIKE 'deleted_%'
         ORDER BY created_at DESC
         LIMIT 5
     ");
     $recentUsers = $stmt->fetchAll();
 
-    // Bekleyen diyetisyen listesi
+    // Bekleyen diyetisyen listesi (silinmiş kullanıcılar hariç)
     $stmt = $conn->query("
         SELECT u.id, u.full_name, u.email, u.created_at,
                dp.title, dp.specialization, dp.experience_years
         FROM users u
         INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-        WHERE dp.is_approved = 0
+        WHERE dp.is_approved = 0 AND u.email NOT LIKE 'deleted_%'
         ORDER BY u.created_at DESC
         LIMIT 5
     ");
