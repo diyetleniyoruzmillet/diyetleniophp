@@ -1,12 +1,6 @@
 [phases.setup]
 nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mysqli", "php82Extensions.mbstring", "php82Extensions.curl", "php82Extensions.gd", "php82Extensions.zip", "bash"]
-
-[phases.install]
-cmds = [
-    "echo 'Setting up Diyetlenio...'",
-    "chmod +x railway-setup.sh",
-    "./railway-setup.sh"
-]
+cmds = ["mkdir -p /etc/nginx/ /var/log/nginx/ /var/cache/nginx/"]
 
 [start]
 cmd = "php -S 0.0.0.0:$PORT -t public"
