@@ -4,20 +4,18 @@
  * WARNING: Remove this file after running migrations!
  */
 
-require_once __DIR__ . '/../../includes/bootstrap.php';
+// Direct database access - no auth required (token protected)
+define('BASE_PATH', dirname(__DIR__, 2));
 
-// Admin only
-if (!$auth->check() || $auth->user()->getUserType() !== 'admin') {
-    die('Access denied. Admin only.');
-}
-
-// Security token
+// Security token check FIRST
 $token = $_GET['token'] ?? '';
 $expectedToken = md5('diyetlenio-migrate-2025');
 
 if ($token !== $expectedToken) {
-    die('Invalid token. Use: ?token=' . $expectedToken);
+    die('Invalid token. Access denied.');
 }
+
+require_once __DIR__ . '/../../includes/bootstrap.php';
 
 ?>
 <!DOCTYPE html>
