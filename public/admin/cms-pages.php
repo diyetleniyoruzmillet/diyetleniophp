@@ -68,7 +68,7 @@ if (isset($_GET['edit'])) {
                 <a href="/admin/cms-menus.php" class="btn btn-outline-light w-100 mb-2">Menüler</a>
                 <a href="/admin/cms-sliders.php" class="btn btn-outline-light w-100 mb-2">Sliderlar</a>
                 <a href="/admin/site-settings.php" class="btn btn-outline-light w-100 mb-2">Site Ayarları</a>
-                <a href="/admin/dashboard.php" class="btn btn-outline-light w-100 mt-4">Dashboard</a>
+                <a href="/admin/dashboard.php" class="btn btn-outline-light w-100 mt-4">Anasayfa</a>
             </div>
 
             <main class="col-md-10 p-4">

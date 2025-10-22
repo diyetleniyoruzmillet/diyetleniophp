@@ -403,7 +403,7 @@ $pageTitle = 'Diyetisyen Dashboard';
 
                     <nav class="nav flex-column">
                         <a class="nav-link active" href="/dietitian/dashboard.php">
-                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                            <i class="fas fa-chart-line me-2"></i>Anasayfa
                         </a>
                         <a class="nav-link" href="/dietitian/profile.php">
                             <i class="fas fa-user-edit me-2"></i>Profilim

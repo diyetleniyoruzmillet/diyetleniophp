@@ -454,7 +454,7 @@ $pageTitle = 'Admin Dashboard';
 
                     <nav class="nav flex-column">
                         <a class="nav-link active" href="/admin/dashboard.php">
-                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                            <i class="fas fa-chart-line me-2"></i>Anasayfa
                         </a>
                         <a class="nav-link" href="/admin/users.php">
                             <i class="fas fa-users me-2"></i>Kullanıcılar
@@ -497,7 +497,7 @@ $pageTitle = 'Admin Dashboard';
                     <div class="page-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h2 class="mb-1">Dashboard</h2>
+                                <h2 class="mb-1">Anasayfa</h2>
                                 <p class="text-muted mb-0">Sistem genel görünümü</p>
                             </div>
                             <div>

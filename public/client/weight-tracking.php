@@ -94,7 +94,7 @@ $pageTitle = 'Kilo Takibi';
                     </h4>
                     <nav class="nav flex-column">
                         <a class="nav-link" href="/client/dashboard.php">
-                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                            <i class="fas fa-chart-line me-2"></i>Anasayfa
                         </a>
                         <a class="nav-link" href="/client/dietitians.php">
                             <i class="fas fa-user-md me-2"></i>Diyetisyenler

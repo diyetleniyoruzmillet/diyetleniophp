@@ -200,7 +200,7 @@ $pageTitle = 'Profil Ayarları';
                     </h4>
                     <nav class="nav flex-column">
                         <a class="nav-link" href="/dietitian/dashboard.php">
-                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                            <i class="fas fa-chart-line me-2"></i>Anasayfa
                         </a>
                         <a class="nav-link" href="/dietitian/clients.php">
                             <i class="fas fa-users me-2"></i>Danışanlarım

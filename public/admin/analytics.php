@@ -130,7 +130,7 @@ $pageTitle = 'Analytics';
             <div class="col-md-2 bg-dark text-white p-3">
                 <h4>Admin Panel</h4>
                 <hr>
-                <a href="/admin/dashboard.php" class="btn btn-outline-light w-100 mb-2">Dashboard</a>
+                <a href="/admin/dashboard.php" class="btn btn-outline-light w-100 mb-2">Anasayfa</a>
                 <a href="/admin/analytics.php" class="btn btn-light w-100 mb-2">Analytics</a>
                 <a href="/admin/users.php" class="btn btn-outline-light w-100 mb-2">Kullanıcılar</a>
                 <a href="/" class="btn btn-outline-light w-100 mt-4">Ana Sayfa</a>
