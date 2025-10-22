@@ -12,6 +12,27 @@ if (!$auth->check() || $auth->user()->getUserType() !== 'admin') {
 
 $conn = $db->getConnection();
 
+// Silme işlemi
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+    } else {
+        $deleteId = (int)$_POST['delete_id'];
+
+        try {
+            $stmt = $conn->prepare("DELETE FROM recipes WHERE id = ?");
+            $stmt->execute([$deleteId]);
+
+            setFlash('success', 'Tarif başarıyla silindi.');
+        } catch (Exception $e) {
+            error_log('Recipe delete error: ' . $e->getMessage());
+            setFlash('error', 'Tarif silinirken bir hata oluştu.');
+        }
+    }
+
+    redirect('/admin/recipes.php');
+}
+
 // Tarifleri çek
 $stmt = $conn->query("
     SELECT r.*, u.full_name as author_name
@@ -42,10 +63,24 @@ $pageTitle = 'Tarif Yönetimi';
                 <div class="content-wrapper">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>Tarif Yönetimi</h2>
-                        <button class="btn btn-success" onclick="alert('Tarif ekleme özelliği yakında aktif olacak!')">
+                        <a href="/admin/recipe-create.php" class="btn btn-success">
                             <i class="fas fa-plus me-2"></i>Yeni Tarif
-                        </button>
+                        </a>
                     </div>
+
+                    <?php if ($msg = getFlash('success')): ?>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="fas fa-check-circle me-2"></i><?= clean($msg) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($msg = getFlash('error')): ?>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="fas fa-exclamation-circle me-2"></i><?= clean($msg) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="card">
                         <div class="card-body">
@@ -82,12 +117,16 @@ $pageTitle = 'Tarif Yönetimi';
                                                     </td>
                                                     <td><?= date('d.m.Y', strtotime($recipe['created_at'])) ?></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-primary" onclick="alert('Düzenleme özelliği yakında aktif olacak!')" title="Düzenle">
+                                                        <a href="/admin/recipe-create.php?id=<?= $recipe['id'] ?>" class="btn btn-sm btn-primary" title="Düzenle">
                                                             <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-danger" onclick="if(confirm('Bu tarifi silmek istediğinizden emin misiniz?')) alert('Silme özelliği yakında aktif olacak!')" title="Sil">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
+                                                        </a>
+                                                        <form method="POST" class="d-inline" onsubmit="return confirm('Bu tarifi silmek istediğinizden emin misiniz?')">
+                                                            <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+                                                            <input type="hidden" name="delete_id" value="<?= $recipe['id'] ?>">
+                                                            <button type="submit" class="btn btn-sm btn-danger" title="Sil">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
