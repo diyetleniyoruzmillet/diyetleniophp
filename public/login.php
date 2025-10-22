@@ -31,23 +31,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Geçersiz form gönderimi.';
     }
     else {
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $remember = isset($_POST['remember']);
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['email', 'password'])
+            ->email('email')
+            ->min('password', 1);
 
-        // Validasyon
-        if (empty($email)) {
-            $errors[] = 'Email adresi gereklidir.';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Geçerli bir email adresi girin.';
-        }
-
-        if (empty($password)) {
-            $errors[] = 'Şifre gereklidir.';
+        if ($validator->fails()) {
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
         }
 
         // Giriş denemesi
         if (empty($errors)) {
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            $remember = isset($_POST['remember']);
             try {
                 if ($auth->attempt($email, $password, $remember)) {
                     $userType = $auth->user()->getUserType();

@@ -11,6 +11,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('/admin/cms-pages.php');
     }
 
+    // Validator ile validasyon
+    $validator = new Validator($_POST);
+    $validator
+        ->required(['action'])
+        ->in('action', ['create', 'update', 'delete']);
+
+    $action = $_POST['action'] ?? '';
+
+    // Action'a göre ek validasyon
+    if ($action === 'create' || $action === 'update') {
+        $validator
+            ->required(['title', 'content'])
+            ->min('title', 3)
+            ->max('title', 200)
+            ->min('content', 10)
+            ->max('meta_title', 200)
+            ->max('meta_description', 500);
+    }
+
+    if ($action === 'update' || $action === 'delete') {
+        $validator->required(['id'])->numeric('id');
+    }
+
+    if ($validator->fails()) {
+        $errorMessages = [];
+        foreach ($validator->errors() as $field => $fieldErrors) {
+            foreach ($fieldErrors as $error) {
+                $errorMessages[] = $error;
+            }
+        }
+        setFlash('error', implode('<br>', $errorMessages));
+        redirect('/admin/cms-pages.php');
+    }
+
     if (isset($_POST['action'])) {
         if ($_POST['action'] === 'create') {
             $stmt = $conn->prepare("
@@ -21,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_POST['title'],
                 createSlug($_POST['title']),
                 $_POST['content'],
-                $_POST['meta_title'],
-                $_POST['meta_description'],
+                $_POST['meta_title'] ?? '',
+                $_POST['meta_description'] ?? '',
                 isset($_POST['is_active']) ? 1 : 0
             ]);
             setFlash('success', 'Sayfa oluşturuldu!');
@@ -34,8 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([
                 $_POST['title'],
                 $_POST['content'],
-                $_POST['meta_title'],
-                $_POST['meta_description'],
+                $_POST['meta_title'] ?? '',
+                $_POST['meta_description'] ?? '',
                 isset($_POST['is_active']) ? 1 : 0,
                 $_POST['id']
             ]);

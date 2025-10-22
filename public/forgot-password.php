@@ -18,17 +18,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     } else {
-        $email = trim($_POST['email'] ?? '');
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['email'])
+            ->email('email');
 
-        // Validasyon
-        if (empty($email)) {
-            $errors[] = 'Email adresi gereklidir.';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Geçerli bir email adresi girin.';
+        if ($validator->fails()) {
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
         }
 
         // Kullanıcı kontrolü
         if (empty($errors)) {
+            $email = $_POST['email'];
             try {
                 $stmt = $db->prepare("SELECT id, email, first_name FROM users WHERE email = ? AND status = 'active'");
                 $stmt->execute([$email]);

@@ -45,20 +45,25 @@ $success = false;
 // Değerlendirme gönderme
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
     if (verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-        $rating = (int)$_POST['rating'];
-        $review = trim($_POST['review']);
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['rating', 'review'])
+            ->between('rating', 1, 5)
+            ->min('review', 10);
 
         $errors = [];
-
-        if ($rating < 1 || $rating > 5) {
-            $errors[] = 'Lütfen 1-5 arası puan verin.';
-        }
-
-        if (empty($review) || strlen($review) < 10) {
-            $errors[] = 'Değerlendirme en az 10 karakter olmalıdır.';
+        if ($validator->fails()) {
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
         }
 
         if (empty($errors)) {
+            $rating = (int)$_POST['rating'];
+            $review = $_POST['review'];
             if ($existingReview) {
                 // Güncelle
                 $stmt = $conn->prepare("

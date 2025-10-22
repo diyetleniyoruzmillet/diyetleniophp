@@ -42,23 +42,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     } else {
-        $appointmentDate = $_POST['appointment_date'] ?? '';
-        $startTime = $_POST['start_time'] ?? '';
-        $notes = trim($_POST['notes'] ?? '');
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['appointment_date', 'start_time'])
+            ->date('appointment_date');
 
-        // Validasyon
-        if (empty($appointmentDate)) {
-            $errors[] = 'Randevu tarihi seçiniz.';
-        } elseif (strtotime($appointmentDate) < strtotime(date('Y-m-d'))) {
-            $errors[] = 'Geçmiş tarihli randevu oluşturamazsınız.';
-        }
+        // Gelecek tarih kontrolü
+        $validator->custom('appointment_date', function($value) {
+            return strtotime($value) >= strtotime(date('Y-m-d'));
+        }, 'Geçmiş tarihli randevu oluşturamazsınız.');
 
-        if (empty($startTime)) {
-            $errors[] = 'Randevu saati seçiniz.';
+        if ($validator->fails()) {
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
         }
 
         // Randevu çakışması kontrolü
         if (empty($errors)) {
+            $appointmentDate = $_POST['appointment_date'];
+            $startTime = $_POST['start_time'];
+            $notes = $_POST['notes'] ?? '';
             $stmt = $conn->prepare("
                 SELECT id FROM appointments 
                 WHERE dietitian_id = ? 

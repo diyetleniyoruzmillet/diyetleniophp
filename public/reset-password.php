@@ -53,22 +53,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $validToken) {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     } else {
-        $password = $_POST['password'] ?? '';
-        $passwordConfirm = $_POST['password_confirm'] ?? '';
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['password', 'password_confirm'])
+            ->min('password', 8)
+            ->match('password_confirm', 'password');
 
-        // Validasyon
-        if (empty($password)) {
-            $errors[] = 'Şifre gereklidir.';
-        } elseif (strlen($password) < 8) {
-            $errors[] = 'Şifre en az 8 karakter olmalıdır.';
-        }
+        // Şifre güçlülük kontrolü
+        $validator->custom('password', function($value) {
+            return preg_match('/[A-Z]/', $value) &&
+                   preg_match('/[a-z]/', $value) &&
+                   preg_match('/[0-9]/', $value);
+        }, 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.');
 
-        if ($password !== $passwordConfirm) {
-            $errors[] = 'Şifreler eşleşmiyor.';
+        if ($validator->fails()) {
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errors[] = $error;
+                }
+            }
         }
 
         // Şifre güncelleme
         if (empty($errors)) {
+            $password = $_POST['password'];
             try {
                 $db->beginTransaction();
 
