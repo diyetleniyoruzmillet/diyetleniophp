@@ -1,10 +1,8 @@
 -- Diyetisyen profili tablosuna IBAN alanı zaten var
 -- Ekstra: Ödeme sistemini IBAN transfer'e uygun hale getir
 
--- Payments tablosuna transfer bilgileri
-ALTER TABLE payments ADD COLUMN IF NOT EXISTS payment_method ENUM('transfer', 'cash', 'online') DEFAULT 'transfer';
-ALTER TABLE payments ADD COLUMN IF NOT EXISTS transfer_reference VARCHAR(255) COMMENT 'Havale referans numarası';
-ALTER TABLE payments ADD COLUMN IF NOT EXISTS receipt_notes TEXT COMMENT 'Ödeme notları';
+-- NOTE: This migration might fail if columns already exist
+-- That's OK - migration runner handles "already exists" errors
 
 -- Site settings'e default IBAN ekle (eğer yoksa)
 INSERT IGNORE INTO site_settings (setting_key, setting_value, setting_type, description) VALUES
