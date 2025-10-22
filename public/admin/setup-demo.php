@@ -26,21 +26,89 @@ $setupRun = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['run_setup'])) {
     $setupRun = true;
+    $output = '';
 
-    // Include the setup scripts
-    ob_start();
     try {
-        include __DIR__ . '/../../scripts/add-demo-dietitians.php';
-        $output1 = ob_get_clean();
+        // Demo diyetisyenler
+        $demoDietitians = [
+            ['full_name' => 'Ayşe Yılmaz', 'email' => 'ayse.yilmaz@diyetlenio.com', 'phone' => '05321234567', 'title' => 'Dyt. Ayşe Yılmaz', 'specialization' => 'Spor Beslenmesi', 'about_me' => 'Spor beslenmesi alanında 8 yıllık deneyime sahibim. Özellikle sporcuların performans artırıcı beslenme programları konusunda uzmanım.', 'experience_years' => 8, 'education' => 'Hacettepe Üniversitesi Beslenme ve Diyetetik', 'certifications' => 'ISSN Spor Beslenmesi Sertifikası', 'consultation_fee' => 500.00, 'online_consultation_fee' => 350.00, 'rating_avg' => 4.8, 'total_clients' => 127],
+            ['full_name' => 'Mehmet Demir', 'email' => 'mehmet.demir@diyetlenio.com', 'phone' => '05339876543', 'title' => 'Dyt. Mehmet Demir', 'specialization' => 'Klinik Beslenme', 'about_me' => 'Diyabet, metabolik sendrom ve kardiyovasküler hastalıklar için özel diyet programları hazırlıyorum.', 'experience_years' => 12, 'education' => 'Ankara Üniversitesi Beslenme ve Diyetetik', 'certifications' => 'Diyabet Eğiticisi Sertifikası', 'consultation_fee' => 600.00, 'online_consultation_fee' => 400.00, 'rating_avg' => 4.9, 'total_clients' => 213],
+            ['full_name' => 'Zeynep Kaya', 'email' => 'zeynep.kaya@diyetlenio.com', 'phone' => '05357654321', 'title' => 'Dyt. Zeynep Kaya', 'specialization' => 'Çocuk Beslenmesi', 'about_me' => 'Bebek, çocuk ve ergen beslenmesi konusunda uzmanım. Ailelerle birlikte çalışarak çocuklarınızın sağlıklı beslenme alışkanlıkları kazanmasına yardımcı oluyorum.', 'experience_years' => 6, 'education' => 'Başkent Üniversitesi Beslenme ve Diyetetik', 'certifications' => 'Çocuk Beslenmesi Uzmanı', 'consultation_fee' => 450.00, 'online_consultation_fee' => 300.00, 'rating_avg' => 4.7, 'total_clients' => 89],
+            ['full_name' => 'Ahmet Öztürk', 'email' => 'ahmet.ozturk@diyetlenio.com', 'phone' => '05364567890', 'title' => 'Dyt. Ahmet Öztürk', 'specialization' => 'Obezite ve Kilo Yönetimi', 'about_me' => 'Obezite tedavisi ve sağlıklı kilo yönetimi alanında uzmanlaşmış bir diyetisyenim.', 'experience_years' => 9, 'education' => 'Gazi Üniversitesi Beslenme ve Diyetetik', 'certifications' => 'Bariatrik Cerrahi Beslenme Uzmanı', 'consultation_fee' => 550.00, 'online_consultation_fee' => 375.00, 'rating_avg' => 4.8, 'total_clients' => 156],
+            ['full_name' => 'Elif Şahin', 'email' => 'elif.sahin@diyetlenio.com', 'phone' => '05372345678', 'title' => 'Dyt. Elif Şahin', 'specialization' => 'Vejetaryen ve Vegan Beslenme', 'about_me' => 'Bitkisel beslenme, vejetaryen ve vegan diyetler konusunda uzmanım.', 'experience_years' => 5, 'education' => 'İstanbul Üniversitesi Beslenme ve Diyetetik', 'certifications' => 'Vejetaryen Beslenme Uzmanı', 'consultation_fee' => 400.00, 'online_consultation_fee' => 275.00, 'rating_avg' => 4.6, 'total_clients' => 73],
+            ['full_name' => 'Can Yıldırım', 'email' => 'can.yildirim@diyetlenio.com', 'phone' => '05383456789', 'title' => 'Dyt. Can Yıldırım', 'specialization' => 'Fonksiyonel Beslenme', 'about_me' => 'Fonksiyonel tıp yaklaşımı ile beslenme programları hazırlıyorum.', 'experience_years' => 7, 'education' => 'Ege Üniversitesi Beslenme ve Diyetetik', 'certifications' => 'Fonksiyonel Beslenme Uzmanı', 'consultation_fee' => 650.00, 'online_consultation_fee' => 450.00, 'rating_avg' => 4.9, 'total_clients' => 94]
+        ];
 
-        ob_start();
-        include __DIR__ . '/../../scripts/add-demo-content.php';
-        $output2 = ob_get_clean();
+        $created = 0;
+        foreach ($demoDietitians as $d) {
+            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->execute([$d['email']]);
+            if ($stmt->fetch()) continue;
+
+            $passwordHash = password_hash('Demo123!', PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO users (email, password, full_name, phone, user_type, is_active, is_email_verified, created_at, updated_at) VALUES (?, ?, ?, ?, 'dietitian', 1, 1, NOW(), NOW())");
+            $stmt->execute([$d['email'], $passwordHash, $d['full_name'], $d['phone']]);
+            $userId = $conn->lastInsertId();
+
+            $stmt = $conn->prepare("INSERT INTO dietitian_profiles (user_id, title, specialization, about_me, experience_years, education, certifications, consultation_fee, online_consultation_fee, rating_avg, total_clients, is_verified, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())");
+            $stmt->execute([$userId, $d['title'], $d['specialization'], $d['about_me'], $d['experience_years'], $d['education'], $d['certifications'], $d['consultation_fee'], $d['online_consultation_fee'], $d['rating_avg'], $d['total_clients']]);
+            $created++;
+        }
+        $output .= "✅ {$created} diyetisyen eklendi\n\n";
+
+        // Get admin user for articles/recipes
+        $stmt = $conn->query("SELECT id FROM users WHERE user_type = 'admin' LIMIT 1");
+        $adminUser = $stmt->fetch();
+        $authorId = $adminUser['id'] ?? 1;
+
+        // Demo Articles
+        $demoArticles = [
+            ['title' => 'Sağlıklı Beslenmenin 10 Altın Kuralı', 'slug' => 'saglikli-beslenmenin-10-altin-kurali', 'excerpt' => 'Sağlıklı bir yaşam için beslenme alışkanlıklarınızı düzenleyin.', 'content' => "Sağlıklı beslenme, yaşam kalitenizi artırmanın en önemli yollarından biridir.\n\n## 1. Dengeli Beslenin\nHer öğünde protein, karbonhidrat ve sağlıklı yağları dengeli şekilde tüketin.", 'category' => 'beslenme', 'tags' => 'sağlıklı beslenme, diyet', 'views' => 250],
+            ['title' => 'Kilo Vermek İçin 5 Etkili Strateji', 'slug' => 'kilo-vermek-icin-5-etkili-strateji', 'excerpt' => 'Sağlıklı ve kalıcı kilo kaybı için bilimsel stratejiler.', 'content' => "Kilo vermek bir maraton, sprint değildir.\n\n## 1. Kalori Açığı Oluşturun\nHarcadığınızdan daha az kalori alın.", 'category' => 'kilo-yonetimi', 'tags' => 'kilo verme, zayıflama', 'views' => 350],
+            ['title' => 'Spor Öncesi ve Sonrası Beslenme', 'slug' => 'spor-oncesi-ve-sonrasi-beslenme', 'excerpt' => 'Egzersiz performansınızı maksimize edin.', 'content' => "Spor yaparken doğru beslenme performansınızı etkiler.\n\n## Spor Öncesi\n2-3 saat önce kompleks karbonhidrat.", 'category' => 'spor-beslenmesi', 'tags' => 'spor, egzersiz', 'views' => 180],
+            ['title' => 'Çocuk Beslenmesinde Dikkat Edilenler', 'slug' => 'cocuk-beslenmesinde-dikkat-edilenler', 'excerpt' => 'Çocuklarınızın sağlıklı büyümesi için öneriler.', 'content' => "Çocukluk döneminde doğru beslenme çok önemlidir.\n\n## Kahvaltı Şart\nGünün en önemli öğünü.", 'category' => 'cocuk-beslenmesi', 'tags' => 'çocuk, büyüme', 'views' => 220],
+            ['title' => 'Vejetaryen ve Vegan Beslenme', 'slug' => 'vejetaryen-ve-vegan-beslenme', 'excerpt' => 'Bitkisel beslenmeye geçişte önemli noktalar.', 'content' => "Bitkisel beslenme doğru planlandığında sağlıklıdır.\n\n## Protein Kaynakları\nBaklagiller, tofu, kinoa.", 'category' => 'vejetaryen-vegan', 'tags' => 'vejetaryen, vegan', 'views' => 190]
+        ];
+
+        $articlesCreated = 0;
+        foreach ($demoArticles as $a) {
+            $stmt = $conn->prepare("SELECT id FROM articles WHERE slug = ?");
+            $stmt->execute([$a['slug']]);
+            if ($stmt->fetch()) continue;
+
+            $stmt = $conn->prepare("INSERT INTO articles (author_id, title, slug, excerpt, content, category, tags, status, views, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'published', ?, NOW(), NOW())");
+            $stmt->execute([$authorId, $a['title'], $a['slug'], $a['excerpt'], $a['content'], $a['category'], $a['tags'], $a['views']]);
+            $articlesCreated++;
+        }
+        $output .= "✅ {$articlesCreated} makale eklendi\n\n";
+
+        // Demo Recipes
+        $demoRecipes = [
+            ['title' => 'Protein Pankek', 'slug' => 'protein-pankek', 'description' => 'Yüksek proteinli kahvaltı.', 'ingredients' => "2 yumurta\n1 scoop protein\n1 muz", 'instructions' => "1. Karıştır\n2. Pişir", 'prep_time' => 5, 'cook_time' => 10, 'servings' => 2, 'calories' => 320, 'protein' => 28, 'carbs' => 35, 'fat' => 8, 'category' => 'Kahvaltı'],
+            ['title' => 'Kinoa Salatası', 'slug' => 'kinoa-salatasi', 'description' => 'Protein zengini salata.', 'ingredients' => "1 su bardağı kinoa\n1 salatalık\n2 domates", 'instructions' => "1. Kinoayı haşla\n2. Sebzeleri doğra\n3. Karıştır", 'prep_time' => 15, 'cook_time' => 15, 'servings' => 4, 'calories' => 280, 'protein' => 10, 'carbs' => 38, 'fat' => 12, 'category' => 'Salata'],
+            ['title' => 'Fırında Somon', 'slug' => 'firinda-somon', 'description' => 'Omega-3 zengini balık.', 'ingredients' => "4 dilim somon\nZeytinyağı\nLimon", 'instructions' => "1. Marine et\n2. 180°C fırında 20dk", 'prep_time' => 10, 'cook_time' => 20, 'servings' => 4, 'calories' => 320, 'protein' => 35, 'carbs' => 2, 'fat' => 18, 'category' => 'Ana Yemek'],
+            ['title' => 'Chia Puding', 'slug' => 'chia-puding', 'description' => 'Sağlıklı tatlı.', 'ingredients' => "3 yemek kaşığı chia\n1 bardak süt\nBal", 'instructions' => "1. Karıştır\n2. Buzdolabında beklet", 'prep_time' => 5, 'cook_time' => 0, 'servings' => 2, 'calories' => 180, 'protein' => 5, 'carbs' => 22, 'fat' => 8, 'category' => 'Tatlı'],
+            ['title' => 'Mercimek Çorbası', 'slug' => 'mercimek-corbasi', 'description' => 'Klasik Türk çorbası.', 'ingredients' => "1 bardak kırmızı mercimek\n1 soğan\n1 havuç", 'instructions' => "1. Soğanı kavur\n2. Mercimek ekle\n3. Pişir", 'prep_time' => 10, 'cook_time' => 30, 'servings' => 6, 'calories' => 160, 'protein' => 8, 'carbs' => 28, 'fat' => 3, 'category' => 'Çorba'],
+            ['title' => 'Izgara Tavuk', 'slug' => 'izgara-tavuk', 'description' => 'Yüksek protein, düşük yağ.', 'ingredients' => "4 parça tavuk göğsü\nBaharatlar", 'instructions' => "1. Marine et\n2. Izgarada pişir", 'prep_time' => 40, 'cook_time' => 15, 'servings' => 4, 'calories' => 250, 'protein' => 42, 'carbs' => 1, 'fat' => 8, 'category' => 'Ana Yemek']
+        ];
+
+        $recipesCreated = 0;
+        foreach ($demoRecipes as $r) {
+            $stmt = $conn->prepare("SELECT id FROM recipes WHERE slug = ?");
+            $stmt->execute([$r['slug']]);
+            if ($stmt->fetch()) continue;
+
+            $stmt = $conn->prepare("INSERT INTO recipes (author_id, title, slug, description, ingredients, instructions, prep_time, cook_time, servings, calories, protein, carbs, fat, category, is_published, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())");
+            $stmt->execute([$authorId, $r['title'], $r['slug'], $r['description'], $r['ingredients'], $r['instructions'], $r['prep_time'], $r['cook_time'], $r['servings'], $r['calories'], $r['protein'], $r['carbs'], $r['fat'], $r['category']]);
+            $recipesCreated++;
+        }
+        $output .= "✅ {$recipesCreated} tarif eklendi\n\n";
+
+        $output .= "🎉 Toplam: {$created} diyetisyen, {$articlesCreated} makale, {$recipesCreated} tarif!";
 
         $results['success'] = true;
-        $results['output'] = $output1 . "\n\n" . $output2;
+        $results['output'] = $output;
     } catch (Exception $e) {
-        ob_end_clean();
         $results['success'] = false;
         $results['error'] = $e->getMessage();
     }
