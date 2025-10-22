@@ -29,7 +29,10 @@ echo "<div class='container'>";
 echo "<h2 class='mb-4'>🔧 Deleted Users - Debug & Fix</h2>";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'fix_all' && isset($_POST['confirm'])) {
+    // CSRF kontrolü
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        echo "<div class='alert alert-danger'>Geçersiz form gönderimi (CSRF hatası).</div>";
+    } elseif ($_POST['action'] === 'fix_all' && isset($_POST['confirm'])) {
         // Fix all users with multiple deleted_ prefixes
         // Strategy: Keep first timestamp, remove all other deleted_ prefixes
         $stmt = $conn->query("
@@ -61,9 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo "<div class='alert alert-success'>";
         echo "✅ {$fixed} kullanıcının email'i temizlendi. <a href='fix-deleted-users.php'>Sayfayı yenile</a>";
         echo "</div>";
-    }
-
-    if ($_POST['action'] === 'permanently_delete' && isset($_POST['user_id']) && isset($_POST['confirm'])) {
+    } elseif ($_POST['action'] === 'permanently_delete' && isset($_POST['user_id']) && isset($_POST['confirm'])) {
         $userId = (int)$_POST['user_id'];
 
         // Delete related records first
@@ -98,6 +99,7 @@ if (count($multipleDeleted) > 0) {
     echo "<div class='card-body'>";
     echo "<h5>🔧 Fix All Users</h5>";
     echo "<form method='POST'>";
+    echo "<input type='hidden' name='csrf_token' value='" . getCsrfToken() . "'>";
     echo "<input type='hidden' name='action' value='fix_all'>";
     echo "<div class='form-check mb-3'>";
     echo "<input type='checkbox' name='confirm' class='form-check-input' id='confirmFix' required>";
@@ -134,6 +136,7 @@ if (count($deletedUsers) === 0) {
         echo "<td><span class='badge bg-" . ($prefixCount > 1 ? 'danger' : 'secondary') . "'>{$prefixCount}</span></td>";
         echo "<td>";
         echo "<form method='POST' class='d-inline' onsubmit='return confirm(\"Permanently delete user {$user['id']}?\")'>";
+        echo "<input type='hidden' name='csrf_token' value='" . getCsrfToken() . "'>";
         echo "<input type='hidden' name='action' value='permanently_delete'>";
         echo "<input type='hidden' name='user_id' value='{$user['id']}'>";
         echo "<input type='hidden' name='confirm' value='1'>";
