@@ -9,6 +9,12 @@ $pageTitle = 'Geri Bildirim';
 
 // Form gönderildi mi kontrol et
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF protection
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/feedback');
+    }
+
     $name = sanitize($_POST['name'] ?? '');
     $email = sanitize($_POST['email'] ?? '');
     $type = sanitize($_POST['type'] ?? '');
@@ -258,6 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="feedback-form">
                 <form method="POST" action="/feedback">
+                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                     <div class="mb-4">
                         <label for="name" class="form-label">Adınız Soyadınız *</label>
                         <input type="text" class="form-control" id="name" name="name" required

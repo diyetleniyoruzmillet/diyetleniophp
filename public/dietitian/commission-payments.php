@@ -16,6 +16,12 @@ $dietitianId = $auth->user()->getId();
 
 // Handle commission payment upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_commission'])) {
+    // CSRF protection
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/dietitian/commission-payments.php');
+    }
+
     try {
         $paymentId = (int)$_POST['payment_id'];
 
@@ -158,8 +164,8 @@ $pageTitle = 'Komisyon Ödemeleri';
                     </h2>
 
                     <?php if (hasFlash()): ?>
-                        <div class="alert alert-<?= getFlash('type') ?> alert-dismissible fade show">
-                            <?= getFlash('message') ?>
+                        <div class="alert alert-<?= clean(getFlash('type')) ?> alert-dismissible fade show">
+                            <?= clean(getFlash('message')) ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <?php endif; ?>
@@ -293,6 +299,7 @@ $pageTitle = 'Komisyon Ödemeleri';
                                                         </div>
 
                                                         <input type="hidden" name="payment_id" value="<?= $payment['id'] ?>">
+                                                        <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>

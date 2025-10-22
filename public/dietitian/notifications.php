@@ -24,12 +24,24 @@ $notifications = $stmt->fetchAll();
 
 // Okunmamış bildirimleri işaretle
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_read'])) {
+    // CSRF protection
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/dietitian/notifications.php');
+    }
+
     $conn->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?")->execute([$userId]);
     redirect('/dietitian/notifications.php');
 }
 
 // Tek bir bildirimi sil
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification'])) {
+    // CSRF protection
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/dietitian/notifications.php');
+    }
+
     $notificationId = (int)$_POST['notification_id'];
     $conn->prepare("DELETE FROM notifications WHERE id = ? AND user_id = ?")->execute([$notificationId, $userId]);
     redirect('/dietitian/notifications.php');
@@ -48,6 +60,7 @@ require __DIR__ . '/../../views/partials/dietitian-header.php';
                     <i class="fas fa-bell me-2"></i>Bildirimler
                 </h1>
                 <form method="POST" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                     <button type="submit" name="mark_read" class="btn btn-sm btn-success">
                         <i class="fas fa-check-double me-1"></i>Tümünü Okundu İşaretle
                     </button>
@@ -78,6 +91,7 @@ require __DIR__ . '/../../views/partials/dietitian-header.php';
                                 </div>
                                 <form method="POST" class="ms-3">
                                     <input type="hidden" name="notification_id" value="<?= $notif['id'] ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                                     <button type="submit" name="delete_notification" class="btn btn-sm btn-outline-danger"
                                             onclick="return confirm('Bu bildirimi silmek istediğinizden emin misiniz?')">
                                         <i class="fas fa-trash"></i>

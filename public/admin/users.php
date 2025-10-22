@@ -50,6 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $stmt->execute([$userId]);
                 setFlash('success', 'Kullanıcı başarıyla deaktif edildi.');
             } elseif ($action === 'delete') {
+                // Önce aktif diyetisyen atamalarını kaldır
+                $stmt = $conn->prepare("
+                    UPDATE client_dietitian_assignments
+                    SET is_active = 0
+                    WHERE (client_id = ? OR dietitian_id = ?) AND is_active = 1
+                ");
+                $stmt->execute([$userId, $userId]);
+
                 // Soft delete - is_active = 0 ve email başına "deleted_" ekle
                 $stmt = $conn->prepare("
                     UPDATE users
@@ -113,7 +121,7 @@ $search = trim($_GET['search'] ?? '');
 $userType = $_GET['user_type'] ?? '';
 
 // Kullanıcıları çek
-$whereClause = "WHERE 1=1";
+$whereClause = "WHERE u.email NOT LIKE 'deleted_%'"; // Silinen kullanıcıları hariç tut
 $params = [];
 
 if ($filter === 'active') {
@@ -165,6 +173,7 @@ $stmt = $conn->query("
     WHERE u.user_type = 'dietitian'
     AND u.is_active = 1
     AND dp.is_approved = 1
+    AND u.email NOT LIKE 'deleted_%'
     ORDER BY u.full_name
 ");
 $availableDietitians = $stmt->fetchAll();
@@ -179,6 +188,7 @@ $stmt = $conn->query("
         SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_count,
         SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) as inactive_count
     FROM users
+    WHERE email NOT LIKE 'deleted_%'
 ");
 $totalStats = $stmt->fetch();
 

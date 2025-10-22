@@ -5,6 +5,12 @@ $conn = $db->getConnection();
 
 // CRUD işlemleri
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF protection
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/admin/cms-pages.php');
+    }
+
     if (isset($_POST['action'])) {
         if ($_POST['action'] === 'create') {
             $stmt = $conn->prepare("
@@ -75,7 +81,7 @@ if (isset($_GET['edit'])) {
                 <h1>Sayfa Yönetimi</h1>
 
                 <?php if ($flash = getFlash('success')): ?>
-                    <div class="alert alert-success"><?= $flash ?></div>
+                    <div class="alert alert-success"><?= clean($flash) ?></div>
                 <?php endif; ?>
 
                 <!-- Form -->
@@ -84,6 +90,7 @@ if (isset($_GET['edit'])) {
                         <h5><?= $editPage ? 'Sayfa Düzenle' : 'Yeni Sayfa Ekle' ?></h5>
                         <form method="POST">
                             <input type="hidden" name="action" value="<?= $editPage ? 'update' : 'create' ?>">
+                            <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                             <?php if ($editPage): ?>
                                 <input type="hidden" name="id" value="<?= $editPage['id'] ?>">
                             <?php endif; ?>

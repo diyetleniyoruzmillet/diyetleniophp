@@ -112,8 +112,8 @@ $pageTitle = 'Ödeme Yönetimi';
                     </h2>
 
                     <?php if (hasFlash()): ?>
-                        <div class="alert alert-<?= getFlash('type') ?> alert-dismissible fade show">
-                            <?= getFlash('message') ?>
+                        <div class="alert alert-<?= clean(getFlash('type')) ?> alert-dismissible fade show">
+                            <?= clean(getFlash('message')) ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <?php endif; ?>

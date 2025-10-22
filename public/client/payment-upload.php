@@ -16,6 +16,12 @@ $clientId = $auth->user()->getId();
 
 // Handle payment upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_payment'])) {
+    // CSRF protection
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/client/payment-upload.php');
+    }
+
     try {
         $appointmentId = (int)$_POST['appointment_id'];
         $amount = (float)$_POST['amount'];
@@ -182,8 +188,8 @@ $pageTitle = 'Ödeme Yükleme';
                     </h2>
 
                     <?php if (hasFlash()): ?>
-                        <div class="alert alert-<?= getFlash('type') ?> alert-dismissible fade show">
-                            <?= getFlash('message') ?>
+                        <div class="alert alert-<?= clean(getFlash('type')) ?> alert-dismissible fade show">
+                            <?= clean(getFlash('message')) ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <?php endif; ?>
@@ -273,6 +279,7 @@ $pageTitle = 'Ödeme Yükleme';
                                                         <input type="hidden" name="appointment_id" value="<?= $apt['id'] ?>">
                                                         <input type="hidden" name="amount" value="<?= $fee ?>">
                                                         <input type="hidden" name="dietitian_id" value="<?= $apt['dietitian_id'] ?>">
+                                                        <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>

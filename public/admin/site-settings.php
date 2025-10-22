@@ -4,6 +4,12 @@ $auth->requireAdmin();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF protection
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/admin/site-settings.php');
+    }
+
     foreach ($_POST['settings'] as $key => $value) {
         $stmt = $conn->prepare("
             INSERT INTO site_settings (setting_key, setting_value) 
@@ -35,10 +41,11 @@ while ($row = $stmt->fetch()) {
         <h1>Site Ayarları</h1>
 
         <?php if ($flash = getFlash('success')): ?>
-            <div class="alert alert-success"><?= $flash ?></div>
+            <div class="alert alert-success"><?= clean($flash) ?></div>
         <?php endif; ?>
 
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
             <div class="card mb-4">
                 <div class="card-header"><h5>Genel Ayarlar</h5></div>
                 <div class="card-body">
