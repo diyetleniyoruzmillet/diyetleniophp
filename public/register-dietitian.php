@@ -18,83 +18,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     } else {
-        // Form verileri
-        $fullName = trim($_POST['full_name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $passwordConfirm = $_POST['password_confirm'] ?? '';
+        // Validator ile validasyon
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['full_name', 'email', 'phone', 'password', 'password_confirm',
+                       'title', 'specialization', 'experience_years', 'education', 'about_me', 'consultation_fee'])
+            ->min('full_name', 3)
+            ->max('full_name', 100)
+            ->email('email')
+            ->unique('email', 'users', 'email')
+            ->phone('phone')
+            ->min('password', 8)
+            ->match('password_confirm', 'password')
+            ->min('about_me', 50)
+            ->max('about_me', 1000)
+            ->min('education', 10)
+            ->max('education', 500)
+            ->between('experience_years', 0, 50)
+            ->between('consultation_fee', 0, 10000)
+            ->required(['terms']);
 
-        // Diyetisyen bilgileri
-        $title = trim($_POST['title'] ?? '');
-        $specialization = trim($_POST['specialization'] ?? '');
-        $experienceYears = (int)($_POST['experience_years'] ?? 0);
-        $education = trim($_POST['education'] ?? '');
-        $aboutMe = trim($_POST['about_me'] ?? '');
-        $iban = trim($_POST['iban'] ?? '');
-        $consultationFee = (float)($_POST['consultation_fee'] ?? 0);
-        $terms = isset($_POST['terms']);
+        // Şifre güçlülük kontrolü
+        $validator->custom('password', function($value) {
+            return preg_match('/[A-Z]/', $value) &&
+                   preg_match('/[a-z]/', $value) &&
+                   preg_match('/[0-9]/', $value);
+        }, 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.');
 
-        // Temel validasyon
-        if (empty($fullName) || strlen($fullName) < 3) {
-            $errors[] = 'Ad Soyad en az 3 karakter olmalıdır.';
+        // IBAN validasyonu (opsiyonel alan için)
+        if (!empty($_POST['iban'])) {
+            $validator->custom('iban', function($value) {
+                $ibanClean = preg_replace('/\s/', '', $value);
+                return preg_match('/^TR\d{24}$/', $ibanClean);
+            }, 'Geçerli bir IBAN numarası girin (TR ile başlamalı, 26 karakter).');
         }
 
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Geçerli bir email adresi girin.';
-        }
-
-        if (empty($phone) || !preg_match('/^[0-9]{10,11}$/', preg_replace('/\D/', '', $phone))) {
-            $errors[] = 'Geçerli bir telefon numarası girin.';
-        }
-
-        if (empty($password) || strlen($password) < 8) {
-            $errors[] = 'Şifre en az 8 karakter olmalıdır.';
-        } elseif (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password)) {
-            $errors[] = 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.';
-        }
-
-        if ($password !== $passwordConfirm) {
-            $errors[] = 'Şifreler eşleşmiyor.';
-        }
-
-        // Diyetisyen bilgileri validasyonu
-        if (empty($title)) {
-            $errors[] = 'Unvan gereklidir.';
-        }
-
-        if (empty($specialization)) {
-            $errors[] = 'Uzmanlık alanı gereklidir.';
-        }
-
-        if ($experienceYears < 0 || $experienceYears > 50) {
-            $errors[] = 'Geçerli bir tecrübe yılı girin.';
-        }
-
-        if (empty($education)) {
-            $errors[] = 'Eğitim bilgisi gereklidir.';
-        }
-
-        if (empty($aboutMe) || strlen($aboutMe) < 50) {
-            $errors[] = 'Hakkımda bölümü en az 50 karakter olmalıdır.';
-        }
-
-        if (!empty($iban)) {
-            $ibanClean = preg_replace('/\s/', '', $iban);
-            if (!preg_match('/^TR\d{24}$/', $ibanClean)) {
-                $errors[] = 'Geçerli bir IBAN numarası girin (TR ile başlamalı, 26 karakter).';
+        if ($validator->fails()) {
+            foreach ($validator->errors() as $field => $fieldErrors) {
+                foreach ($fieldErrors as $error) {
+                    $errors[] = $error;
+                }
             }
         }
 
-        if ($consultationFee < 0 || $consultationFee > 10000) {
-            $errors[] = 'Geçerli bir danışmanlık ücreti girin.';
-        }
-
-        if (!$terms) {
-            $errors[] = 'Kullanım şartlarını kabul etmelisiniz.';
-        }
-
-        // Dosya yükleme kontrolü
+        // Dosya yükleme kontrolü (ayrı tutulmalı - Validator $_FILES'ı handle etmiyor)
         $diplomaFile = null;
         if (isset($_FILES['diploma']) && $_FILES['diploma']['error'] === UPLOAD_ERR_OK) {
             $allowed = ['pdf', 'jpg', 'jpeg', 'png'];
@@ -111,18 +78,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Diploma dosyası yüklemeniz gereklidir.';
         }
 
-        // Email kontrolü
+        // Kayıt işlemi (Email kontrolü Validator'da zaten yapıldı - unique())
         if (empty($errors)) {
-            $conn = $db->getConnection();
-            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            if ($stmt->fetch()) {
-                $errors[] = 'Bu email adresi zaten kayıtlı.';
-            }
-        }
+            // Form verilerini al
+            $fullName = $_POST['full_name'];
+            $email = $_POST['email'];
+            $phone = $_POST['phone'];
+            $password = $_POST['password'];
+            $title = $_POST['title'];
+            $specialization = $_POST['specialization'];
+            $experienceYears = (int)$_POST['experience_years'];
+            $education = $_POST['education'];
+            $aboutMe = $_POST['about_me'];
+            $iban = $_POST['iban'] ?? '';
+            $consultationFee = (float)$_POST['consultation_fee'];
 
-        // Kayıt işlemi
-        if (empty($errors)) {
             try {
                 $conn = $db->getConnection();
                 $conn->beginTransaction();
