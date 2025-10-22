@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 // Filtreleme
-$filter = $_GET['filter'] ?? 'pending';
+$filter = $_GET['filter'] ?? 'all'; // Default: Tümünü göster
 $search = trim($_GET['search'] ?? '');
 
 // Diyetisyenleri çek
@@ -94,12 +94,16 @@ if ($filter === 'pending') {
 } elseif ($filter === 'approved') {
     $whereClause = "WHERE dp.is_approved = 1";
 }
+// 'all' ise WHERE clause boş kalır, hepsi gelir
 
 if (!empty($search)) {
     $whereClause .= ($whereClause ? " AND" : "WHERE") . " (u.full_name LIKE ? OR u.email LIKE ?)";
     $params[] = "%{$search}%";
     $params[] = "%{$search}%";
 }
+
+// Silinen kullanıcıları hariç tut
+$deletedFilter = ($whereClause ? " AND" : "WHERE") . " u.email NOT LIKE 'deleted_%'";
 
 $stmt = $conn->prepare("
     SELECT u.id, u.full_name, u.email, u.phone, u.is_active, u.created_at,
@@ -108,7 +112,7 @@ $stmt = $conn->prepare("
            dp.approval_date, dp.rejection_reason, dp.rating_avg, dp.total_clients
     FROM users u
     INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-    {$whereClause}
+    {$whereClause}{$deletedFilter}
     ORDER BY u.created_at DESC
 ");
 $stmt->execute($params);
