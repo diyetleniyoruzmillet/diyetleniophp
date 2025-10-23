@@ -288,7 +288,7 @@ $pageTitle = 'Diyetisyen Dashboard';
         }
 
         .icon-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
             color: white;
         }

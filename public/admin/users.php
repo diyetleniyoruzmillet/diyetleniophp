@@ -290,7 +290,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
     <style>
         /* Modern Stats Cards */
         .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 15px;
             padding: 25px;
             color: white;
@@ -367,7 +367,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
 
         /* Modern Page Header */
         .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
@@ -399,7 +399,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
         }
 
         .btn-filter.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
@@ -418,7 +418,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
         }
 
         .modern-table thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
         }
 
@@ -486,7 +486,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
         }
 
         .btn-modern-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
         }
 
@@ -513,7 +513,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             border-radius: 20px 20px 0 0;
             padding: 25px;
@@ -546,7 +546,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
         }
 
         .search-box input:focus {
-            border-color: #667eea;
+            border-color: #56ab2f;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
 
@@ -815,7 +815,7 @@ $pageTitle = 'Kullanıcı Yönetimi';
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);">
+                                                    <span class="badge" style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);">
                                                         <i class="fas fa-calendar-check me-1"></i>
                                                         <?= number_format($user['appointment_count']) ?>
                                                     </span>

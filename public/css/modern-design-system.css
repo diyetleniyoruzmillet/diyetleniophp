@@ -7,22 +7,22 @@
    CSS VARIABLES - Modern Color Palette
    ============================================ */
 :root {
-    /* Primary Gradients - Vibrant & Modern */
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-primary-light: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+    /* Primary Gradients - Vibrant & Modern (UNIFIED GREEN THEME) */
+    --gradient-primary: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    --gradient-primary-light: linear-gradient(135deg, #56ab2f20 0%, #a8e06320 100%);
     --gradient-success: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-    --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-warning: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
     --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     --gradient-danger: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
     --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 
-    /* Animated Background Gradients */
-    --gradient-bg-1: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    /* Animated Background Gradients (Green Theme) */
+    --gradient-bg-1: linear-gradient(135deg, #56ab2f 0%, #a8e063 50%, #7ac74f 100%);
     --gradient-bg-2: linear-gradient(135deg, #56ab2f 0%, #a8e063 50%, #4facfe 100%);
 
-    /* Solid Colors */
-    --primary: #667eea;
-    --primary-dark: #5568d3;
+    /* Solid Colors (Green Theme) */
+    --primary: #56ab2f;
+    --primary-dark: #4a9428;
     --success: #56ab2f;
     --warning: #f5576c;
     --info: #4facfe;

@@ -346,7 +346,7 @@ $pageTitle = 'Danışan Paneli';
         }
 
         .icon-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
             color: white;
         }
@@ -358,7 +358,7 @@ $pageTitle = 'Danışan Paneli';
         }
 
         .icon-warning {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
             color: white;
         }
@@ -483,7 +483,7 @@ $pageTitle = 'Danışan Paneli';
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border: none;
             color: white;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);

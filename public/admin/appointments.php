@@ -73,7 +73,7 @@ $pageTitle = 'Randevu Yönetimi';
     <style>
         /* Modern Stats Cards */
         .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 15px;
             padding: 25px;
             color: white;
@@ -140,7 +140,7 @@ $pageTitle = 'Randevu Yönetimi';
 
         /* Filter Card */
         .filter-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 20px;
             padding: 25px;
             margin-bottom: 25px;
@@ -158,7 +158,7 @@ $pageTitle = 'Randevu Yönetimi';
 
         .btn-filter.active {
             background: white;
-            color: #667eea;
+            color: #56ab2f;
             box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
         }
 
@@ -176,7 +176,7 @@ $pageTitle = 'Randevu Yönetimi';
         }
 
         .modern-table thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
         }
 
@@ -264,7 +264,7 @@ $pageTitle = 'Randevu Yönetimi';
             height: 40px;
             padding: 0;
             background: white;
-            color: #667eea;
+            color: #56ab2f;
         }
 
         /* Animations */
@@ -443,7 +443,7 @@ $pageTitle = 'Randevu Yönetimi';
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 1rem; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);">
+                                                        <span class="badge" style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 1rem; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);">
                                                             <?= number_format($apt['consultation_fee'], 0) ?> ₺
                                                         </span>
                                                     </td>

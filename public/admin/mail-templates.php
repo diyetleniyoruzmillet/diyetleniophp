@@ -68,7 +68,7 @@ $pageTitle = 'Mail Template Yönetimi';
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             min-height: 100vh;
         }
 
@@ -83,7 +83,7 @@ $pageTitle = 'Mail Template Yönetimi';
         .page-header-custom h1 {
             font-size: 2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
@@ -114,14 +114,14 @@ $pageTitle = 'Mail Template Yönetimi';
             left: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             transition: width 0.3s ease;
         }
 
         .template-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
-            border-color: #667eea;
+            border-color: #56ab2f;
         }
 
         .template-card:hover::before {
@@ -148,7 +148,7 @@ $pageTitle = 'Mail Template Yönetimi';
         .template-icon {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -160,7 +160,7 @@ $pageTitle = 'Mail Template Yönetimi';
 
         .template-subject {
             font-size: 0.95rem;
-            color: #667eea;
+            color: #56ab2f;
             font-weight: 600;
             margin-bottom: 12px;
             padding: 8px 16px;
@@ -195,7 +195,7 @@ $pageTitle = 'Mail Template Yönetimi';
 
         .variable-tag {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             padding: 6px 14px;
             border-radius: 20px;
@@ -212,7 +212,7 @@ $pageTitle = 'Mail Template Yönetimi';
         }
 
         .btn-view {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             padding: 10px 24px;
             border-radius: 12px;
@@ -254,7 +254,7 @@ $pageTitle = 'Mail Template Yönetimi';
         }
 
         .template-count {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             padding: 20px;
             border-radius: 16px;
@@ -276,7 +276,7 @@ $pageTitle = 'Mail Template Yönetimi';
         }
 
         .modal-header-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             border-radius: 16px 16px 0 0;
             padding: 24px;
@@ -306,7 +306,7 @@ $pageTitle = 'Mail Template Yönetimi';
         }
 
         .info-label i {
-            color: #667eea;
+            color: #56ab2f;
         }
     </style>
 </head>
