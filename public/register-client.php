@@ -14,92 +14,106 @@ $errors = [];
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Rate limiting kontrolü (3 kayıt denemesi / 10 dakika)
-    $rateLimiter = new RateLimiter($db);
-    if ($rateLimiter->tooManyAttempts('register_client', null, 3, 10)) {
-        $remainingSeconds = $rateLimiter->availableIn('register_client', null, 10);
-        $remainingMinutes = ceil($remainingSeconds / 60);
-        $errors[] = "Çok fazla kayıt denemesi yaptınız. Lütfen {$remainingMinutes} dakika sonra tekrar deneyin.";
-    }
     // CSRF kontrolü
-    elseif (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     }
     else {
-        // Validator ile validasyon
-        $validator = new Validator($_POST);
-
-        $validator
-            ->required(['full_name', 'email', 'phone', 'password', 'password_confirm'])
-            ->min('full_name', 3)
-            ->max('full_name', 100)
-            ->email('email')
-            ->unique('email', 'users', 'email')
-            ->phone('phone')
-            ->min('password', 8)
-            ->match('password_confirm', 'password');
-
-        // Şifre güçlülük kontrolü
-        $validator->custom('password', function($value) {
-            return preg_match('/[A-Z]/', $value) &&
-                   preg_match('/[a-z]/', $value) &&
-                   preg_match('/[0-9]/', $value);
-        }, 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.');
-
-        // Şartlar kabul edildi mi?
-        if (!isset($_POST['terms'])) {
-            $validator->errors()['terms'][] = 'Kullanım şartlarını kabul etmelisiniz.';
+        // Rate limiting kontrolü (3 kayıt denemesi / 10 dakika) - with error handling
+        try {
+            $rateLimiter = new RateLimiter($db);
+            if ($rateLimiter->tooManyAttempts('register_client', null, 3, 10)) {
+                $remainingSeconds = $rateLimiter->availableIn('register_client', null, 10);
+                $remainingMinutes = ceil($remainingSeconds / 60);
+                $errors[] = "Çok fazla kayıt denemesi yaptınız. Lütfen {$remainingMinutes} dakika sonra tekrar deneyin.";
+            }
+        } catch (Exception $e) {
+            error_log('Rate limiter error in register-client: ' . $e->getMessage());
+            // Continue without rate limiting
         }
 
-        if ($validator->fails()) {
-            foreach ($validator->errors() as $field => $fieldErrors) {
-                foreach ($fieldErrors as $error) {
-                    $errors[] = $error;
+        if (empty($errors)) {
+            // Validator ile validasyon
+            $validator = new Validator($_POST);
+
+            $validator
+                ->required(['full_name', 'email', 'phone', 'password', 'password_confirm'])
+                ->min('full_name', 3)
+                ->max('full_name', 100)
+                ->email('email')
+                ->unique('email', 'users', 'email')
+                ->phone('phone')
+                ->min('password', 8)
+                ->match('password_confirm', 'password');
+
+            // Şifre güçlülük kontrolü
+            $validator->custom('password', function($value) {
+                return preg_match('/[A-Z]/', $value) &&
+                       preg_match('/[a-z]/', $value) &&
+                       preg_match('/[0-9]/', $value);
+            }, 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.');
+
+            // Şartlar kabul edildi mi?
+            if (!isset($_POST['terms'])) {
+                $validator->errors()['terms'][] = 'Kullanım şartlarını kabul etmelisiniz.';
+            }
+
+            if ($validator->fails()) {
+                foreach ($validator->errors() as $field => $fieldErrors) {
+                    foreach ($fieldErrors as $error) {
+                        $errors[] = $error;
+                    }
                 }
             }
-        }
 
-        // Kayıt işlemi
-        if (empty($errors)) {
-            try {
-                // Rate limit'e kaydet (başarılı deneme öncesi)
-                $rateLimiter->hit(hash('sha256', 'register_client|ip_' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')), 10);
+            // Kayıt işlemi
+            if (empty($errors)) {
+                try {
+                    // Rate limit'e kaydet (başarılı deneme öncesi) - with error handling
+                    try {
+                        if (isset($rateLimiter)) {
+                            $rateLimiter->hit(hash('sha256', 'register_client|ip_' . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')), 10);
+                        }
+                    } catch (Exception $e) {
+                        error_log('Rate limiter hit error: ' . $e->getMessage());
+                    }
 
-                // Validated data al
-                $data = $validator->validated();
+                    // Validated data al
+                    $data = $validator->validated();
 
-                $conn = $db->getConnection();
-                $conn->beginTransaction();
+                    $conn = $db->getConnection();
+                    $conn->beginTransaction();
 
-                // Email doğrulama token'ı oluştur
-                $verificationToken = bin2hex(random_bytes(32));
-                $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+                    // Email doğrulama token'ı oluştur
+                    $verificationToken = bin2hex(random_bytes(32));
+                    $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
-                // Kullanıcıyı kaydet
-                $stmt = $conn->prepare("
-                    INSERT INTO users (
-                        email, password, full_name, phone, user_type,
-                        email_verification_token, is_active, created_at
-                    ) VALUES (?, ?, ?, ?, 'client', ?, 1, NOW())
-                ");
+                    // Kullanıcıyı kaydet
+                    $stmt = $conn->prepare("
+                        INSERT INTO users (
+                            email, password, full_name, phone, user_type,
+                            email_verification_token, is_active, created_at
+                        ) VALUES (?, ?, ?, ?, 'client', ?, 1, NOW())
+                    ");
 
-                $stmt->execute([
-                    $data['email'],
-                    $hashedPassword,
-                    $data['full_name'],
-                    $data['phone'],
-                    $verificationToken
-                ]);
+                    $stmt->execute([
+                        $data['email'],
+                        $hashedPassword,
+                        $data['full_name'],
+                        $data['phone'],
+                        $verificationToken
+                    ]);
 
-                $conn->commit();
-                $success = true;
+                    $conn->commit();
+                    $success = true;
 
-            } catch (Exception $e) {
-                if (isset($conn) && $conn->inTransaction()) {
-                    $conn->rollBack();
+                } catch (Exception $e) {
+                    if (isset($conn) && $conn->inTransaction()) {
+                        $conn->rollBack();
+                    }
+                    $errors[] = 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.';
+                    error_log('Registration error: ' . $e->getMessage());
                 }
-                $errors[] = 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.';
-                error_log('Registration error: ' . $e->getMessage());
             }
         }
     }
