@@ -862,3 +862,71 @@ function isActive(string $path): string
     $currentPath = $_SERVER['REQUEST_URI'] ?? '';
     return strpos($currentPath, $path) === 0 ? 'active' : '';
 }
+
+/**
+ * Video görüşme için benzersiz room ID oluşturur
+ *
+ * @param int $appointmentId
+ * @return string
+ */
+function generateVideoRoomId(int $appointmentId): string
+{
+    return 'room_' . $appointmentId . '_' . bin2hex(random_bytes(8));
+}
+
+/**
+ * Randevu için video görüşme başlatabilir mi kontrol eder
+ *
+ * @param array $appointment
+ * @return bool
+ */
+function canStartVideoCall(array $appointment): bool
+{
+    // Sadece online randevular için
+    if ($appointment['type'] !== 'online') {
+        return false;
+    }
+
+    // Randevu durumu confirmed olmalı
+    if ($appointment['status'] !== 'confirmed') {
+        return false;
+    }
+
+    // Randevu zamanı gelmiş veya geçmiş olmalı (15 dakika önceden başlatılabilir)
+    $appointmentDateTime = strtotime($appointment['appointment_date'] . ' ' . $appointment['appointment_time']);
+    $now = time();
+    $fifteenMinutesBefore = $appointmentDateTime - (15 * 60);
+
+    return $now >= $fifteenMinutesBefore;
+}
+
+/**
+ * Video call butonu HTML'i oluşturur
+ *
+ * @param array $appointment
+ * @param PDO $conn Database connection
+ * @return string
+ */
+function getVideoCallButton(array $appointment, PDO $conn): string
+{
+    if (!canStartVideoCall($appointment)) {
+        return '';
+    }
+
+    // Room ID al veya oluştur
+    $roomId = $appointment['video_room_url'];
+
+    if (empty($roomId)) {
+        $roomId = generateVideoRoomId($appointment['id']);
+
+        // Database'e kaydet
+        $stmt = $conn->prepare("UPDATE appointments SET video_room_url = ? WHERE id = ?");
+        $stmt->execute([$roomId, $appointment['id']]);
+    }
+
+    $videoUrl = "/video-room.php?appointment_id=" . $appointment['id'] . "&room_id=" . urlencode($roomId);
+
+    return '<a href="' . htmlspecialchars($videoUrl) . '" class="btn btn-success btn-lg w-100" target="_blank">
+        <i class="fas fa-video me-2"></i>Video Görüşmeye Başla
+    </a>';
+}

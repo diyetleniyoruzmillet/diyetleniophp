@@ -96,12 +96,20 @@ return [
 
     // WebRTC ayarları
     'webrtc' => [
+        'signaling_server_url' => $_ENV['SIGNALING_SERVER_URL'] ?? 'http://localhost:3000',
         'stun_servers' => [
             'stun:stun.l.google.com:19302',
             'stun:stun1.l.google.com:19302',
+            'stun:stun2.l.google.com:19302',
         ],
         'turn_servers' => [
             // TURN sunucu yapılandırması eklenecek
+            // Örnek:
+            // [
+            //     'urls' => 'turn:your-turn-server.com:3478',
+            //     'username' => 'your-username',
+            //     'credential' => 'your-password'
+            // ]
         ],
         'max_duration' => (int) ($_ENV['VIDEO_MAX_DURATION'] ?? 60), // Dakika
     ],

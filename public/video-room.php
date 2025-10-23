@@ -237,126 +237,97 @@ $pageTitle = 'Video Görüşme';
         </div>
     </div>
 
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="/assets/js/webrtc-client.js"></script>
     <script>
+        // Configuration
+        <?php
+        $config = include __DIR__ . '/../config/config.php';
+        $signalingServerUrl = $config['webrtc']['signaling_server_url'];
+        ?>
+        const signalingServerUrl = '<?= $signalingServerUrl ?>';
         const roomId = '<?= $roomId ?>';
         const userId = '<?= $user->getId() ?>';
         const userName = '<?= clean($user->getFullName()) ?>';
 
-        let localStream = null;
-        let remoteStream = null;
-        let peerConnection = null;
-        let isMuted = false;
-        let isVideoOff = false;
+        // Initialize WebRTC Client
+        const webrtcClient = new WebRTCClient({
+            roomId: roomId,
+            userId: userId,
+            userName: userName,
+            signalingServerUrl: signalingServerUrl
+        });
 
-        // ICE servers for WebRTC
-        const iceServers = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' }
-            ]
+        // Setup callbacks
+        webrtcClient.onLocalStream = (stream) => {
+            document.getElementById('localVideo').srcObject = stream;
+            console.log('Local stream started');
         };
 
-        // Initialize
-        async function init() {
-            try {
-                // Get local media stream
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { width: 1280, height: 720 },
-                    audio: true
-                });
+        webrtcClient.onRemoteStream = (stream, socketId) => {
+            document.getElementById('remoteVideo').srcObject = stream;
+            document.getElementById('waitingScreen').classList.add('hidden');
+            updateConnectionStatus('connected');
+            console.log('Remote stream received from:', socketId);
+        };
 
-                document.getElementById('localVideo').srcObject = localStream;
+        webrtcClient.onConnectionStateChange = (state, socketId) => {
+            console.log('Connection state changed:', state);
+            updateConnectionStatus(state);
+        };
 
-                // Create peer connection
-                peerConnection = new RTCPeerConnection(iceServers);
+        webrtcClient.onError = (error) => {
+            console.error('WebRTC Error:', error);
+            alert(error.message || 'Video call hatası oluştu. Lütfen sayfayı yenileyip tekrar deneyin.');
+        };
 
-                // Add local tracks to peer connection
-                localStream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, localStream);
-                });
+        webrtcClient.onUserJoined = ({ socketId, userId, userName }) => {
+            console.log('User joined:', userName);
+        };
 
-                // Handle remote stream
-                peerConnection.ontrack = (event) => {
-                    if (!remoteStream) {
-                        remoteStream = new MediaStream();
-                        document.getElementById('remoteVideo').srcObject = remoteStream;
-                    }
-                    remoteStream.addTrack(event.track);
-                    document.getElementById('waitingScreen').classList.add('hidden');
-                };
+        webrtcClient.onUserLeft = ({ socketId, userId, userName }) => {
+            console.log('User left:', userName);
+            document.getElementById('waitingScreen').classList.remove('hidden');
+            updateConnectionStatus('disconnected');
+        };
 
-                // ICE candidate handling
-                peerConnection.onicecandidate = (event) => {
-                    if (event.candidate) {
-                        console.log('New ICE candidate:', event.candidate);
-                        // Send to signaling server
-                        // socket.emit('ice-candidate', roomId, userId, event.candidate);
-                        // Note: Uncomment above when signaling server is running
-                        // For now, ICE candidates are handled directly by STUN/TURN servers
-                    }
-                };
+        // Initialize WebRTC
+        webrtcClient.init().catch(error => {
+            console.error('Failed to initialize WebRTC:', error);
+            alert('Video görüşme başlatılamadı. Lütfen:\n1. Kamera ve mikrofon izinlerini kontrol edin\n2. HTTPS bağlantısı kullandığınızdan emin olun\n3. Tarayıcınızı güncelleyin');
+            setTimeout(() => {
+                window.location.href = '/<?= $user->getUserType() ?>/appointments.php';
+            }, 3000);
+        });
 
-                // Connection state
-                peerConnection.onconnectionstatechange = () => {
-                    updateConnectionStatus(peerConnection.connectionState);
-                };
-
-                setTimeout(() => {
-                    document.getElementById('waitingScreen').classList.add('hidden');
-                }, 2000);
-
-            } catch (error) {
-                console.error('Error accessing media devices:', error);
-                alert('Kamera veya mikrofon erişimi reddedildi. Lütfen izinleri kontrol edin.');
-            }
-        }
-
-        // Mute/Unmute
+        // Mute/Unmute button
         document.getElementById('muteBtn').addEventListener('click', () => {
-            if (localStream) {
-                const audioTrack = localStream.getAudioTracks()[0];
-                if (audioTrack) {
-                    isMuted = !isMuted;
-                    audioTrack.enabled = !isMuted;
-                    const btn = document.getElementById('muteBtn');
-                    btn.classList.toggle('active', isMuted);
-                    btn.querySelector('i').className = isMuted ? 'fas fa-microphone-slash' : 'fas fa-microphone';
-                }
-            }
+            const isMuted = webrtcClient.toggleMute();
+            const btn = document.getElementById('muteBtn');
+            btn.classList.toggle('active', isMuted);
+            btn.querySelector('i').className = isMuted ? 'fas fa-microphone-slash' : 'fas fa-microphone';
+            console.log('Microphone', isMuted ? 'muted' : 'unmuted');
         });
 
-        // Video On/Off
+        // Video on/off button
         document.getElementById('videoBtn').addEventListener('click', () => {
-            if (localStream) {
-                const videoTrack = localStream.getVideoTracks()[0];
-                if (videoTrack) {
-                    isVideoOff = !isVideoOff;
-                    videoTrack.enabled = !isVideoOff;
-                    const btn = document.getElementById('videoBtn');
-                    btn.classList.toggle('active', isVideoOff);
-                    btn.querySelector('i').className = isVideoOff ? 'fas fa-video-slash' : 'fas fa-video';
-                }
-            }
+            const isOff = webrtcClient.toggleVideo();
+            const btn = document.getElementById('videoBtn');
+            btn.classList.toggle('active', isOff);
+            btn.querySelector('i').className = isOff ? 'fas fa-video-slash' : 'fas fa-video';
+            console.log('Video', isOff ? 'off' : 'on');
         });
 
-        // End Call
+        // End call button
         document.getElementById('endBtn').addEventListener('click', () => {
             if (confirm('Görüşmeyi sonlandırmak istediğinizden emin misiniz?')) {
-                endCall();
+                webrtcClient.leave();
                 window.location.href = '/<?= $user->getUserType() ?>/appointments.php';
             }
         });
 
-        function endCall() {
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-            }
-            if (peerConnection) {
-                peerConnection.close();
-            }
-        }
-
+        // Update connection status display
         function updateConnectionStatus(state) {
             const statusText = document.getElementById('statusText');
             const statusDot = document.querySelector('.status-dot');
@@ -375,14 +346,25 @@ $pageTitle = 'Video Görüşme';
                     statusText.textContent = 'Bağlantı Kesildi';
                     statusDot.style.background = '#ef4444';
                     break;
+                default:
+                    statusText.textContent = 'Hazırlanıyor...';
+                    statusDot.style.background = '#6b7280';
             }
         }
 
         // Cleanup on page unload
-        window.addEventListener('beforeunload', endCall);
+        window.addEventListener('beforeunload', () => {
+            webrtcClient.leave();
+        });
 
-        // Start
-        init();
+        // Hide waiting screen after 10 seconds if no connection
+        setTimeout(() => {
+            const waitingScreen = document.getElementById('waitingScreen');
+            if (!waitingScreen.classList.contains('hidden')) {
+                console.warn('No remote stream after 10 seconds');
+                // Keep showing "waiting" - other participant may join late
+            }
+        }, 10000);
     </script>
 </body>
 </html>
