@@ -183,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log('Dietitian registration error: ' . $e->getMessage());
             }
         }
+        } // else bloğu kapandı
     } catch (Throwable $e) {
         $errors[] = 'Beklenmeyen bir hata oluştu: ' . $e->getMessage();
         error_log('Registration form error: ' . $e->getMessage());
