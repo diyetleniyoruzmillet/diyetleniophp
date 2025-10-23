@@ -45,11 +45,15 @@ spl_autoload_register(function ($className) {
 
 // Global değişkenler
 $db = null;
+$conn = null;
 $auth = null;
 
 try {
     // Veritabanı bağlantısı
     $db = Database::getInstance();
+
+    // PDO connection (used throughout the codebase)
+    $conn = $db->getConnection();
 
     // Auth instance
     $auth = new Auth();
