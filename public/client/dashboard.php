@@ -19,11 +19,13 @@ $stmt = $conn->prepare("
     SELECT
         (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'completed') as completed_appointments,
         (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'scheduled' AND appointment_date >= NOW()) as upcoming_appointments,
-        (SELECT COUNT(*) FROM diet_plans WHERE client_id = ? AND is_active = 1) as active_plans,
         (SELECT COUNT(DISTINCT dietitian_id) FROM appointments WHERE client_id = ?) as dietitians_worked_with
 ");
-$stmt->execute([$userId, $userId, $userId, $userId]);
+$stmt->execute([$userId, $userId, $userId]);
 $stats = $stmt->fetch();
+
+// Aktif plan sayısını 0 olarak set et (diet_plans tablosu henüz yok)
+$stats['active_plans'] = 0;
 
 // Aktif diyetisyeni çek (son randevusu olan)
 $stmt = $conn->prepare("
