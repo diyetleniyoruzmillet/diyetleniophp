@@ -3,11 +3,6 @@
  * Diyetlenio - Danışan Dashboard
  */
 
-// Hata raporlamayı aç
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
 // Sadece client erişebilir
@@ -16,12 +11,11 @@ if (!$auth->check() || $auth->user()->getUserType() !== 'client') {
     redirect('/login.php');
 }
 
-try {
-    $conn = $db->getConnection();
-    $userId = $auth->user()->getId();
+$conn = $db->getConnection();
+$userId = $auth->user()->getId();
 
-    // İstatistikleri çek (appointments tablosu olmayabilir, try-catch)
-    $stats = [
+// İstatistikleri çek (appointments tablosu olmayabilir, try-catch)
+$stats = [
     'completed_appointments' => 0,
     'upcoming_appointments' => 0,
     'dietitians_worked_with' => 0,
@@ -40,6 +34,8 @@ try {
     if ($result) {
         $stats = array_merge($stats, $result);
     }
+    // active_plans manually set to 0 (diet_plans table doesn't exist yet)
+    $stats['active_plans'] = 0;
 } catch (PDOException $e) {
     error_log('Stats query error: ' . $e->getMessage());
     // Tablo yoksa default değerleri kullan
@@ -71,7 +67,7 @@ try {
         FROM appointments a
         INNER JOIN users u ON a.dietitian_id = u.id
         INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-        WHERE a.client_id = ? AND a.status = 'scheduled' AND appointment_date >= NOW()
+        WHERE a.client_id = ? AND a.status = 'scheduled' AND a.appointment_date >= NOW()
         ORDER BY a.appointment_date ASC
         LIMIT 5
     ");
@@ -116,26 +112,33 @@ try {
 // Bugünün öğünleri (aktif plandan) - diet_plan_meals tablosu henüz yok
 $todayMeals = [];
 // TODO: diet_plan_meals tablosu oluşturulduğunda aktifleştir
-
-$pageTitle = 'Danışan Paneli';
-
-// DEBUG: Test output
-echo "<!-- DEBUG: Page reached here successfully -->";
-echo "<!-- User ID: " . $userId . " -->";
-echo "<!-- Stats: " . json_encode($stats) . " -->";
-
-} catch (Throwable $e) {
-    error_log('Client dashboard error: ' . $e->getMessage());
-    error_log('File: ' . $e->getFile() . ':' . $e->getLine());
-    error_log('Trace: ' . $e->getTraceAsString());
-
-    // Debug modunda detaylı hatayı göster
-    if (defined('DEBUG_MODE') && DEBUG_MODE) {
-        die('<h1>Dashboard Error</h1><pre>' . $e->getMessage() . "\n\nFile: " . $e->getFile() . ':' . $e->getLine() . "\n\nTrace:\n" . $e->getTraceAsString() . '</pre>');
-    } else {
-        die('Dashboard yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+/*
+if ($activePlan) {
+    try {
+        $stmt = $conn->prepare("
+            SELECT * FROM diet_plan_meals
+            WHERE plan_id = ? AND day_of_week = DAYOFWEEK(NOW())
+            ORDER BY
+                CASE meal_time
+                    WHEN 'breakfast' THEN 1
+                    WHEN 'snack1' THEN 2
+                    WHEN 'lunch' THEN 3
+                    WHEN 'snack2' THEN 4
+                    WHEN 'dinner' THEN 5
+                    WHEN 'snack3' THEN 6
+                END ASC
+        ");
+        $stmt->execute([$activePlan['id']]);
+        $todayMeals = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        // Tablo yoksa boş array
+        error_log('Diet plan meals query error: ' . $e->getMessage());
+        $todayMeals = [];
     }
 }
+*/
+
+$pageTitle = 'Danışan Paneli';
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -503,12 +506,366 @@ echo "<!-- Stats: " . json_encode($stats) . " -->";
     </style>
 </head>
 <body>
-    <!-- DEBUG TEST -->
-    <div style="background: red; color: white; padding: 20px; font-size: 24px; text-align: center;">
-        TEST: Dashboard PHP Çalışıyor! User ID: <?= $userId ?>
-    </div>
-    <!-- END DEBUG TEST -->
-
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-0">
+                <div class="p-4">
+                    <h4 class="sidebar-brand">
+                        <i class="fas fa-heartbeat me-2"></i>Diyetlenio
+                    </h4>
+                    <p class="sidebar-subtitle mb-4">Danışan Paneli</p>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="/client/dashboard.php">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                        </a>
+                        <a class="nav-link" href="/client/dietitians.php">
+                            <i class="fas fa-user-md me-2"></i>Diyetisyenler
+                        </a>
+                        <a class="nav-link" href="/client/appointments.php">
+                            <i class="fas fa-calendar-check me-2"></i>Randevularım
+                        </a>
+                        <a class="nav-link" href="/client/diet-plans.php">
+                            <i class="fas fa-clipboard-list me-2"></i>Diyet Planlarım
+                        </a>
+                        <a class="nav-link" href="/client/weight-tracking.php">
+                            <i class="fas fa-weight me-2"></i>Kilo Takibi
+                        </a>
+                        <a class="nav-link" href="/client/messages.php">
+                            <i class="fas fa-envelope me-2"></i>Mesajlar
+                        </a>
+                        <a class="nav-link" href="/client/profile.php">
+                            <i class="fas fa-user me-2"></i>Profilim
+                        </a>
+                        <hr class="text-white-50 my-3">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-2"></i>Ana Sayfa
+                        </a>
+                        <a class="nav-link" href="/logout.php">
+                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <div class="content-wrapper">
+                    <!-- Welcome Header -->
+                    <div class="welcome-header">
+                        <h2>Hoş Geldiniz, <?= clean($auth->user()->getFullName()) ?>!</h2>
+                        <p class="text-muted mb-0">Sağlıklı yaşam yolculuğunuza devam edin</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted mb-1">Tamamlanan Seanslar</p>
+                                        <h3 class="mb-0"><?= number_format($stats['completed_appointments']) ?></h3>
+                                    </div>
+                                    <div class="stat-icon icon-success">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted mb-1">Yaklaşan Randevular</p>
+                                        <h3 class="mb-0"><?= number_format($stats['upcoming_appointments']) ?></h3>
+                                    </div>
+                                    <div class="stat-icon icon-primary">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted mb-1">Aktif Diyet Planı</p>
+                                        <h3 class="mb-0"><?= number_format($stats['active_plans']) ?></h3>
+                                    </div>
+                                    <div class="stat-icon icon-warning">
+                                        <i class="fas fa-clipboard-list"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card stat-card-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted mb-1">Çalışılan Diyetisyen</p>
+                                        <h3 class="mb-0"><?= number_format($stats['dietitians_worked_with']) ?></h3>
+                                    </div>
+                                    <div class="stat-icon icon-info">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Left Column -->
+                        <div class="col-md-8">
+                            <!-- Current Dietitian -->
+                            <?php if ($currentDietitian): ?>
+                                <div class="card-custom mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">
+                                            <i class="fas fa-user-md text-success me-2"></i>Diyetisyenim
+                                        </h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1"><?= clean($currentDietitian['full_name']) ?></h6>
+                                                <p class="text-muted mb-2"><?= clean($currentDietitian['title']) ?></p>
+                                                <span class="badge bg-light text-dark">
+                                                    <?= clean($currentDietitian['specialization']) ?>
+                                                </span>
+                                                <span class="ms-2">
+                                                    <i class="fas fa-star text-warning"></i>
+                                                    <?= number_format($currentDietitian['rating_avg'], 1) ?>
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <a href="/client/messages.php?dietitian_id=<?= $currentDietitian['id'] ?>"
+                                                   class="btn btn-outline-success btn-sm me-2">
+                                                    <i class="fas fa-envelope me-1"></i>Mesaj Gönder
+                                                </a>
+                                                <a href="/client/appointments.php?new=1" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-calendar-plus me-1"></i>Randevu Al
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Upcoming Appointments -->
+                            <div class="card-custom mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">
+                                        <i class="fas fa-calendar-alt text-primary me-2"></i>Yaklaşan Randevular
+                                    </h5>
+                                    <?php if (count($upcomingAppointments) === 0): ?>
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted">Yaklaşan randevunuz bulunmuyor.</p>
+                                            <a href="/client/appointments.php?new=1" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Randevu Oluştur
+                                            </a>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Tarih & Saat</th>
+                                                        <th>Diyetisyen</th>
+                                                        <th>Tür</th>
+                                                        <th>Durum</th>
+                                                        <th>İşlemler</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($upcomingAppointments as $apt): ?>
+                                                        <tr>
+                                                            <td>
+                                                                <strong><?= date('d.m.Y', strtotime($apt['appointment_date'])) ?></strong><br>
+                                                                <small class="text-muted"><?= date('H:i', strtotime($apt['appointment_date'])) ?></small>
+                                                            </td>
+                                                            <td>
+                                                                <?= clean($apt['dietitian_name']) ?><br>
+                                                                <small class="text-muted"><?= clean($apt['title']) ?></small>
+                                                            </td>
+                                                            <td>
+                                                                <?php if ($apt['is_online']): ?>
+                                                                    <span class="badge bg-info">
+                                                                        <i class="fas fa-video me-1"></i>Online
+                                                                    </span>
+                                                                <?php else: ?>
+                                                                    <span class="badge bg-secondary">
+                                                                        <i class="fas fa-clinic-medical me-1"></i>Yüz Yüze
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge bg-warning">Planlandı</span>
+                                                            </td>
+                                                            <td>
+                                                                <a href="/client/appointments.php?id=<?= $apt['id'] ?>"
+                                                                   class="btn btn-sm btn-outline-primary">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <!-- Today's Meals -->
+                            <?php if ($activePlan && count($todayMeals) > 0): ?>
+                                <div class="card-custom mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">
+                                            <i class="fas fa-utensils text-warning me-2"></i>Bugünün Öğünleri
+                                        </h5>
+                                        <?php foreach ($todayMeals as $meal): ?>
+                                            <div class="meal-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong><?= clean($meal['meal_type']) ?></strong>
+                                                        <small class="text-muted ms-2">
+                                                            <i class="far fa-clock me-1"></i><?= $meal['meal_time'] ?>
+                                                        </small>
+                                                        <p class="mb-0 mt-1"><?= nl2br(clean($meal['description'])) ?></p>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-fire me-1"></i><?= $meal['calories'] ?> kcal
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-4">
+                            <!-- Weight Tracking Chart -->
+                            <?php if (count($weightHistory) > 0): ?>
+                                <div class="card-custom mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">
+                                            <i class="fas fa-chart-line text-success me-2"></i>Kilo Takibi
+                                        </h5>
+                                        <canvas id="weightChart" height="200"></canvas>
+                                        <div class="text-center mt-3">
+                                            <a href="/client/weight-tracking.php" class="btn btn-sm btn-outline-success">
+                                                Detaylı Görüntüle
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Quick Actions -->
+                            <div class="card-custom mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">
+                                        <i class="fas fa-bolt text-warning me-2"></i>Hızlı İşlemler
+                                    </h5>
+                                    <div class="d-grid gap-2">
+                                        <a href="/client/dietitians.php" class="action-card">
+                                            <i class="fas fa-search fa-2x text-success mb-2"></i>
+                                            <p class="mb-0">Diyetisyen Bul</p>
+                                        </a>
+                                        <a href="/client/weight-tracking.php?new=1" class="action-card">
+                                            <i class="fas fa-weight fa-2x text-primary mb-2"></i>
+                                            <p class="mb-0">Kilo Kaydı Ekle</p>
+                                        </a>
+                                        <a href="/client/diet-plans.php" class="action-card">
+                                            <i class="fas fa-clipboard-list fa-2x text-warning mb-2"></i>
+                                            <p class="mb-0">Diyet Planlarım</p>
+                                        </a>
+                                        <a href="/blog.php" class="action-card">
+                                            <i class="fas fa-book fa-2x text-info mb-2"></i>
+                                            <p class="mb-0">Sağlık Makaleleri</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Active Plan Info -->
+                            <?php if ($activePlan): ?>
+                                <div class="card-custom">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">
+                                            <i class="fas fa-clipboard-check text-success me-2"></i>Aktif Plan
+                                        </h5>
+                                        <h6><?= clean($activePlan['plan_name']) ?></h6>
+                                        <p class="text-muted small mb-2">
+                                            Diyetisyen: <?= clean($activePlan['dietitian_name']) ?>
+                                        </p>
+                                        <p class="mb-2">
+                                            <small class="text-muted">
+                                                <i class="far fa-calendar me-1"></i>
+                                                <?= date('d.m.Y', strtotime($activePlan['start_date'])) ?> -
+                                                <?= date('d.m.Y', strtotime($activePlan['end_date'])) ?>
+                                            </small>
+                                        </p>
+                                        <p class="mb-0 small"><?= nl2br(clean(substr($activePlan['description'], 0, 100))) ?>...</p>
+                                        <a href="/client/diet-plans.php?id=<?= $activePlan['id'] ?>"
+                                           class="btn btn-sm btn-success w-100 mt-3">
+                                            Detayları Görüntüle
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <?php if (count($weightHistory) > 0): ?>
+    <script>
+        // Weight tracking chart
+        const weightData = <?= json_encode(array_reverse(array_map(function($w) {
+            return [
+                'date' => date('d.m', strtotime($w['measurement_date'])),
+                'weight' => (float)$w['weight']
+            ];
+        }, $weightHistory))) ?>;
+
+        const ctx = document.getElementById('weightChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: weightData.map(d => d.date),
+                datasets: [{
+                    label: 'Kilo (kg)',
+                    data: weightData.map(d => d.weight),
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    </script>
+    <?php endif; ?>
+</body>
+</html>
