@@ -14,46 +14,71 @@ if (!$auth->check() || $auth->user()->getUserType() !== 'client') {
 $conn = $db->getConnection();
 $userId = $auth->user()->getId();
 
-// İstatistikleri çek
-$stmt = $conn->prepare("
-    SELECT
-        (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'completed') as completed_appointments,
-        (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'scheduled' AND appointment_date >= NOW()) as upcoming_appointments,
-        (SELECT COUNT(DISTINCT dietitian_id) FROM appointments WHERE client_id = ?) as dietitians_worked_with
-");
-$stmt->execute([$userId, $userId, $userId]);
-$stats = $stmt->fetch();
+// İstatistikleri çek (appointments tablosu olmayabilir, try-catch)
+$stats = [
+    'completed_appointments' => 0,
+    'upcoming_appointments' => 0,
+    'dietitians_worked_with' => 0,
+    'active_plans' => 0
+];
 
-// Aktif plan sayısını 0 olarak set et (diet_plans tablosu henüz yok)
-$stats['active_plans'] = 0;
+try {
+    $stmt = $conn->prepare("
+        SELECT
+            (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'completed') as completed_appointments,
+            (SELECT COUNT(*) FROM appointments WHERE client_id = ? AND status = 'scheduled' AND appointment_date >= NOW()) as upcoming_appointments,
+            (SELECT COUNT(DISTINCT dietitian_id) FROM appointments WHERE client_id = ?) as dietitians_worked_with
+    ");
+    $stmt->execute([$userId, $userId, $userId]);
+    $result = $stmt->fetch();
+    if ($result) {
+        $stats = array_merge($stats, $result);
+    }
+} catch (PDOException $e) {
+    error_log('Stats query error: ' . $e->getMessage());
+    // Tablo yoksa default değerleri kullan
+}
 
 // Aktif diyetisyeni çek (son randevusu olan)
-$stmt = $conn->prepare("
-    SELECT u.id, u.full_name, dp.title, dp.specialization, dp.rating_avg
-    FROM appointments a
-    INNER JOIN users u ON a.dietitian_id = u.id
-    INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-    WHERE a.client_id = ? AND a.status IN ('scheduled', 'completed')
-    ORDER BY a.appointment_date DESC
-    LIMIT 1
-");
-$stmt->execute([$userId]);
-$currentDietitian = $stmt->fetch();
+$currentDietitian = null;
+try {
+    $stmt = $conn->prepare("
+        SELECT u.id, u.full_name, dp.title, dp.specialization, dp.rating_avg
+        FROM appointments a
+        INNER JOIN users u ON a.dietitian_id = u.id
+        INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
+        WHERE a.client_id = ? AND a.status IN ('scheduled', 'completed')
+        ORDER BY a.appointment_date DESC
+        LIMIT 1
+    ");
+    $stmt->execute([$userId]);
+    $currentDietitian = $stmt->fetch();
+} catch (PDOException $e) {
+    error_log('Current dietitian query error: ' . $e->getMessage());
+}
 
 // Yaklaşan randevular
-$stmt = $conn->prepare("
-    SELECT a.*, u.full_name as dietitian_name, dp.title
-    FROM appointments a
-    INNER JOIN users u ON a.dietitian_id = u.id
-    INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-    WHERE a.client_id = ? AND a.status = 'scheduled' AND a.appointment_date >= NOW()
-    ORDER BY a.appointment_date ASC
-    LIMIT 5
-");
-$stmt->execute([$userId]);
-$upcomingAppointments = $stmt->fetchAll();
+$upcomingAppointments = [];
+try {
+    $stmt = $conn->prepare("
+        SELECT a.*, u.full_name as dietitian_name, dp.title
+        FROM appointments a
+        INNER JOIN users u ON a.dietitian_id = u.id
+        INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
+        WHERE a.client_id = ? AND a.status = 'scheduled' AND appointment_date >= NOW()
+        ORDER BY a.appointment_date ASC
+        LIMIT 5
+    ");
+    $stmt->execute([$userId]);
+    $upcomingAppointments = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log('Upcoming appointments query error: ' . $e->getMessage());
+}
 
-// Aktif diyet planı
+// Aktif diyet planı (diet_plans tablosu henüz yok)
+$activePlan = null;
+/*
+// TODO: diet_plans tablosu oluşturulduğunda aktifleştir
 $stmt = $conn->prepare("
     SELECT dp.*, u.full_name as dietitian_name
     FROM diet_plans dp
@@ -64,42 +89,27 @@ $stmt = $conn->prepare("
 ");
 $stmt->execute([$userId]);
 $activePlan = $stmt->fetch();
+*/
 
 // Son kilo takibi
-$stmt = $conn->prepare("
-    SELECT * FROM weight_tracking
-    WHERE client_id = ?
-    ORDER BY measurement_date DESC
-    LIMIT 5
-");
-$stmt->execute([$userId]);
-$weightHistory = $stmt->fetchAll();
-
-// Bugünün öğünleri (aktif plandan)
-$todayMeals = [];
-if ($activePlan) {
-    try {
-        $stmt = $conn->prepare("
-            SELECT * FROM diet_plan_meals
-            WHERE plan_id = ? AND day_of_week = DAYOFWEEK(NOW())
-            ORDER BY
-                CASE meal_time
-                    WHEN 'breakfast' THEN 1
-                    WHEN 'snack1' THEN 2
-                    WHEN 'lunch' THEN 3
-                    WHEN 'snack2' THEN 4
-                    WHEN 'dinner' THEN 5
-                    WHEN 'snack3' THEN 6
-                END ASC
-        ");
-        $stmt->execute([$activePlan['id']]);
-        $todayMeals = $stmt->fetchAll();
-    } catch (PDOException $e) {
-        // Tablo yoksa boş array
-        error_log('Diet plan meals query error: ' . $e->getMessage());
-        $todayMeals = [];
-    }
+$weightHistory = [];
+try {
+    $stmt = $conn->prepare("
+        SELECT * FROM weight_tracking
+        WHERE client_id = ?
+        ORDER BY measurement_date DESC
+        LIMIT 5
+    ");
+    $stmt->execute([$userId]);
+    $weightHistory = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log('Weight tracking query error: ' . $e->getMessage());
+    // Tablo yoksa boş array
 }
+
+// Bugünün öğünleri (aktif plandan) - diet_plan_meals tablosu henüz yok
+$todayMeals = [];
+// TODO: diet_plan_meals tablosu oluşturulduğunda aktifleştir
 
 $pageTitle = 'Danışan Paneli';
 ?>
