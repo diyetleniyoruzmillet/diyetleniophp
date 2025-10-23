@@ -381,7 +381,7 @@ $pageTitle = $article['title'];
                 <div class="article-meta">
                     <div class="author-info">
                         <?php if ($article['author_photo']): ?>
-                            <img src="<?= htmlspecialchars($article['author_photo']) ?>" alt="<?= clean($article['author_name']) ?>" class="author-photo">
+                            <img src="<?= clean($article['author_photo']) ?>" alt="<?= clean($article['author_name']) ?>" class="author-photo">
                         <?php else: ?>
                             <div class="author-photo" style="background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-user"></i>
@@ -400,7 +400,7 @@ $pageTitle = $article['title'];
     <div class="container">
         <article class="article-content">
             <?php if ($article['image']): ?>
-                <img src="<?= htmlspecialchars($article['image']) ?>" alt="<?= clean($article['title']) ?>" class="featured-image">
+                <img src="<?= clean($article['image']) ?>" alt="<?= clean($article['title']) ?>" class="featured-image">
             <?php endif; ?>
 
             <div class="article-body">
@@ -470,7 +470,7 @@ $pageTitle = $article['title'];
                     <div class="d-flex align-items-start mb-3">
                         <div class="me-3">
                             <?php if ($comment['profile_photo']): ?>
-                                <img src="<?= htmlspecialchars($comment['profile_photo']) ?>" alt="<?= clean($comment['full_name']) ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">
+                                <img src="<?= clean($comment['profile_photo']) ?>" alt="<?= clean($comment['full_name']) ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">
                             <?php else: ?>
                                 <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;">
                                     <i class="fas fa-user"></i>
@@ -498,7 +498,7 @@ $pageTitle = $article['title'];
                     <a href="/blog-detail.php?id=<?= $related['id'] ?>" class="text-decoration-none">
                         <div class="related-card">
                             <?php if ($related['image']): ?>
-                                <img src="<?= htmlspecialchars($related['image']) ?>" alt="<?= clean($related['title']) ?>" class="related-image">
+                                <img src="<?= clean($related['image']) ?>" alt="<?= clean($related['title']) ?>" class="related-image">
                             <?php else: ?>
                                 <div class="related-image d-flex align-items-center justify-content-center text-white">
                                     <i class="fas fa-newspaper fa-3x"></i>

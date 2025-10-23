@@ -477,7 +477,7 @@ $pageTitle = $dietitian['full_name'];
             <div class="hero-content text-center">
                 <div class="profile-photo-large">
                     <?php if ($dietitian['profile_photo']): ?>
-                        <img src="<?= htmlspecialchars($dietitian['profile_photo']) ?>" alt="<?= clean($dietitian['full_name']) ?>" style="width:100%;height:100%;border-radius:30px;object-fit:cover;">
+                        <img src="<?= clean($dietitian['profile_photo']) ?>" alt="<?= clean($dietitian['full_name']) ?>" style="width:100%;height:100%;border-radius:30px;object-fit:cover;">
                     <?php else: ?>
                         <i class="fas fa-user-md"></i>
                     <?php endif; ?>
@@ -590,7 +590,7 @@ $pageTitle = $dietitian['full_name'];
                                 <div class="review-header">
                                     <div class="review-photo">
                                         <?php if ($review['client_photo']): ?>
-                                            <img src="<?= htmlspecialchars($review['client_photo']) ?>" alt="<?= clean($review['client_name']) ?>" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                                            <img src="<?= clean($review['client_photo']) ?>" alt="<?= clean($review['client_name']) ?>" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
                                         <?php else: ?>
                                             <i class="fas fa-user"></i>
                                         <?php endif; ?>
