@@ -754,7 +754,9 @@ $pageTitle = 'Danışan Paneli';
                                         <h5 class="card-title mb-3">
                                             <i class="fas fa-chart-line text-success me-2"></i>Kilo Takibi
                                         </h5>
-                                        <canvas id="weightChart" height="200"></canvas>
+                                        <div style="position: relative; height: 280px; margin-bottom: 15px;">
+                                            <canvas id="weightChart"></canvas>
+                                        </div>
                                         <div class="text-center mt-3">
                                             <a href="/client/weight-tracking.php" class="btn btn-sm btn-outline-success">
                                                 Detaylı Görüntüle
@@ -836,35 +838,89 @@ $pageTitle = 'Danışan Paneli';
             ];
         }, $weightHistory))) ?>;
 
-        const ctx = document.getElementById('weightChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: weightData.map(d => d.date),
-                datasets: [{
-                    label: 'Kilo (kg)',
-                    data: weightData.map(d => d.weight),
-                    borderColor: '#28a745',
-                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+        const ctx = document.getElementById('weightChart');
+        if (ctx) {
+            new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: weightData.map(d => d.date),
+                    datasets: [{
+                        label: 'Kilo (kg)',
+                        data: weightData.map(d => d.weight),
+                        borderColor: '#56ab2f',
+                        backgroundColor: 'rgba(86, 171, 47, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#56ab2f',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: '#a8e063',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: false
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(86, 171, 47, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#56ab2f',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Kilo: ' + context.parsed.y + ' kg';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' kg';
+                                },
+                                font: {
+                                    size: 12
+                                },
+                                color: '#64748b'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                },
+                                color: '#64748b'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
                 }
-            }
-        });
+            });
+        }
     </script>
     <?php endif; ?>
 </body>
