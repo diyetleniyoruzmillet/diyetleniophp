@@ -9,10 +9,17 @@ function isAdminPage($page) {
     return $currentPage === $page;
 }
 
-// Get pending dietitian count
+// Get pending dietitian count (onay bekleyen, silinmemiş)
 $pendingDietitians = 0;
 try {
-    $stmt = $conn->query("SELECT COUNT(*) as count FROM users WHERE user_type = 'dietitian' AND is_active = 0");
+    $stmt = $conn->query("
+        SELECT COUNT(*) as count
+        FROM users u
+        INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
+        WHERE u.user_type = 'dietitian'
+        AND dp.is_approved = 0
+        AND u.email NOT LIKE 'deleted_%'
+    ");
     $result = $stmt->fetch();
     $pendingDietitians = $result['count'] ?? 0;
 } catch (Exception $e) {
