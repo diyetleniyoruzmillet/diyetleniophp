@@ -24,6 +24,12 @@ $notifications = $stmt->fetchAll();
 
 // Okunmamış bildirimleri işaretle
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_read'])) {
+    // CSRF koruması
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form isteği. Lütfen tekrar deneyin.');
+        redirect('/client/notifications.php');
+    }
+
     $conn->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?")->execute([$userId]);
     redirect('/client/notifications.php');
 }
@@ -39,6 +45,7 @@ require __DIR__ . '/../../views/partials/client-header.php';
             <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Bildirimler</h1>
                 <form method="POST" class="d-inline">
+                    <?= csrfField() ?>
                     <button type="submit" name="mark_read" class="btn btn-sm btn-success">
                         <i class="fas fa-check-double me-1"></i>Tümünü Okundu İşaretle
                     </button>
