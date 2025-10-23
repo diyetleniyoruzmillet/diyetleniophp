@@ -97,8 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $conn = $db->getConnection();
                 $conn->beginTransaction();
 
-                // Email doğrulama token'ı
-                $verificationToken = bin2hex(random_bytes(32));
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
                 // Diploma dosyasını kaydet
@@ -119,20 +117,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $diplomaPath = 'documents/' . $diplomaFileName;
                 }
 
-                // Kullanıcıyı kaydet
+                // Kullanıcıyı kaydet (admin onayı bekleyecek)
                 $stmt = $conn->prepare("
                     INSERT INTO users (
                         email, password, full_name, phone, user_type,
-                        email_verification_token, is_active, created_at
-                    ) VALUES (?, ?, ?, ?, 'dietitian', ?, 0, NOW())
+                        is_active, created_at
+                    ) VALUES (?, ?, ?, ?, 'dietitian', 1, NOW())
                 ");
 
                 $stmt->execute([
                     $email,
                     $hashedPassword,
                     $fullName,
-                    $phone,
-                    $verificationToken
+                    $phone
                 ]);
 
                 $userId = $conn->lastInsertId();
@@ -161,11 +158,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $conn->commit();
                 $success = true;
 
-                // Email gönderme ve admin bildirimi
+                // Admin bildirimi (opsiyonel)
                 try {
-                    // Diyetisyene doğrulama emaili gönder
-                    Mail::sendDietitianVerification($email, $verificationToken, $fullName);
-
                     // Admin'e yeni başvuru bildirimi gönder
                     Mail::notifyAdminNewDietitian($userId, [
                         'full_name' => $fullName,
@@ -733,9 +727,9 @@ $pageTitle = 'Diyetisyen Kayıt';
                             <div class="success-steps">
                                 <strong>Sonraki Adımlar:</strong>
                                 <ol>
-                                    <li>Email adresinize gönderilen doğrulama linkine tıklayın</li>
                                     <li>Yönetici onayını bekleyin (1-2 iş günü)</li>
-                                    <li>Onay sonrası giriş yaparak profilinizi tamamlayın</li>
+                                    <li>Onay sonrası email ile bilgilendirileceksiniz</li>
+                                    <li>Ardından giriş yaparak profilinizi tamamlayabilirsiniz</li>
                                 </ol>
                             </div>
 

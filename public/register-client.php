@@ -84,24 +84,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $conn = $db->getConnection();
                     $conn->beginTransaction();
 
-                    // Email doğrulama token'ı oluştur
-                    $verificationToken = bin2hex(random_bytes(32));
                     $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
-                    // Kullanıcıyı kaydet
+                    // Kullanıcıyı kaydet (doğrulama gerektirmeden aktif)
                     $stmt = $conn->prepare("
                         INSERT INTO users (
                             email, password, full_name, phone, user_type,
-                            email_verification_token, is_active, created_at
-                        ) VALUES (?, ?, ?, ?, 'client', ?, 1, NOW())
+                            is_active, created_at
+                        ) VALUES (?, ?, ?, ?, 'client', 1, NOW())
                     ");
 
                     $stmt->execute([
                         $data['email'],
                         $hashedPassword,
                         $data['full_name'],
-                        $data['phone'],
-                        $verificationToken
+                        $data['phone']
                     ]);
 
                     $conn->commit();
@@ -483,8 +480,7 @@ $pageTitle = 'Danışan Kayıt';
                     </div>
                     <h2 class="page-title mb-3">Kayıt Başarılı!</h2>
                     <p class="text-muted mb-4">
-                        Hesabınız oluşturuldu. Email adresinize gönderilen doğrulama linkine tıklayarak
-                        hesabınızı aktif edebilirsiniz.
+                        Hesabınız başarıyla oluşturuldu. Artık giriş yapabilirsiniz.
                     </p>
                     <a href="/login.php" class="btn btn-register">
                         <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
