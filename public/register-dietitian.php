@@ -14,10 +14,11 @@ $errors = [];
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // CSRF kontrolü
-    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-        $errors[] = 'Geçersiz form gönderimi.';
-    } else {
+    try {
+        // CSRF kontrolü
+        if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+            $errors[] = 'Geçersiz form gönderimi.';
+        } else {
         // Validator ile validasyon
         $validator = new Validator($_POST);
         $validator
@@ -181,6 +182,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.';
                 error_log('Dietitian registration error: ' . $e->getMessage());
             }
+        }
+    } catch (Throwable $e) {
+        $errors[] = 'Beklenmeyen bir hata oluştu: ' . $e->getMessage();
+        error_log('Registration form error: ' . $e->getMessage());
+        error_log('File: ' . $e->getFile() . ':' . $e->getLine());
+        error_log('Trace: ' . $e->getTraceAsString());
+
+        // Debug modunda detaylı hatayı göster
+        if (defined('DEBUG_MODE') && DEBUG_MODE) {
+            die('<h1>Registration Error</h1><pre>' . $e->getMessage() . "\n\nFile: " . $e->getFile() . ':' . $e->getLine() . "\n\nTrace:\n" . $e->getTraceAsString() . '</pre>');
         }
     }
 }
