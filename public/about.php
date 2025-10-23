@@ -752,6 +752,11 @@ $pageTitle = 'Hakkımızda';
                         <a class="nav-link" href="/recipes.php">Tarifler</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-danger fw-bold" href="/emergency.php">
+                            <i class="fas fa-ambulance me-1"></i>Acil Nöbetçi
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" href="/about.php">Hakkımızda</a>
                     </li>
                     <li class="nav-item">
