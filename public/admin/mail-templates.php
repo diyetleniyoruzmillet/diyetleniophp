@@ -72,92 +72,241 @@ $pageTitle = 'Mail Template Yönetimi';
             min-height: 100vh;
         }
 
+        .page-header-custom {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .page-header-custom h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .page-header-custom p {
+            color: #64748b;
+            font-size: 1rem;
+            margin: 0;
+        }
+
         .template-card {
             background: white;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border-left: 4px solid #667eea;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
         }
 
         .template-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .template-card:hover::before {
+            width: 8px;
         }
 
         .template-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
+            align-items: flex-start;
+            margin-bottom: 20px;
         }
 
         .template-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #2d3748;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #1e293b;
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .template-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .template-subject {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #667eea;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            display: inline-block;
         }
 
         .template-description {
             color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 16px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
-        .variables-list {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 12px;
+        .variables-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .variables-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #475569;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
         }
 
         .variable-tag {
             display: inline-block;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 4px 12px;
-            border-radius: 16px;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 0.8rem;
             font-family: 'Courier New', monospace;
             margin: 4px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+            transition: all 0.2s ease;
         }
 
-        .btn-modern {
-            padding: 8px 16px;
-            border-radius: 8px;
+        .variable-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 12px;
             font-weight: 600;
             border: none;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-edit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-edit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        .btn-view:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             color: white;
         }
 
         .alert-info-custom {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 16px;
+            padding: 24px;
             border: none;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .alert-info-custom i {
+            font-size: 1.2rem;
+        }
+
+        .alert-info-custom strong {
+            font-size: 1.05rem;
+        }
+
+        .alert-info-custom code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .template-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .template-count h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .template-count p {
+            margin: 8px 0 0 0;
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        .modal-header-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+            padding: 24px;
+        }
+
+        .modal-header-custom h5 {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .modal-body-custom {
+            padding: 28px;
+        }
+
+        .info-group {
             margin-bottom: 24px;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-label i {
+            color: #667eea;
         }
     </style>
 </head>
@@ -166,17 +315,25 @@ $pageTitle = 'Mail Template Yönetimi';
 
     <div class="main-content">
         <div class="container-fluid py-4">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h2 mb-0 text-white">
-                        <i class="fas fa-envelope me-3"></i><?= clean($pageTitle) ?>
-                    </h1>
-                    <p class="text-white-50 mb-0">Mail şablonlarını görüntüleyin ve düzenleyin</p>
+            <!-- Page Header -->
+            <div class="page-header-custom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1>
+                            <i class="fas fa-envelope me-3"></i><?= clean($pageTitle) ?>
+                        </h1>
+                        <p>Mail şablonlarını görüntüleyin ve yönetin</p>
+                    </div>
+                    <a href="/admin/dashboard.php" class="btn btn-view">
+                        <i class="fas fa-arrow-left me-2"></i>Dashboard
+                    </a>
                 </div>
-                <a href="/admin/dashboard.php" class="btn btn-light">
-                    <i class="fas fa-arrow-left me-2"></i>Dashboard
-                </a>
+            </div>
+
+            <!-- Template Count -->
+            <div class="template-count">
+                <h2><?= count($templates) ?></h2>
+                <p><i class="fas fa-envelope me-2"></i>Toplam Mail Şablonu</p>
             </div>
 
             <!-- Info Alert -->
@@ -193,22 +350,25 @@ $pageTitle = 'Mail Template Yönetimi';
                     <?php foreach ($templates as $key => $template): ?>
                         <div class="template-card">
                             <div class="template-header">
-                                <div>
-                                    <h3 class="template-name">
-                                        <i class="fas fa-envelope-open-text me-2 text-primary"></i>
-                                        <?= clean($template['name']) ?>
-                                    </h3>
+                                <div class="d-flex align-items-center">
+                                    <div class="template-icon">
+                                        <i class="fas fa-envelope-open-text"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="template-name mb-0">
+                                            <?= clean($template['name']) ?>
+                                        </h3>
+                                    </div>
                                 </div>
                                 <div>
-                                    <button class="btn btn-modern btn-edit" data-bs-toggle="modal" data-bs-target="#viewModal<?= $key ?>">
+                                    <button class="btn btn-view" data-bs-toggle="modal" data-bs-target="#viewModal<?= $key ?>">
                                         <i class="fas fa-eye me-2"></i>Görüntüle
                                     </button>
                                 </div>
                             </div>
 
                             <div class="template-subject">
-                                <i class="fas fa-tag me-2"></i>
-                                Konu: <?= clean($template['subject']) ?>
+                                <i class="fas fa-tag me-2"></i><?= clean($template['subject']) ?>
                             </div>
 
                             <div class="template-description">
@@ -216,10 +376,10 @@ $pageTitle = 'Mail Template Yönetimi';
                                 <?= clean($template['description']) ?>
                             </div>
 
-                            <div class="variables-list">
-                                <small class="text-muted d-block mb-2">
-                                    <strong><i class="fas fa-code me-1"></i>Kullanılabilir Değişkenler:</strong>
-                                </small>
+                            <div class="variables-section">
+                                <div class="variables-section-title">
+                                    <i class="fas fa-code me-2"></i>Kullanılabilir Değişkenler
+                                </div>
                                 <?php foreach ($template['variables'] as $variable): ?>
                                     <span class="variable-tag"><?= clean($variable) ?></span>
                                 <?php endforeach; ?>
@@ -229,58 +389,63 @@ $pageTitle = 'Mail Template Yönetimi';
                         <!-- View/Edit Modal -->
                         <div class="modal fade" id="viewModal<?= $key ?>" tabindex="-1">
                             <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                                <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden;">
+                                    <div class="modal-header-custom">
                                         <h5 class="modal-title">
-                                            <i class="fas fa-envelope me-2"></i>
+                                            <i class="fas fa-envelope-open-text me-2"></i>
                                             <?= clean($template['name']) ?>
                                         </h5>
                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <div class="modal-body">
+                                    <div class="modal-body-custom">
                                         <div class="alert alert-warning">
                                             <i class="fas fa-exclamation-triangle me-2"></i>
                                             <strong>Not:</strong> Bu şablon şu anda kod içinde tanımlıdır.
                                             Değişiklik yapmak için <code>/classes/Mail.php</code> dosyasındaki ilgili metodu düzenleyin.
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">
-                                                <i class="fas fa-tag me-2"></i>Konu:
-                                            </label>
-                                            <input type="text" class="form-control" value="<?= clean($template['subject']) ?>" readonly>
+                                        <div class="info-group">
+                                            <div class="info-label">
+                                                <i class="fas fa-tag"></i>
+                                                Konu:
+                                            </div>
+                                            <input type="text" class="form-control" value="<?= clean($template['subject']) ?>" readonly style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px;">
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">
-                                                <i class="fas fa-file-code me-2"></i>Şablon Konumu:
-                                            </label>
-                                            <input type="text" class="form-control" value="/classes/Mail.php" readonly>
+                                        <div class="info-group">
+                                            <div class="info-label">
+                                                <i class="fas fa-file-code"></i>
+                                                Şablon Konumu:
+                                            </div>
+                                            <input type="text" class="form-control" value="/classes/Mail.php" readonly style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; font-family: 'Courier New', monospace;">
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">
-                                                <i class="fas fa-info-circle me-2"></i>Açıklama:
-                                            </label>
-                                            <textarea class="form-control" rows="2" readonly><?= clean($template['description']) ?></textarea>
+                                        <div class="info-group">
+                                            <div class="info-label">
+                                                <i class="fas fa-info-circle"></i>
+                                                Açıklama:
+                                            </div>
+                                            <textarea class="form-control" rows="2" readonly style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px;"><?= clean($template['description']) ?></textarea>
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">
-                                                <i class="fas fa-code me-2"></i>Kullanılabilir Değişkenler:
-                                            </label>
-                                            <div class="p-3" style="background: #f8fafc; border-radius: 8px;">
+                                        <div class="info-group mb-0">
+                                            <div class="info-label">
+                                                <i class="fas fa-code"></i>
+                                                Kullanılabilir Değişkenler:
+                                            </div>
+                                            <div class="p-3" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; border: 1px solid #e2e8f0;">
                                                 <?php foreach ($template['variables'] as $variable): ?>
                                                     <span class="variable-tag"><?= clean($variable) ?></span>
                                                 <?php endforeach; ?>
                                             </div>
                                             <small class="text-muted mt-2 d-block">
+                                                <i class="fas fa-lightbulb me-1"></i>
                                                 Bu değişkenler email şablonunda kullanılabilir ve çalışma zamanında gerçek değerlerle değiştirilir.
                                             </small>
                                         </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <div class="modal-footer" style="padding: 20px 28px; border-top: 2px solid #e2e8f0;">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; padding: 10px 24px;">
                                             <i class="fas fa-times me-2"></i>Kapat
                                         </button>
                                     </div>
