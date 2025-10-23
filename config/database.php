@@ -44,6 +44,24 @@ foreach (['DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 'DB
     }
 }
 
+// Railway MySQL değişkenlerini map et
+$railwayMappings = [
+    'MYSQLHOST' => 'DB_HOST',
+    'MYSQLPORT' => 'DB_PORT',
+    'MYSQLDATABASE' => 'DB_DATABASE',
+    'MYSQLUSER' => 'DB_USERNAME',
+    'MYSQLPASSWORD' => 'DB_PASSWORD'
+];
+
+foreach ($railwayMappings as $railwayKey => $envKey) {
+    // Railway değişkeni varsa ve hedef değişken yoksa, map et
+    $railwayValue = getenv($railwayKey);
+    if ($railwayValue !== false && !isset($_ENV[$envKey])) {
+        $_ENV[$envKey] = $railwayValue;
+        putenv("$envKey=$railwayValue");
+    }
+}
+
 // Veritabanı yapılandırma ayarları
 return [
     'driver'    => $_ENV['DB_CONNECTION'] ?? 'mysql',
