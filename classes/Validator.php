@@ -142,6 +142,26 @@ class Validator
     }
 
     /**
+     * Değer aralığı kontrolü (min ve max arasında)
+     *
+     * @param string $field
+     * @param float $minValue
+     * @param float $maxValue
+     * @return self
+     */
+    public function between(string $field, float $minValue, float $maxValue): self
+    {
+        if (isset($this->data[$field]) && is_numeric($this->data[$field])) {
+            $value = (float)$this->data[$field];
+            if ($value < $minValue || $value > $maxValue) {
+                $this->errors[$field][] = "$field $minValue ile $maxValue arasında olmalıdır.";
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Regex pattern kontrolü
      *
      * @param string $field
