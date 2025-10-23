@@ -15,7 +15,7 @@ $conn = $db->getConnection();
 $categoriesStmt = $conn->query("
     SELECT DISTINCT category
     FROM articles
-    WHERE status = 'published' AND category IS NOT NULL AND category != ''
+    WHERE status = 'approved' AND category IS NOT NULL AND category != ''
     ORDER BY category
 ");
 $categories = $categoriesStmt->fetchAll(PDO::FETCH_COLUMN);
@@ -23,26 +23,25 @@ $categories = $categoriesStmt->fetchAll(PDO::FETCH_COLUMN);
 // Featured article (en son yayınlanan)
 $featuredStmt = $conn->prepare("
     SELECT a.*, u.full_name as author_name,
-           (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count
+           0 as comment_count
     FROM articles a
     LEFT JOIN users u ON a.author_id = u.id
-    WHERE a.status = 'published'
-    ORDER BY a.published_at DESC
+    WHERE a.status = 'approved'
+    ORDER BY a.created_at DESC
     LIMIT 1
 ");
 $featuredStmt->execute();
 $featuredArticle = $featuredStmt->fetch();
 
 // Ana sorgu - arama ve kategori filtreleri ile
-$conditions = ["a.status = 'published'"];
+$conditions = ["a.status = 'approved'"];
 $params = [];
 
 if (!empty($search)) {
-    $conditions[] = "(a.title LIKE ? OR a.content LIKE ? OR MATCH(a.title, a.content) AGAINST(? IN NATURAL LANGUAGE MODE))";
+    $conditions[] = "(a.title LIKE ? OR a.content LIKE ?)";
     $searchParam = '%' . $search . '%';
     $params[] = $searchParam;
     $params[] = $searchParam;
-    $params[] = $search;
 }
 
 if (!empty($category)) {
