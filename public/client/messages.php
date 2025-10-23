@@ -204,3 +204,166 @@ $pageTitle = 'Mesajlar';
 <body>
     <div class="container-fluid">
         <div class="row">
+            <div class="col-md-2 sidebar p-0">
+                <div class="p-4">
+                    <h4 class="text-white mb-4">
+                        <i class="fas fa-heartbeat me-2"></i>Diyetlenio
+                    </h4>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/client/dashboard.php">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                        </a>
+                        <a class="nav-link" href="/client/dietitians.php">
+                            <i class="fas fa-user-md me-2"></i>Diyetisyenler
+                        </a>
+                        <a class="nav-link" href="/client/appointments.php">
+                            <i class="fas fa-calendar-check me-2"></i>Randevularım
+                        </a>
+                        <a class="nav-link" href="/client/diet-plans.php">
+                            <i class="fas fa-clipboard-list me-2"></i>Diyet Planlarım
+                        </a>
+                        <a class="nav-link" href="/client/weight-tracking.php">
+                            <i class="fas fa-weight me-2"></i>Kilo Takibi
+                        </a>
+                        <a class="nav-link active" href="/client/messages.php">
+                            <i class="fas fa-envelope me-2"></i>Mesajlar
+                        </a>
+                        <a class="nav-link" href="/client/profile.php">
+                            <i class="fas fa-user me-2"></i>Profilim
+                        </a>
+                        <hr class="text-white-50 my-3">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-2"></i>Ana Sayfa
+                        </a>
+                        <a class="nav-link" href="/logout.php">
+                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="col-md-10">
+                <div class="content-wrapper">
+                    <h2 class="mb-4">Mesajlar</h2>
+
+                    <?php if (count($conversations) === 0): ?>
+                        <div class="card">
+                            <div class="card-body text-center py-5">
+                                <i class="fas fa-comments fa-4x text-muted mb-3"></i>
+                                <h4 class="text-muted">Henüz mesajlaşma yok</h4>
+                                <p class="text-muted">Diyetisyeninizle randevu aldıktan sonra mesajlaşmaya başlayabilirsiniz.</p>
+                                <a href="/client/dietitians.php" class="btn btn-success mt-3">
+                                    <i class="fas fa-search me-2"></i>Diyetisyen Bul
+                                </a>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="messages-container">
+                            <div class="row g-0">
+                                <!-- Conversations List -->
+                                <div class="col-md-4 conversations-list">
+                                    <div class="p-3 border-bottom">
+                                        <h5 class="mb-0">Konuşmalar</h5>
+                                    </div>
+                                    <?php foreach ($conversations as $conv): ?>
+                                        <a href="?dietitian_id=<?= $conv['id'] ?>" class="text-decoration-none">
+                                            <div class="conversation-item position-relative <?= $selectedUserId == $conv['id'] ? 'active' : '' ?>">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-0"><?= clean($conv['full_name']) ?></h6>
+                                                        <small class="text-muted"><?= clean($conv['title']) ?></small>
+                                                    </div>
+                                                </div>
+                                                <?php if ($conv['last_message_time']): ?>
+                                                    <small class="text-muted d-block mt-1">
+                                                        <?= date('d.m.Y H:i', strtotime($conv['last_message_time'])) ?>
+                                                    </small>
+                                                <?php endif; ?>
+                                                <?php if ($conv['unread_count'] > 0): ?>
+                                                    <span class="unread-badge"><?= $conv['unread_count'] ?></span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <!-- Messages Area -->
+                                <div class="col-md-8">
+                                    <?php if ($selectedUser): ?>
+                                        <!-- Chat Header -->
+                                        <div class="chat-header">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1">
+                                                    <h5 class="mb-0"><?= clean($selectedUser['full_name']) ?></h5>
+                                                    <small class="text-muted">
+                                                        <?= clean($selectedUser['title']) ?> - <?= clean($selectedUser['specialization']) ?>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Messages -->
+                                        <div class="messages-area" id="messagesArea">
+                                            <?php if (count($messages) === 0): ?>
+                                                <div class="text-center text-muted py-5">
+                                                    <i class="fas fa-comment fa-3x mb-3"></i>
+                                                    <p>Henüz mesaj yok. İlk mesajı gönderin!</p>
+                                                </div>
+                                            <?php else: ?>
+                                                <?php foreach ($messages as $msg): ?>
+                                                    <div class="d-flex <?= $msg['sender_id'] == $userId ? 'justify-content-end' : 'justify-content-start' ?>">
+                                                        <div class="message-bubble <?= $msg['sender_id'] == $userId ? 'message-sent' : 'message-received' ?>">
+                                                            <div><?= nl2br(clean($msg['message'])) ?></div>
+                                                            <div class="message-time">
+                                                                <?= date('d.m.Y H:i', strtotime($msg['created_at'])) ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <!-- Message Input -->
+                                        <div class="message-input-area">
+                                            <form method="POST" id="messageForm">
+                                                <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+                                                <input type="hidden" name="receiver_id" value="<?= $selectedUserId ?>">
+                                                <div class="input-group">
+                                                    <textarea
+                                                        name="message"
+                                                        class="form-control"
+                                                        placeholder="Mesajınızı yazın..."
+                                                        rows="2"
+                                                        required
+                                                    ></textarea>
+                                                    <button type="submit" name="send_message" class="btn btn-success">
+                                                        <i class="fas fa-paper-plane me-2"></i>Gönder
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Scroll to bottom of messages
+        const messagesArea = document.getElementById('messagesArea');
+        if (messagesArea) {
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        // Auto-refresh messages every 10 seconds
+        setInterval(() => {
+            location.reload();
+        }, 10000);
+    </script>
+</body>
+</html>
