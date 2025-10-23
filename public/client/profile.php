@@ -29,32 +29,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         setFlash('error', 'Geçersiz form gönderimi.');
     } else {
-        $fullName = trim($_POST['full_name']);
-        $email = trim($_POST['email']);
-        $phone = trim($_POST['phone']);
-        $dateOfBirth = $_POST['date_of_birth'];
-        $gender = $_POST['gender'];
-        $height = !empty($_POST['height']) ? (float)$_POST['height'] : null;
-        $targetWeight = !empty($_POST['target_weight']) ? (float)$_POST['target_weight'] : null;
-        $healthConditions = trim($_POST['health_conditions'] ?? '');
-        $allergies = trim($_POST['allergies'] ?? '');
-        $dietaryPreferences = trim($_POST['dietary_preferences'] ?? '');
-        $activityLevel = $_POST['activity_level'] ?? null;
+        // Validator ile input doğrulama
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['full_name', 'email', 'phone'])
+            ->min('full_name', 3)
+            ->max('full_name', 100)
+            ->email('email')
+            ->phone('phone');
+
+        // Opsiyonel alanların validasyonu
+        if (!empty($_POST['height'])) {
+            $validator->between('height', 50, 250); // cm cinsinden
+        }
+
+        if (!empty($_POST['target_weight'])) {
+            $validator->between('target_weight', 30, 300); // kg cinsinden
+        }
+
+        if (!empty($_POST['date_of_birth'])) {
+            $validator->date('date_of_birth', 'Y-m-d');
+        }
+
+        // Şifre değişikliği validasyonu (opsiyonel)
+        if (!empty($_POST['new_password'])) {
+            $validator
+                ->required(['confirm_password'])
+                ->min('new_password', 8)
+                ->match('new_password', 'confirm_password');
+        }
+
+        // Email benzersizlik kontrolü
+        if (!empty($_POST['email']) && $_POST['email'] !== $profile['email']) {
+            $validator->unique('email', 'users', 'email', $userId);
+        }
 
         $errors = [];
 
-        // Validasyon
-        if (empty($fullName)) $errors[] = 'Ad Soyad gereklidir.';
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Geçerli bir email adresi gereklidir.';
-        if (empty($phone)) $errors[] = 'Telefon numarası gereklidir.';
+        // Validation sonuçlarını kontrol et
+        if ($validator->fails()) {
+            $errors = array_map(function($fieldErrors) {
+                return is_array($fieldErrors) ? $fieldErrors[0] : $fieldErrors;
+            }, $validator->errors());
+        }
 
-        // Email kontrolü (başka kullanıcıda kullanılıyor mu?)
-        if (!empty($email) && $email !== $profile['email']) {
-            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-            $stmt->execute([$email, $userId]);
-            if ($stmt->fetch()) {
-                $errors[] = 'Bu email adresi başka bir kullanıcı tarafından kullanılıyor.';
-            }
+        if (count($errors) === 0) {
+            // Değerleri al
+            $fullName = trim($_POST['full_name']);
+            $email = trim($_POST['email']);
+            $phone = trim($_POST['phone']);
+            $dateOfBirth = $_POST['date_of_birth'] ?? null;
+            $gender = $_POST['gender'] ?? null;
+            $height = !empty($_POST['height']) ? (float)$_POST['height'] : null;
+            $targetWeight = !empty($_POST['target_weight']) ? (float)$_POST['target_weight'] : null;
+            $healthConditions = trim($_POST['health_conditions'] ?? '');
+            $allergies = trim($_POST['allergies'] ?? '');
+            $dietaryPreferences = trim($_POST['dietary_preferences'] ?? '');
+            $activityLevel = $_POST['activity_level'] ?? null;
         }
 
         if (count($errors) === 0) {
@@ -115,31 +146,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                 }
 
-                // Şifre değişikliği
+                // Şifre değişikliği (Validator zaten doğruladı)
                 if (!empty($_POST['new_password'])) {
-                    $newPassword = $_POST['new_password'];
-                    $confirmPassword = $_POST['confirm_password'];
-
-                    if ($newPassword === $confirmPassword) {
-                        if (strlen($newPassword) >= 8) {
-                            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                            $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-                            $stmt->execute([$hashedPassword, $userId]);
-                        } else {
-                            $errors[] = 'Şifre en az 8 karakter olmalıdır.';
-                        }
-                    } else {
-                        $errors[] = 'Şifreler eşleşmiyor.';
-                    }
+                    $hashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+                    $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                    $stmt->execute([$hashedPassword, $userId]);
                 }
 
-                if (count($errors) === 0) {
-                    $conn->commit();
-                    setFlash('success', 'Profiliniz başarıyla güncellendi.');
-                    redirect('/client/profile.php');
-                } else {
-                    $conn->rollBack();
-                }
+                $conn->commit();
+                setFlash('success', 'Profiliniz başarıyla güncellendi.');
+                redirect('/client/profile.php');
 
             } catch (Exception $e) {
                 $conn->rollBack();

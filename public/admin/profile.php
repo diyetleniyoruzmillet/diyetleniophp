@@ -13,17 +13,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     } else {
-        $firstName = trim($_POST['first_name'] ?? '');
-        $lastName = trim($_POST['last_name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
+        // Validator ile input doğrulama
+        $validator = new Validator($_POST);
+        $validator
+            ->required(['first_name', 'last_name', 'email'])
+            ->min('first_name', 2)
+            ->max('first_name', 50)
+            ->min('last_name', 2)
+            ->max('last_name', 50)
+            ->email('email');
 
-        if (empty($firstName)) $errors[] = 'Ad gereklidir.';
-        if (empty($lastName)) $errors[] = 'Soyad gereklidir.';
-        if (empty($email)) $errors[] = 'Email gereklidir.';
+        // Telefon varsa validasyon yap
+        if (!empty($_POST['phone'])) {
+            $validator->phone('phone');
+        }
 
-        if (empty($errors)) {
+        if ($validator->fails()) {
+            $errors = array_map(function($fieldErrors) {
+                return is_array($fieldErrors) ? $fieldErrors[0] : $fieldErrors;
+            }, $validator->errors());
+        } else {
             try {
+                $firstName = trim($_POST['first_name']);
+                $lastName = trim($_POST['last_name']);
+                $email = trim($_POST['email']);
+                $phone = trim($_POST['phone'] ?? '');
+
                 $conn = $db->getConnection();
                 $stmt = $conn->prepare("UPDATE users SET full_name = ?, email = ?, phone = ?, updated_at = NOW() WHERE id = ?");
                 $fullName = trim($firstName . ' ' . $lastName);
