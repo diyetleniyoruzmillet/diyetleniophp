@@ -575,6 +575,8 @@ $pageTitle = 'İletişim';
             padding: 3rem;
             margin-top: 4rem;
             box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 1;
         }
 
         .faq-section h2 {
@@ -627,6 +629,8 @@ $pageTitle = 'İletişim';
         .social-section {
             text-align: center;
             padding: 3rem 0;
+            position: relative;
+            z-index: 10;
         }
 
         .social-section h3 {
