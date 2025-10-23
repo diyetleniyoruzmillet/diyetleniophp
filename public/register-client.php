@@ -163,7 +163,7 @@ $pageTitle = 'Danışan Kayıt';
             width: 500px;
             height: 500px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(79, 172, 254, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(168, 224, 99, 0.2) 0%, transparent 70%);
             filter: blur(80px);
             bottom: -200px;
             left: -100px;
@@ -398,9 +398,9 @@ $pageTitle = 'Danışan Kayıt';
         }
 
         .btn-link:hover {
-            border-color: #0ea5e9;
-            color: #0ea5e9;
-            background: rgba(102, 126, 234, 0.05);
+            border-color: #56ab2f;
+            color: #56ab2f;
+            background: rgba(86, 171, 47, 0.05);
             transform: translateY(-2px);
         }
 

@@ -88,7 +88,7 @@ $pageTitle = 'Şifremi Unuttum';
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -161,7 +161,7 @@ $pageTitle = 'Şifremi Unuttum';
 
         .icon-wrapper i {
             font-size: 4rem;
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -195,8 +195,8 @@ $pageTitle = 'Şifremi Unuttum';
         }
 
         .form-floating input:focus {
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+            border-color: #56ab2f;
+            box-shadow: 0 0 0 4px rgba(86, 171, 47, 0.1);
         }
 
         .form-floating label {
@@ -205,7 +205,7 @@ $pageTitle = 'Şifremi Unuttum';
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border: none;
             color: white;
             padding: 15px 30px;
@@ -213,13 +213,13 @@ $pageTitle = 'Şifremi Unuttum';
             font-weight: 600;
             border-radius: 12px;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);
             width: 100%;
         }
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(14, 165, 233, 0.5);
+            box-shadow: 0 6px 25px rgba(86, 171, 47, 0.5);
             color: white;
         }
 
@@ -229,14 +229,14 @@ $pageTitle = 'Şifremi Unuttum';
         }
 
         .back-link a {
-            color: #0ea5e9;
+            color: #56ab2f;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
         }
 
         .back-link a:hover {
-            color: #0284c7;
+            color: #a8e063;
         }
 
         .alert {

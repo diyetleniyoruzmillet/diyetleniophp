@@ -81,12 +81,12 @@ $pageTitle = 'Hakkımızda';
         .navbar-brand {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #0ea5e9 !important;
+            color: #56ab2f !important;
         }
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             padding: 120px 0 100px;
             text-align: center;
@@ -163,7 +163,7 @@ $pageTitle = 'Hakkımızda';
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+            background: linear-gradient(90deg, #56ab2f, #a8e063);
             transform: scaleX(0);
             transition: transform 0.4s ease;
         }
@@ -174,14 +174,14 @@ $pageTitle = 'Hakkımızda';
 
         .mission-vision-card:hover {
             transform: translateY(-10px);
-            border-color: #0ea5e9;
-            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+            border-color: #56ab2f;
+            box-shadow: 0 20px 40px rgba(86, 171, 47, 0.15);
         }
 
         .mission-vision-icon {
             width: 90px;
             height: 90px;
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -189,7 +189,7 @@ $pageTitle = 'Hakkımızda';
             font-size: 2.5rem;
             color: white;
             margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 10px 30px rgba(86, 171, 47, 0.3);
         }
 
         .mission-vision-card h3 {
@@ -245,25 +245,25 @@ $pageTitle = 'Hakkımızda';
         .value-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-            border-color: #0ea5e9;
+            border-color: #56ab2f;
         }
 
         .value-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(86, 171, 47, 0.1) 0%, rgba(168, 224, 99, 0.1) 100%);
             border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.2rem;
-            color: #0ea5e9;
+            color: #56ab2f;
             margin-bottom: 24px;
             transition: all 0.3s ease;
         }
 
         .value-card:hover .value-icon {
-            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             transform: rotate(5deg) scale(1.1);
         }

@@ -66,12 +66,12 @@ try {
 
     <style>
         :root {
-            --primary: #06b6d4;
-            --primary-dark: #0891b2;
-            --secondary: #10b981;
-            --secondary-dark: #059669;
-            --accent: #8b5cf6;
-            --accent-light: #a78bfa;
+            --primary: #56ab2f;
+            --primary-dark: #4a9428;
+            --secondary: #a8e063;
+            --secondary-dark: #8cc653;
+            --accent: #56ab2f;
+            --accent-light: #a8e063;
             --dark: #0f172a;
             --dark-800: #1e293b;
             --light: #f8fafc;
@@ -220,7 +220,7 @@ try {
             min-height: 95vh;
             display: flex;
             align-items: center;
-            background: linear-gradient(135deg, #06b6d4 0%, #10b981 50%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             position: relative;
             overflow: hidden;
         }
@@ -233,9 +233,9 @@ try {
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.3) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(86, 171, 47, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(168, 224, 99, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(86, 171, 47, 0.3) 0%, transparent 50%);
             animation: gradient-shift 15s ease infinite;
         }
 
@@ -504,27 +504,27 @@ try {
         }
 
         .feature-icon.icon-3 {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, #7ac74f 0%, #6bb03f 100%);
             color: white;
-            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+            box-shadow: 0 10px 30px rgba(122, 199, 79, 0.4);
         }
 
         .feature-icon.icon-4 {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #4a9428 100%);
             color: white;
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(86, 171, 47, 0.4);
         }
 
         .feature-icon.icon-5 {
-            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            background: linear-gradient(135deg, #a8e063 0%, #8cc653 100%);
             color: white;
-            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+            box-shadow: 0 10px 30px rgba(168, 224, 99, 0.4);
         }
 
         .feature-icon.icon-6 {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(86, 171, 47, 0.4);
         }
 
         .feature-title {
@@ -583,7 +583,7 @@ try {
             width: 100%;
             height: 280px;
             object-fit: cover;
-            background: linear-gradient(135deg, #06b6d4 0%, #10b981 50%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             transition: transform 0.5s ease;
         }
 
@@ -630,7 +630,7 @@ try {
 
         /* Modern CTA Section */
         .cta-section {
-            background: linear-gradient(135deg, #06b6d4 0%, #10b981 50%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             padding: 7rem 0;
             position: relative;
             overflow: hidden;

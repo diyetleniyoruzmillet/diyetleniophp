@@ -212,7 +212,7 @@ $pageTitle = 'Diyetisyen Kayıt';
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             background-size: 200% 200%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
@@ -300,19 +300,19 @@ $pageTitle = 'Diyetisyen Kayıt';
         .brand-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6); }
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 35px rgba(86, 171, 47, 0.6); }
         }
 
         .brand-icon i {
@@ -358,8 +358,8 @@ $pageTitle = 'Diyetisyen Kayıt';
         .form-floating-custom select:focus,
         .form-floating-custom textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            border-color: #56ab2f;
+            box-shadow: 0 0 0 4px rgba(86, 171, 47, 0.15);
             transform: translateY(-2px);
         }
 
@@ -383,7 +383,7 @@ $pageTitle = 'Diyetisyen Kayıt';
         .form-floating-custom textarea:not(:placeholder-shown) + label {
             top: -8px;
             font-size: 12px;
-            color: #667eea;
+            color: #56ab2f;
             font-weight: 600;
         }
 
@@ -406,7 +406,7 @@ $pageTitle = 'Diyetisyen Kayıt';
         }
 
         .password-toggle:hover {
-            color: #667eea;
+            color: #56ab2f;
         }
 
         /* Password Strength Indicator */
@@ -458,7 +458,7 @@ $pageTitle = 'Diyetisyen Kayıt';
 
         .section-title i {
             margin-right: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -490,8 +490,8 @@ $pageTitle = 'Diyetisyen Kayıt';
         }
 
         .file-upload-label:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
+            border-color: #56ab2f;
+            background: rgba(86, 171, 47, 0.05);
         }
 
         .file-upload-label.has-file {
@@ -523,7 +523,7 @@ $pageTitle = 'Diyetisyen Kayıt';
 
         /* Buttons */
         .btn-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border: none;
             color: white;
             padding: 16px;
@@ -531,7 +531,7 @@ $pageTitle = 'Diyetisyen Kayıt';
             font-weight: 600;
             font-size: 16px;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 20px rgba(86, 171, 47, 0.4);
             position: relative;
             overflow: hidden;
         }
@@ -553,7 +553,7 @@ $pageTitle = 'Diyetisyen Kayıt';
 
         .btn-gradient:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 8px 30px rgba(86, 171, 47, 0.6);
             color: white;
         }
 
@@ -562,8 +562,8 @@ $pageTitle = 'Diyetisyen Kayıt';
         }
 
         .btn-outline-custom {
-            border: 2px solid #0ea5e9;
-            color: #0ea5e9;
+            border: 2px solid #56ab2f;
+            color: #56ab2f;
             background: white;
             padding: 10px 24px;
             border-radius: 12px;
@@ -572,7 +572,7 @@ $pageTitle = 'Diyetisyen Kayıt';
         }
 
         .btn-outline-custom:hover {
-            background: #0ea5e9;
+            background: #56ab2f;
             color: white;
         }
 
@@ -599,7 +599,7 @@ $pageTitle = 'Diyetisyen Kayıt';
         }
 
         .custom-checkbox a {
-            color: #0ea5e9;
+            color: #56ab2f;
             text-decoration: none;
             font-weight: 600;
         }

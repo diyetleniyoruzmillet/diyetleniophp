@@ -116,7 +116,7 @@ $pageTitle = 'Giriş Yap';
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             background-size: 200% 200%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
@@ -148,7 +148,7 @@ $pageTitle = 'Giriş Yap';
             width: 500px;
             height: 500px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(86, 171, 47, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(168, 224, 99, 0.2) 0%, transparent 70%);
             filter: blur(80px);
             bottom: -200px;
             left: -100px;
@@ -183,7 +183,7 @@ $pageTitle = 'Giriş Yap';
         }
 
         .brand-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             color: white;
             padding: 60px 40px;
             display: flex;
@@ -212,7 +212,7 @@ $pageTitle = 'Giriş Yap';
             width: 300px;
             height: 300px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(86, 171, 47, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(168, 224, 99, 0.1) 0%, transparent 70%);
             bottom: -100px;
             left: -100px;
             animation: pulse 6s ease-in-out infinite reverse;
@@ -293,8 +293,8 @@ $pageTitle = 'Giriş Yap';
         }
 
         .form-floating input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            border-color: #56ab2f;
+            box-shadow: 0 0 0 4px rgba(86, 171, 47, 0.15);
             transform: translateY(-2px);
         }
 
@@ -334,8 +334,8 @@ $pageTitle = 'Giriş Yap';
         }
 
         .form-check-input:checked {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: #667eea;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            border-color: #56ab2f;
         }
 
         .form-check-label {
@@ -345,7 +345,7 @@ $pageTitle = 'Giriş Yap';
         }
 
         .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border: none;
             color: white;
             padding: 16px 30px;
@@ -353,7 +353,7 @@ $pageTitle = 'Giriş Yap';
             font-weight: 600;
             border-radius: 12px;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 20px rgba(86, 171, 47, 0.4);
             width: 100%;
             position: relative;
             overflow: hidden;
@@ -376,7 +376,7 @@ $pageTitle = 'Giriş Yap';
 
         .btn-login:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 8px 30px rgba(86, 171, 47, 0.6);
             color: white;
         }
 
@@ -390,7 +390,7 @@ $pageTitle = 'Giriş Yap';
         }
 
         .forgot-link a {
-            color: #667eea;
+            color: #56ab2f;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
@@ -404,7 +404,7 @@ $pageTitle = 'Giriş Yap';
             left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #56ab2f, #a8e063);
             transition: width 0.3s;
         }
 
@@ -413,7 +413,7 @@ $pageTitle = 'Giriş Yap';
         }
 
         .forgot-link a:hover {
-            color: #764ba2;
+            color: #a8e063;
         }
 
         .divider {
@@ -461,11 +461,11 @@ $pageTitle = 'Giriş Yap';
         }
 
         .btn-register:hover {
-            border-color: #667eea;
+            border-color: #56ab2f;
             color: white;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.3);
         }
 
         .back-home {
