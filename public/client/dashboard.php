@@ -11,11 +11,12 @@ if (!$auth->check() || $auth->user()->getUserType() !== 'client') {
     redirect('/login.php');
 }
 
-$conn = $db->getConnection();
-$userId = $auth->user()->getId();
+try {
+    $conn = $db->getConnection();
+    $userId = $auth->user()->getId();
 
-// İstatistikleri çek (appointments tablosu olmayabilir, try-catch)
-$stats = [
+    // İstatistikleri çek (appointments tablosu olmayabilir, try-catch)
+    $stats = [
     'completed_appointments' => 0,
     'upcoming_appointments' => 0,
     'dietitians_worked_with' => 0,
@@ -112,6 +113,19 @@ $todayMeals = [];
 // TODO: diet_plan_meals tablosu oluşturulduğunda aktifleştir
 
 $pageTitle = 'Danışan Paneli';
+
+} catch (Throwable $e) {
+    error_log('Client dashboard error: ' . $e->getMessage());
+    error_log('File: ' . $e->getFile() . ':' . $e->getLine());
+    error_log('Trace: ' . $e->getTraceAsString());
+
+    // Debug modunda detaylı hatayı göster
+    if (defined('DEBUG_MODE') && DEBUG_MODE) {
+        die('<h1>Dashboard Error</h1><pre>' . $e->getMessage() . "\n\nFile: " . $e->getFile() . ':' . $e->getLine() . "\n\nTrace:\n" . $e->getTraceAsString() . '</pre>');
+    } else {
+        die('Dashboard yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="tr">
