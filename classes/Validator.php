@@ -244,17 +244,24 @@ class Validator
     public function unique(string $field, string $table, string $column, ?int $exceptId = null): self
     {
         if (isset($this->data[$field]) && !empty($this->data[$field])) {
-            global $db;
+            global $conn;
 
             $sql = "SELECT COUNT(*) as count FROM {$table} WHERE {$column} = ?";
             $params = [$this->data[$field]];
+
+            // Soft delete edilmiş kullanıcıları hariç tut (email tabanlı tablolar için)
+            if ($table === 'users' && $column === 'email') {
+                $sql .= " AND email NOT LIKE 'deleted_%'";
+            }
 
             if ($exceptId !== null) {
                 $sql .= " AND id != ?";
                 $params[] = $exceptId;
             }
 
-            $result = $db->query($sql, $params)->fetch();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetch();
 
             if ($result['count'] > 0) {
                 $this->errors[$field][] = "Bu $field zaten kullanılıyor.";

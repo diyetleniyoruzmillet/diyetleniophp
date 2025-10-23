@@ -68,6 +68,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <style>
     .navbar-brand {
         transition: transform 0.3s;
+        font-size: 1.3rem !important;
     }
     .navbar-brand:hover {
         transform: scale(1.05);
@@ -75,9 +76,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     .nav-link {
         color: #0f172a !important;
         font-weight: 500;
-        margin: 0 0.5rem;
+        font-size: 0.9rem;
+        margin: 0 0.25rem;
+        padding: 0.5rem 0.6rem !important;
         transition: all 0.3s;
         position: relative;
+        white-space: nowrap;
     }
     .nav-link:hover {
         color: #0ea5e9 !important;
@@ -102,20 +106,38 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         border: none;
         color: white;
         font-weight: 600;
+        font-size: 0.85rem;
         transition: all 0.3s;
         box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        padding: 0.5rem 1.2rem !important;
+        border-radius: 50px;
     }
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
         color: white;
     }
+    /* Collapse navbar earlier for better spacing */
+    @media (max-width: 1200px) {
+        .nav-link {
+            font-size: 0.85rem;
+            margin: 0 0.15rem;
+            padding: 0.5rem 0.5rem !important;
+        }
+        .navbar-brand {
+            font-size: 1.2rem !important;
+        }
+    }
     @media (max-width: 992px) {
         .nav-link {
             margin: 0.5rem 0;
+            padding: 0.5rem 0 !important;
+            font-size: 0.95rem;
         }
         .btn-primary {
             margin-top: 0.5rem;
+            width: 100%;
+            text-align: center;
         }
     }
 </style>

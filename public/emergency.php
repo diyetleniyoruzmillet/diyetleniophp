@@ -396,34 +396,7 @@ $pageTitle = 'Acil Nöbetçi Diyetisyen';
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dietitians.php">Diyetisyenler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/emergency.php">
-                            <i class="fas fa-ambulance me-1"></i>Acil Nöbetçi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact.php">İletişim</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <!-- Emergency Hero -->
     <div class="emergency-hero">
