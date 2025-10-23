@@ -60,11 +60,11 @@ if ($featuredArticle) {
 
 $stmt = $conn->prepare("
     SELECT a.*, u.full_name as author_name,
-           (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comment_count
+           0 as comment_count
     FROM articles a
     LEFT JOIN users u ON a.author_id = u.id
     WHERE $whereClause
-    ORDER BY a.published_at DESC
+    ORDER BY a.created_at DESC
     LIMIT ? OFFSET ?
 ");
 
