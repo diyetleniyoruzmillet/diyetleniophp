@@ -119,6 +119,11 @@ $todayMeals = [];
 
 $pageTitle = 'Danışan Paneli';
 
+// DEBUG: Test output
+echo "<!-- DEBUG: Page reached here successfully -->";
+echo "<!-- User ID: " . $userId . " -->";
+echo "<!-- Stats: " . json_encode($stats) . " -->";
+
 } catch (Throwable $e) {
     error_log('Client dashboard error: ' . $e->getMessage());
     error_log('File: ' . $e->getFile() . ':' . $e->getLine());
@@ -498,6 +503,12 @@ $pageTitle = 'Danışan Paneli';
     </style>
 </head>
 <body>
+    <!-- DEBUG TEST -->
+    <div style="background: red; color: white; padding: 20px; font-size: 24px; text-align: center;">
+        TEST: Dashboard PHP Çalışıyor! User ID: <?= $userId ?>
+    </div>
+    <!-- END DEBUG TEST -->
+
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
