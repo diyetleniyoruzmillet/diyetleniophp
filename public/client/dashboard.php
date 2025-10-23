@@ -3,6 +3,11 @@
  * Diyetlenio - Danışan Dashboard
  */
 
+// Hata raporlamayı aç
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
 // Sadece client erişebilir
