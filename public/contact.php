@@ -849,56 +849,7 @@ $pageTitle = 'İletişim';
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-heartbeat"></i>
-                <span>Diyetlenio</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dietitians.php">Diyetisyenler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/blog.php">Blog</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/recipes.php">Tarifler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger fw-bold" href="/emergency.php">
-                            <i class="fas fa-ambulance me-1"></i>Acil Nöbetçi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about.php">Hakkımızda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/contact.php">İletişim</a>
-                    </li>
-                    <?php if ($auth->check()): ?>
-                        <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">
-                                Panel
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <!-- Hero -->
     <section class="hero">
