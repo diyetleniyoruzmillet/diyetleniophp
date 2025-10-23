@@ -1,24 +1,17 @@
 <?php
 require_once __DIR__ . '/../includes/bootstrap.php';
 
-// Arama ve kategori parametreleri
+// Arama parametresi
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$category = isset($_GET['category']) ? trim($_GET['category']) : '';
 
 // Blog yazılarını çek
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $perPage = 9;
 $offset = ($page - 1) * $perPage;
 
-// Kategorileri çek (filtreleme için)
+// Database connection
 $conn = $db->getConnection();
-$categoriesStmt = $conn->query("
-    SELECT DISTINCT category
-    FROM articles
-    WHERE status = 'approved' AND category IS NOT NULL AND category != ''
-    ORDER BY category
-");
-$categories = $categoriesStmt->fetchAll(PDO::FETCH_COLUMN);
+$categories = []; // Kategori sistemi şu an aktif değil
 
 // Featured article (en son yayınlanan)
 $featuredStmt = $conn->prepare("
@@ -33,7 +26,7 @@ $featuredStmt = $conn->prepare("
 $featuredStmt->execute();
 $featuredArticle = $featuredStmt->fetch();
 
-// Ana sorgu - arama ve kategori filtreleri ile
+// Ana sorgu - arama filtresi ile
 $conditions = ["a.status = 'approved'"];
 $params = [];
 
@@ -42,11 +35,6 @@ if (!empty($search)) {
     $searchParam = '%' . $search . '%';
     $params[] = $searchParam;
     $params[] = $searchParam;
-}
-
-if (!empty($category)) {
-    $conditions[] = "a.category = ?";
-    $params[] = $category;
 }
 
 $whereClause = implode(' AND ', $conditions);
