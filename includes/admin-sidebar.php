@@ -64,6 +64,9 @@ try {
             <a class="nav-link <?= isAdminPage('analytics.php') ? 'active' : '' ?>" href="/admin/analytics.php">
                 <i class="fas fa-chart-bar me-2"></i>Analitik
             </a>
+            <a class="nav-link <?= isAdminPage('mail-templates.php') ? 'active' : '' ?>" href="/admin/mail-templates.php">
+                <i class="fas fa-envelope me-2"></i>Mail Şablonları
+            </a>
             <a class="nav-link <?= isAdminPage('settings.php') ? 'active' : '' ?>" href="/admin/settings.php">
                 <i class="fas fa-cog me-2"></i>Ayarlar
             </a>

@@ -162,6 +162,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $stmt->execute([$userId]);
 
                 setFlash('success', 'Diyetisyen ataması kaldırıldı.');
+            } elseif ($action === 'reset_password') {
+                // Şifre sıfırlama
+                $newPassword = $_POST['new_password'] ?? '';
+                $confirmPassword = $_POST['confirm_password'] ?? '';
+
+                // Validasyon
+                if (empty($newPassword) || empty($confirmPassword)) {
+                    setFlash('error', 'Şifre alanları boş bırakılamaz.');
+                    redirect('/admin/users.php');
+                }
+
+                if ($newPassword !== $confirmPassword) {
+                    setFlash('error', 'Şifreler eşleşmiyor.');
+                    redirect('/admin/users.php');
+                }
+
+                if (strlen($newPassword) < 8) {
+                    setFlash('error', 'Şifre en az 8 karakter olmalıdır.');
+                    redirect('/admin/users.php');
+                }
+
+                // Şifreyi hashle ve güncelle
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                $stmt = $conn->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?");
+                $stmt->execute([$hashedPassword, $userId]);
+
+                setFlash('success', 'Kullanıcı şifresi başarıyla güncellendi.');
             }
         } catch (Exception $e) {
             error_log('User management error: ' . $e->getMessage());
@@ -840,6 +867,9 @@ $pageTitle = 'Kullanıcı Yönetimi';
                                                                     </button>
                                                                 </form>
                                                             <?php endif; ?>
+                                                            <button type="button" class="btn btn-modern btn-modern-warning" data-bs-toggle="modal" data-bs-target="#resetPasswordModal<?= $user['id'] ?>" title="Şifre Sıfırla">
+                                                                <i class="fas fa-key"></i>
+                                                            </button>
                                                             <form method="POST" class="d-inline" onsubmit="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')">
                                                                 <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
                                                                 <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
@@ -925,6 +955,67 @@ $pageTitle = 'Kullanıcı Yönetimi';
                                                     </div>
                                                 </div>
                                             <?php endif; ?>
+
+                                            <!-- Şifre Sıfırlama Modal -->
+                                            <div class="modal fade" id="resetPasswordModal<?= $user['id'] ?>" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form method="POST">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">
+                                                                    <i class="fas fa-key me-2"></i>
+                                                                    Şifre Sıfırla - <?= clean($user['full_name']) ?>
+                                                                </h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+                                                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                                                <input type="hidden" name="action" value="reset_password">
+
+                                                                <div class="alert alert-warning">
+                                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                                    <strong>Uyarı:</strong> Bu işlem kullanıcının şifresini kalıcı olarak değiştirecektir.
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label class="form-label"><strong>Kullanıcı:</strong></label>
+                                                                    <p class="mb-2"><?= clean($user['full_name']) ?> (<?= clean($user['email']) ?>)</p>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label class="form-label">Yeni Şifre *</label>
+                                                                    <input type="password"
+                                                                           name="new_password"
+                                                                           class="form-control"
+                                                                           required
+                                                                           minlength="8"
+                                                                           placeholder="Minimum 8 karakter">
+                                                                    <small class="text-muted">En az 8 karakter içermelidir.</small>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label class="form-label">Şifre Tekrar *</label>
+                                                                    <input type="password"
+                                                                           name="confirm_password"
+                                                                           class="form-control"
+                                                                           required
+                                                                           minlength="8"
+                                                                           placeholder="Şifreyi tekrar girin">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-modern" style="background: linear-gradient(135deg, #a8a8a8 0%, #757575 100%); color: white;" data-bs-dismiss="modal">
+                                                                    <i class="fas fa-times me-2"></i>İptal
+                                                                </button>
+                                                                <button type="submit" class="btn btn-modern btn-modern-warning">
+                                                                    <i class="fas fa-key me-2"></i>Şifreyi Sıfırla
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
