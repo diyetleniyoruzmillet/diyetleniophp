@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mysqli", "php82Extensions.mbstring", "php82Extensions.curl", "php82Extensions.gd", "php82Extensions.zip", "bash"]
+nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mysqli", "php83Extensions.mbstring", "php83Extensions.curl", "php83Extensions.gd", "php83Extensions.zip", "bash"]
 cmds = ["mkdir -p /etc/nginx/ /var/log/nginx/ /var/cache/nginx/"]
 
 [start]

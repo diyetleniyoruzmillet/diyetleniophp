@@ -1,6 +1,14 @@
-# Diyetlenio Signaling Server
+# Diyetlenio Signaling Server (Legacy - Deprecated)
 
 WebRTC signaling server for peer-to-peer video calls.
+
+Bu klasör legacy sürümdür. Güncel signaling sunucusu `signaling-server/` klasöründe bulunur ve `server.js` ile çalışır. Yeni kurulumlar için aşağıdaki komutları kullanın:
+
+```bash
+cd signaling-server
+npm install
+npm run start
+```
 
 ## Installation
 

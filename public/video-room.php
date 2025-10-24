@@ -21,7 +21,8 @@ if (!$appointmentId || !$roomId) {
 }
 
 // Randevu bilgisini çek
-$stmt = $db->prepare("
+$conn = $db->getConnection();
+$stmt = $conn->prepare("
     SELECT a.*,
            u1.first_name as client_name, u1.last_name as client_lastname,
            u2.first_name as dietitian_name, u2.last_name as dietitian_lastname

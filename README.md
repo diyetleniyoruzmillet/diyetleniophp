@@ -25,8 +25,10 @@ Diyetisyenler ve danışanları bir araya getiren, video görüşme özellikli w
 # Veritabanını oluştur
 mysql -u root -p < database.sql
 
-# Composer bağımlılıkları
-composer install
+# (Opsiyonel) Composer bağımlılıkları
+# Not: Projede zorunlu composer.json bulunmamaktadır.
+# SMTP gibi gelişmiş mail kullanımı eklenecekse composer yapılandırılabilir.
+# composer install
 
 # Yapılandırma
 cp .env.example .env
@@ -35,6 +37,11 @@ cp .env.example .env
 # Geliştirme sunucusunu başlat
 php -S localhost:8000 -t public
 ```
+
+Notlar:
+- Deploy ortamı PHP 8.3 ile hizalanmıştır (Nixpacks yapılandırması güncellendi).
+- WebRTC signaling server için güncel dizin: `signaling-server/` (Node.js).
+- Migration dosyaları (`public/run-migration-015.php`, `public/run-migration-019.php`) sadece kontrollü kurulumda kullanılmalı ve çalıştırma sonrası silinmelidir. Production’da admin girişi ve .env’de `MIGRATION_TOKEN` zorunludur.
 
 ## 📧 İletişim
 

@@ -251,7 +251,9 @@ function redirect(string $url, int $statusCode = 302): void
 function redirectBack(): void
 {
     $referer = $_SERVER['HTTP_REFERER'] ?? url();
-    redirect($referer);
+    // Güvenli yönlendirme (open redirect koruması)
+    $safeUrl = sanitizeRedirectUrl($referer, url());
+    redirect($safeUrl);
 }
 
 /**

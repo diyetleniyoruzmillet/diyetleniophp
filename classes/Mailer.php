@@ -12,7 +12,8 @@ class Mailer
 
     public function __construct()
     {
-        $this->from = $_ENV['MAIL_FROM'] ?? 'noreply@diyetlenio.com';
+        // .env anahtarları ile hizalanır
+        $this->from = $_ENV['MAIL_FROM_ADDRESS'] ?? $_ENV['MAIL_FROM'] ?? 'noreply@diyetlenio.com';
         $this->fromName = $_ENV['MAIL_FROM_NAME'] ?? 'Diyetlenio';
         
         $this->config = [

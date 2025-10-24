@@ -24,6 +24,11 @@ try {
     $stmt->execute([$userId]);
     $profile = $stmt->fetch();
 
+    // Onaylanmamış ise bekleme sayfasına yönlendir
+    if (!$profile || (int)$profile['is_approved'] !== 1) {
+        redirect('/dietitian/pending-approval.php');
+    }
+
     // Bugünkü randevular
     $stmt = $conn->prepare("
         SELECT a.*, u.full_name as client_name, u.phone as client_phone

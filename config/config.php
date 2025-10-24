@@ -22,6 +22,14 @@ if ($environment === 'development') {
 // Zaman dilimi ayarı
 date_default_timezone_set('Europe/Istanbul');
 
+// APP_KEY güvenliği (production'da zorunlu)
+$appKey = $_ENV['APP_KEY'] ?? null;
+if ($environment !== 'development' && (empty($appKey) || $appKey === 'base64:YourRandomGeneratedKeyHere')) {
+    error_log('APP_KEY eksik veya geçersiz. Production ortamında APP_KEY zorunludur.');
+    http_response_code(500);
+    die('Yapılandırma hatası: APP_KEY .env içinde tanımlanmalı.');
+}
+
 // Site yapılandırması
 return [
     // Uygulama ayarları
@@ -37,7 +45,7 @@ return [
 
     // Güvenlik ayarları
     'security' => [
-        'encryption_key' => $_ENV['APP_KEY'] ?? 'base64:' . base64_encode(random_bytes(32)),
+        'encryption_key' => $appKey ?: ('base64:' . base64_encode(random_bytes(32))),
         'hash_algo'      => 'sha256',
         'session_name'   => 'diyetlenio_session',
         'csrf_token_name' => 'csrf_token',

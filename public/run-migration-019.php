@@ -1,20 +1,34 @@
 <?php
 /**
  * Migration Runner - 019_create_video_sessions
- * Run this once to create video session tables
- * DELETE THIS FILE after running!
+ * Bu dosya yalnızca kontrollü kurulum sırasında çalıştırılmalıdır.
+ * Çalıştırdıktan sonra mutlaka silin!
  */
 
-// Security token
-$token = $_GET['token'] ?? '';
-$expectedToken = md5('migration-019-' . date('Y-m-d'));
+require_once __DIR__ . '/../includes/bootstrap.php';
 
-if ($token !== $expectedToken) {
-    http_response_code(403);
-    die('Invalid security token. Use: ?token=' . $expectedToken . '<br><br>Token: <strong>' . $expectedToken . '</strong>');
+// Üretimde ek koruma: sadece admin kullanıcı ve gizli token ile çalıştır
+$appEnv = $_ENV['APP_ENV'] ?? 'production';
+if ($appEnv === 'production') {
+    if (!$auth || !$auth->check() || $auth->user()->getUserType() !== 'admin') {
+        http_response_code(403);
+        die('Forbidden: Sadece admin kullanıcılar production ortamında migration çalıştırabilir.');
+    }
 }
 
-require_once __DIR__ . '/../includes/bootstrap.php';
+// Güçlü token doğrulaması (.env üzerinden)
+$providedToken = $_GET['token'] ?? '';
+$envToken = $_ENV['MIGRATION_TOKEN'] ?? '';
+
+if (empty($envToken)) {
+    http_response_code(400);
+    die('MIGRATION_TOKEN .env içinde tanımlı değil. Lütfen .env dosyanıza MIGRATION_TOKEN=<güçlü-bir-değer> ekleyin.');
+}
+
+if (!hash_equals($envToken, $providedToken)) {
+    http_response_code(403);
+    die('Geçersiz güvenlik token\'ı. Lütfen doğru token ile tekrar deneyin.');
+}
 
 $migrationFile = __DIR__ . '/../database/migrations/019_create_video_sessions.sql';
 

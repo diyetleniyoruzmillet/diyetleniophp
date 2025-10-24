@@ -63,8 +63,22 @@ class FileUpload
             return ['success' => false, 'filename' => null, 'error' => 'Geçersiz dosya tipi.'];
         }
 
+        // Determine safe file extension from MIME (override original extension)
+        $mimeToExt = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+            'application/pdf' => 'pdf',
+            'application/msword' => 'doc',
+        ];
+
+        $extension = $mimeToExt[$mimeType] ?? strtolower(preg_replace('/[^a-z0-9]/i', '', pathinfo($file['name'], PATHINFO_EXTENSION)));
+        if ($extension === '') {
+            return ['success' => false, 'filename' => null, 'error' => 'Geçersiz dosya uzantısı.'];
+        }
+
         // Generate unique filename
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = self::generateUniqueFilename($extension);
 
         // Create upload directory if not exists

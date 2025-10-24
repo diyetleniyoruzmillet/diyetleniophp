@@ -5,46 +5,10 @@
 
 require_once __DIR__ . '/../includes/bootstrap.php';
 $pageTitle = 'Sık Sorulan Sorular';
+$bodyClass = 'faq';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-        .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
-        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: #0ea5e9 !important; }
-        .hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; padding: 100px 0 80px; text-align: center; }
-        .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; }
-        .hero p { font-size: 1.2rem; opacity: 0.95; }
-        .faq-section { padding: 80px 0; }
-        .accordion-item { border: none; margin-bottom: 15px; border-radius: 15px !important; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .accordion-button { background: white; color: #2d3748; font-weight: 600; font-size: 1.1rem; padding: 20px 25px; border: none; }
-        .accordion-button:not(.collapsed) { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
-        .accordion-button:focus { box-shadow: none; }
-        .accordion-body { padding: 25px; color: #718096; line-height: 1.8; }
-        .category-tabs { margin-bottom: 50px; }
-        .nav-pills .nav-link { border-radius: 12px; padding: 12px 25px; margin: 0 5px; font-weight: 500; color: #718096; }
-        .nav-pills .nav-link.active { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
-        .footer { background: #1e293b; color: white; padding: 40px 0; text-align: center; }
-        .footer a { color: #0ea5e9; text-decoration: none; }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="/"><i class="fas fa-heartbeat me-2"></i>Diyetlenio</a>
-            <div class="ms-auto">
-                <a href="/" class="btn btn-outline-primary me-2">Ana Sayfa</a>
-                <a href="/login.php" class="btn btn-primary">Giriş Yap</a>
-            </div>
-        </div>
-    </nav>
+<?php include __DIR__ . '/../includes/partials/header.php'; ?>
+    
 
     <section class="hero">
         <div class="container">
@@ -297,5 +261,4 @@ $pageTitle = 'Sık Sorulan Sorular';
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>
