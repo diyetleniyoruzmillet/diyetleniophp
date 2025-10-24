@@ -86,6 +86,7 @@ $stmt->execute($params);
 $dietitians = $stmt->fetchAll();
 
 $pageTitle = 'Diyetisyenlerimiz';
+$showNavbar = true;
 include __DIR__ . '/../includes/partials/header.php';
 ?>
     <style>

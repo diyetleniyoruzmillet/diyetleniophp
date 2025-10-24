@@ -35,6 +35,7 @@ $reviewStmt->execute([$id]);
 $reviews = $reviewStmt->fetchAll();
 
 $pageTitle = $dietitian['full_name'];
+$showNavbar = true;
 include __DIR__ . '/../includes/partials/header.php';
 ?>
     <style>
