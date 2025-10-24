@@ -756,32 +756,11 @@ include __DIR__ . '/../includes/partials/header.php';
 <body>
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-    <!-- Hero Section -->
+    <!-- Hero Section (stats removed for cleaner design) -->
     <section class="hero-section">
         <div class="container text-center hero-content">
             <h1 class="hero-title">Uzman Diyetisyenlerimiz</h1>
             <p class="hero-subtitle">Size en uygun diyetisyeni bulun ve sağlıklı yaşam yolculuğunuza başlayın</p>
-
-            <div class="row stats-row justify-content-center">
-                <div class="col-md-3 col-6">
-                    <div class="stat-item">
-                        <span class="stat-number"><?= $totalCount ?>+</span>
-                        <span class="stat-label">Uzman Diyetisyen</span>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-item">
-                        <span class="stat-number">5000+</span>
-                        <span class="stat-label">Mutlu Danışan</span>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-item">
-                        <span class="stat-number">4.8</span>
-                        <span class="stat-label">Ortalama Puan</span>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -950,8 +929,8 @@ include __DIR__ . '/../includes/partials/header.php';
 
                                         <div class="price-section">
                                             <div>
-                                                <div class="price"><?= number_format($d['consultation_fee'], 0) ?> ₺</div>
-                                                <div class="price-label">Konsültasyon ücreti</div>
+                                                <div class="badge free-badge" style="background:#10b981; color:#fff; padding:6px 10px; border-radius:12px; font-weight:700; font-size:.9rem;">İlk Randevu Ücretsiz</div>
+                                                <div class="price-label" style="margin-top:6px;">Ücret görüşmeden sonra</div>
                                             </div>
                                         </div>
 
