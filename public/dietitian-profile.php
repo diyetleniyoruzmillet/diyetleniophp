@@ -36,6 +36,7 @@ $reviews = $reviewStmt->fetchAll();
 
 $pageTitle = $dietitian['full_name'];
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         :root {
             --primary: #0ea5e9;
