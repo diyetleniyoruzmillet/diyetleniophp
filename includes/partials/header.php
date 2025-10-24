@@ -11,7 +11,8 @@ $title = isset($pageTitle) && $pageTitle ? $pageTitle . ' - Diyetlenio' : 'Diyet
 $metaDescription = $metaDescription ?? '';
 $extraHead = $extraHead ?? '';
 $bodyClass = $bodyClass ?? '';
-$showNavbar = array_key_exists('showNavbar', get_defined_vars()) ? (bool)$showNavbar : true;
+// Varsayılan olarak navbar gizli
+$showNavbar = array_key_exists('showNavbar', get_defined_vars()) ? (bool)$showNavbar : false;
 
 // Aktif menü için path belirleme
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
