@@ -53,3 +53,4 @@ build/
 *.sql.gz
 *.sql.backup
 backup/
+qwen-code/
