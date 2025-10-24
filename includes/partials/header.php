@@ -12,7 +12,7 @@ $metaDescription = $metaDescription ?? '';
 $extraHead = $extraHead ?? '';
 $bodyClass = $bodyClass ?? '';
 // Varsayılan olarak navbar gizli
-$showNavbar = array_key_exists('showNavbar', get_defined_vars()) ? (bool)$showNavbar : false;
+$showNavbar = array_key_exists('showNavbar', get_defined_vars()) ? (bool)$showNavbar : true;
 
 // Aktif menü için path belirleme
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
