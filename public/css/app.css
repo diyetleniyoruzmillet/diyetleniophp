@@ -1,6 +1,17 @@
 /* App-specific small helpers to complement design-system.css */
 body { font-family: var(--font-sans); color: var(--color-dark); line-height: var(--lh); }
 
+/* Login page layout centering */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
 /* Global Navbar */
 .navbar-main {
   background: rgba(255,255,255,0.9);
