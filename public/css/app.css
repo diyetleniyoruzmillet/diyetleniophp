@@ -1,9 +1,12 @@
 /* App-specific small helpers to complement design-system.css */
+html, body { height: 100%; }
 body { font-family: var(--font-sans); color: var(--color-dark); line-height: var(--lh); }
 
 /* Login page layout centering */
 .login-page {
   min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,6 +97,12 @@ body { font-family: var(--font-sans); color: var(--color-dark); line-height: var
   .form-section { padding: 40px 30px; }
   .brand-title { font-size: 2rem; }
   .form-title { font-size: 1.5rem; }
+}
+
+@media (max-width: 576px) {
+  .form-section { padding: 24px 20px; }
+  .login-card { border-radius: 16px; }
+  .password-toggle { right: 10px; }
 }
 
 /* FAQ page */
