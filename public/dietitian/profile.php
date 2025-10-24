@@ -126,6 +126,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $userId
                 ]);
 
+                // Profil fotoğrafı yükleme
+                if (!empty($_FILES['profile_photo']['tmp_name'])) {
+                    $upload = FileUpload::uploadImage($_FILES['profile_photo'], 'profiles', [
+                        'maxSize' => 5 * 1024 * 1024,
+                        'maxWidth' => 1200,
+                        'maxHeight' => 1200,
+                    ]);
+                    if ($upload['success']) {
+                        // Eski fotoğrafı sil (varsa ve farklıysa)
+                        if (!empty($profile['profile_photo']) && $profile['profile_photo'] !== $upload['filename']) {
+                            FileUpload::delete($profile['profile_photo']);
+                        }
+                        // Not: upload['filename'] 'profiles/...' şeklinde döner. users.profile_photo alanına bu şekilde kaydederiz.
+                        $stmt = $conn->prepare("UPDATE users SET profile_photo = ? WHERE id = ?");
+                        $stmt->execute([$upload['filename'], $userId]);
+                    } else {
+                        throw new Exception($upload['error'] ?? 'Profil fotoğrafı yüklenemedi.');
+                    }
+                }
+
                 // Şifre değişikliği (Validator zaten doğruladı)
                 if (!empty($_POST['new_password'])) {
                     $hashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
@@ -269,7 +289,7 @@ $pageTitle = 'Profil Ayarları';
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="">
+                    <form method="POST" action="" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
 
                         <div class="profile-card p-4 mb-4">
@@ -277,6 +297,20 @@ $pageTitle = 'Profil Ayarları';
                                 <i class="fas fa-user-circle me-2"></i>Kişisel Bilgiler
                             </h5>
                             <div class="row g-3">
+                                <div class="col-md-3 text-center">
+                                    <div class="mb-2">
+                                        <?php
+                                        $photo = $profile['profile_photo'] ?? '';
+                                        $photoUrl = $photo ? ('/assets/uploads/' . ltrim($photo, '/')) : '/images/default-avatar.png';
+                                        ?>
+                                        <img src="<?= clean($photoUrl) ?>" alt="Profil Fotoğrafı" class="rounded-circle border" style="width:120px;height:120px;object-fit:cover;">
+                                    </div>
+                                    <div class="mt-2">
+                                        <label class="form-label">Profil Fotoğrafı</label>
+                                        <input type="file" name="profile_photo" accept="image/*" class="form-control">
+                                        <small class="text-muted d-block mt-1">JPG, PNG, WEBP. Maks 5MB</small>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Ad Soyad *</label>
                                     <input type="text" name="full_name" class="form-control"

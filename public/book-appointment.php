@@ -127,15 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $availableTimes = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
 $pageTitle = 'Randevu Al';
-?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+include __DIR__ . '/../includes/partials/header.php';
     <style>
         body { background: #f8f9fa; font-family: 'Inter', sans-serif; }
         .container { max-width: 900px; margin-top: 50px; }
@@ -165,8 +157,9 @@ $pageTitle = 'Randevu Al';
             <div class="row align-items-center">
                 <div class="col-auto">
                     <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <?php if ($dietitian['profile_photo']): ?>
-                            <img src="/assets/uploads/<?= clean($dietitian['profile_photo']) ?>" alt="" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <?php if ($dietitian['profile_photo']): ?>
+                                        <?php $p=$dietitian['profile_photo']; $photoUrl='/assets/uploads/' . ltrim($p,'/'); ?>
+                                        <img src="<?= clean($photoUrl) ?>" alt="" class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">
                         <?php else: ?>
                             <i class="fas fa-user-md fa-2x text-success"></i>
                         <?php endif; ?>
@@ -230,5 +223,4 @@ $pageTitle = 'Randevu Al';
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>

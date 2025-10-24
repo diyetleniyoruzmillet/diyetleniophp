@@ -5,16 +5,7 @@
 
 require_once __DIR__ . '/../includes/bootstrap.php';
 $pageTitle = 'Gizlilik Politikası';
-?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+include __DIR__ . '/../includes/partials/header.php';
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; }
         .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
@@ -29,15 +20,7 @@ $pageTitle = 'Gizlilik Politikası';
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="/"><i class="fas fa-heartbeat me-2"></i>Diyetlenio</a>
-            <div class="ms-auto">
-                <a href="/" class="btn btn-outline-primary me-2">Ana Sayfa</a>
-                <a href="/login.php" class="btn btn-primary">Giriş Yap</a>
-            </div>
-        </div>
-    </nav>
+    
 
     <div class="container">
         <div class="content">
@@ -111,15 +94,4 @@ $pageTitle = 'Gizlilik Politikası';
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Diyetlenio. Tüm hakları saklıdır.</p>
-            <div class="mt-3">
-                <a href="/about.php" class="me-3">Hakkımızda</a>
-                <a href="/contact.php" class="me-3">İletişim</a>
-                <a href="/terms.php">Kullanım Şartları</a>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>

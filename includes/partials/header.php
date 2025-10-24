@@ -38,18 +38,41 @@ $_isActive = function(string $path) use ($currentPath): bool {
 </head>
 <body class="<?= clean($bodyClass) ?>">
 <?php if ($showNavbar): ?>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="box-shadow: var(--shadow-sm)">
+    <nav class="navbar navbar-expand-lg navbar-main sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/"><i class="fas fa-heartbeat me-2 text-danger"></i>Diyetlenio</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link<?= $_isActive('/') ? ' text-primary' : '' ?>" href="/">Ana Sayfa</a></li>
-                    <li class="nav-item"><a class="nav-link<?= $_isActive('/blog.php') ? ' text-primary' : '' ?>" href="/blog.php">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link<?= $_isActive('/faq.php') ? ' text-primary' : '' ?>" href="/faq.php">SSS</a></li>
-                    <li class="nav-item ms-lg-3"><a class="btn btn-sm btn-outline-primary<?= $_isActive('/login.php') ? ' active' : '' ?>" href="/login.php">Giriş Yap</a></li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/') ? ' active' : '' ?>" href="/">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/blog.php') ? ' active' : '' ?>" href="/blog.php">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/faq.php') ? ' active' : '' ?>" href="/faq.php">SSS</a></li>
+                    <?php if (isset($auth) && $auth && $auth->check()): ?>
+                        <?php $ut = $auth->user()->getUserType();
+                              $panelLink = $ut === 'admin' ? '/admin/dashboard.php' : ($ut === 'dietitian' ? '/dietitian/dashboard.php' : '/client/dashboard.php');
+                              $fullName = $auth->user()->getFullName();
+                              $pp = $auth->user()->get('profile_photo') ?? '';
+                              $avatar = $pp ? ('/assets/uploads/' . ltrim($pp,'/')) : '/images/default-avatar.png'; ?>
+                        <li class="nav-item"><a class="nav-link<?= $_isActive($panelLink) ? ' active' : '' ?>" href="<?= $panelLink ?>">Panelim</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="<?= clean($avatar) ?>" alt="<?= clean($fullName) ?>" class="rounded-circle me-2" style="width:28px;height:28px;object-fit:cover;">
+                                <span class="d-none d-md-inline"><?= clean($fullName) ?></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="<?= $panelLink ?>"><i class="fas fa-gauge me-2"></i>Panel</a></li>
+                                <?php if ($ut === 'dietitian'): ?>
+                                    <li><a class="dropdown-item" href="/dietitian/profile.php"><i class="fas fa-user me-2"></i>Profilim</a></li>
+                                <?php endif; ?>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/logout.php"><i class="fas fa-right-from-bracket me-2"></i>Çıkış</a></li>
+                            </ul>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item ms-lg-3"><a class="btn btn-sm btn-outline-primary<?= $_isActive('/login.php') ? ' active' : '' ?>" href="/login.php">Giriş Yap</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

@@ -35,16 +35,7 @@ $reviewStmt->execute([$id]);
 $reviews = $reviewStmt->fetchAll();
 
 $pageTitle = $dietitian['full_name'];
-?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+include __DIR__ . '/../includes/partials/header.php';
     <style>
         :root {
             --primary: #0ea5e9;
@@ -477,7 +468,8 @@ $pageTitle = $dietitian['full_name'];
             <div class="hero-content text-center">
                 <div class="profile-photo-large">
                     <?php if ($dietitian['profile_photo']): ?>
-                        <img src="<?= clean($dietitian['profile_photo']) ?>" alt="<?= clean($dietitian['full_name']) ?>" style="width:100%;height:100%;border-radius:30px;object-fit:cover;">
+                        <?php $p=$dietitian['profile_photo']; $photoUrl='/assets/uploads/' . ltrim($p,'/'); ?>
+                        <img src="<?= clean($photoUrl) ?>" alt="<?= clean($dietitian['full_name']) ?>" style="width:100%;height:100%;border-radius:30px;object-fit:cover;">
                     <?php else: ?>
                         <i class="fas fa-user-md"></i>
                     <?php endif; ?>
@@ -677,5 +669,4 @@ $pageTitle = $dietitian['full_name'];
             }
         });
     </script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>

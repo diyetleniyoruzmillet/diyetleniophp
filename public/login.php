@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Giriş Yap';
-$bodyClass = 'bg-hero-green';
+$bodyClass = 'login-page bg-hero-green';
 $showNavbar = false;
 ?>
 <?php include __DIR__ . '/../includes/partials/header.php'; ?>

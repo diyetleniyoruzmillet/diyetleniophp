@@ -40,17 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <meta name="description" content="Diyetlenio hakkındaki görüş ve önerilerinizi bizimle paylaşın. Sizin için daha iyi bir deneyim oluşturmak istiyoruz.">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/modern-design-system.css">
+<?php $metaDescription = 'Diyetlenio hakkındaki görüş ve önerilerinizi bizimle paylaşın. Sizin için daha iyi bir deneyim oluşturmak istiyoruz.'; include __DIR__ . '/../includes/partials/header.php'; ?>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -200,41 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">İletişim</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/feedback">Geri Bildirim</a>
-                    </li>
-                    <?php if ($auth->check()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">
-                                Panel
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login.php">Giriş</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    
 
     <!-- Hero -->
     <section class="hero">
@@ -340,4 +296,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>

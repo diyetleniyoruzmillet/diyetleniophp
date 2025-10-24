@@ -81,16 +81,8 @@ $relatedStmt->execute([$id, $article['category']]);
 $relatedArticles = $relatedStmt->fetchAll();
 
 $pageTitle = $article['title'];
-?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+$metaDescription = mb_substr(strip_tags($article['excerpt'] ?? ''), 0, 160);
+include __DIR__ . '/../includes/partials/header.php';
     <style>
         :root {
             --primary: #0ea5e9;
@@ -469,8 +461,9 @@ $pageTitle = $article['title'];
                 <div class="comment-card">
                     <div class="d-flex align-items-start mb-3">
                         <div class="me-3">
-                            <?php if ($comment['profile_photo']): ?>
-                                <img src="<?= clean($comment['profile_photo']) ?>" alt="<?= clean($comment['full_name']) ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">
+                            <?php if (!empty($comment['profile_photo'])): ?>
+                                <?php $p=$comment['profile_photo']; $photoUrl = (strpos($p,'http')===0) ? $p : ('/assets/uploads/' . ltrim($p,'/')); ?>
+                                <img src="<?= clean($photoUrl) ?>" alt="<?= clean($comment['full_name'] ?? $comment['guest_name'] ?? 'Kullanıcı') ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">
                             <?php else: ?>
                                 <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;">
                                     <i class="fas fa-user"></i>
@@ -553,5 +546,4 @@ $pageTitle = $article['title'];
             document.getElementById('readingProgress').style.width = scrolled + '%';
         });
     </script>
-</body>
-</html>
+<?php include __DIR__ . '/../includes/partials/footer.php'; ?>

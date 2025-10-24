@@ -50,14 +50,12 @@ try {
     $recentArticles = [];
 }
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diyetlenio - Sağlıklı Yaşam İçin Profesyonel Beslenme Danışmanlığı</title>
-    <meta name="description" content="Uzman diyetisyenlerle online görüşme, kişisel diyet programı ve beslenme danışmanlığı. Sağlıklı yaşam yolculuğunuza hemen başlayın!">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<?php
+$pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Beslenme Danışmanlığı';
+$metaDescription = 'Uzman diyetisyenlerle online görüşme, kişisel diyet programı ve beslenme danışmanlığı. Sağlıklı yaşam yolculuğunuza hemen başlayın!';
+$extraHead = '';
+include __DIR__ . '/../includes/partials/header.php';
+?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -939,7 +937,8 @@ try {
                 ?>
                 <div class="col-md-4" data-aos="zoom-in" data-aos-delay="<?= $delay ?>">
                     <div class="dietitian-card">
-                        <img src="<?= $dietitian['profile_photo'] ?: '/images/default-avatar.png' ?>"
+                        <?php $p=$dietitian['profile_photo'] ?? ''; $photoUrl = $p ? ('/assets/uploads/' . ltrim($p,'/')) : '/images/default-avatar.png'; ?>
+                        <img src="<?= $photoUrl ?>"
                              alt="<?= clean($dietitian['full_name']) ?>"
                              class="dietitian-image">
                         <div class="dietitian-body">
