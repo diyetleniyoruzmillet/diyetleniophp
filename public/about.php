@@ -7,6 +7,7 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 
 $pageTitle = 'Hakkımızda';
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         * {
             margin: 0;

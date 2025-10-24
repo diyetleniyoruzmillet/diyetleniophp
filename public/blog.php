@@ -77,6 +77,7 @@ function calculateReadTime($content) {
 
 $pageTitle = 'Blog';
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         :root {
             --primary-color: #0ea5e9;

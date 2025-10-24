@@ -91,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'İletişim';
 $metaDescription = 'Diyetlenio ile iletişime geçin. Size nasıl yardımcı olabiliriz?';
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
