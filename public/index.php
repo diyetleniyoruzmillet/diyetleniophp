@@ -54,6 +54,7 @@ try {
 $pageTitle = 'Sağlıklı Yaşam İçin Profesyonel Beslenme Danışmanlığı';
 $metaDescription = 'Uzman diyetisyenlerle online görüşme, kişisel diyet programı ve beslenme danışmanlığı. Sağlıklı yaşam yolculuğunuza hemen başlayın!';
 $extraHead = '<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">';
+$showNavbar = true;
 include __DIR__ . '/../includes/partials/header.php';
 ?>
     
