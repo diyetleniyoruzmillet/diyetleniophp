@@ -87,6 +87,7 @@ $dietitians = $stmt->fetchAll();
 
 $pageTitle = 'Diyetisyenlerimiz';
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         :root {
             --primary-color: #10b981;
