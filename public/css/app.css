@@ -38,6 +38,7 @@ body { font-family: var(--font-sans); color: var(--color-dark); line-height: var
 
 /* Login page mappings (to reduce inline CSS over time) */
 .login-container { width: 100%; max-width: 1000px; }
+.login-container { margin: 0 auto; }
 .login-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 25px; box-shadow: var(--shadow-lg); overflow: hidden; }
 .brand-section { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); color: #fff; padding: 60px 40px; position: relative; overflow: hidden; }
 .form-section { padding: 60px 50px; }
