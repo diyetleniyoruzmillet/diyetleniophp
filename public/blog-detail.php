@@ -83,6 +83,7 @@ $relatedArticles = $relatedStmt->fetchAll();
 $pageTitle = $article['title'];
 $metaDescription = mb_substr(strip_tags($article['excerpt'] ?? ''), 0, 160);
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         :root {
             --primary: #0ea5e9;

@@ -8,6 +8,7 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 $pageTitle = 'Yardım Merkezi';
 $metaDescription = 'Diyetlenio kullanımı hakkında yardım ve destek. Sıkça sorulan sorular, rehberler ve daha fazlası.';
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         body {
             font-family: 'Inter', sans-serif;

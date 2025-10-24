@@ -6,6 +6,7 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 $pageTitle = 'Gizlilik Politikası';
 include __DIR__ . '/../includes/partials/header.php';
+?>
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; }
         .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 1rem 0; }
