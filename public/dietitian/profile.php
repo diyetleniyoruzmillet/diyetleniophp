@@ -181,266 +181,174 @@ $stmt->execute([$userId]);
 $profile = $stmt->fetch();
 
 $pageTitle = 'Profil Ayarları';
+include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #f8f9fa; }
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 8px;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.2);
-        }
-        .content-wrapper { padding: 30px; }
-        .profile-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .section-title {
-            border-bottom: 2px solid #28a745;
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-0">
-                <div class="p-4">
-                    <h4 class="text-white mb-4">
-                        <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-                    </h4>
-                    <nav class="nav flex-column">
-                        <a class="nav-link" href="/dietitian/dashboard.php">
-                            <i class="fas fa-chart-line me-2"></i>Anasayfa
-                        </a>
-                        <a class="nav-link" href="/dietitian/clients.php">
-                            <i class="fas fa-users me-2"></i>Danışanlarım
-                        </a>
-                        <a class="nav-link" href="/dietitian/appointments.php">
-                            <i class="fas fa-calendar-check me-2"></i>Randevular
-                        </a>
-                        <a class="nav-link" href="/dietitian/availability.php">
-                            <i class="fas fa-clock me-2"></i>Müsaitlik
-                        </a>
-                        <a class="nav-link" href="/dietitian/diet-plans.php">
-                            <i class="fas fa-clipboard-list me-2"></i>Diyet Planları
-                        </a>
-                        <a class="nav-link" href="/dietitian/messages.php">
-                            <i class="fas fa-envelope me-2"></i>Mesajlar
-                        </a>
-                        <a class="nav-link active" href="/dietitian/profile.php">
-                            <i class="fas fa-user me-2"></i>Profilim
-                        </a>
-                        <hr class="text-white-50 my-3">
-                        <a class="nav-link" href="/">
-                            <i class="fas fa-home me-2"></i>Ana Sayfa
-                        </a>
-                        <a class="nav-link" href="/logout.php">
-                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış
-                        </a>
-                    </nav>
+
+<style>
+    .profile-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .section-title {
+        border-bottom: 2px solid #f093fb;
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+    }
+    .profile-photo-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #f093fb;
+    }
+</style>
+
+<h2 class="mb-4">Profil Ayarları</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+
+    <div class="profile-card p-4 mb-4">
+        <h5 class="section-title">
+            <i class="fas fa-user-circle me-2"></i>Kişisel Bilgiler
+        </h5>
+
+        <div class="row g-3">
+            <div class="col-md-12 text-center mb-3">
+                <?php if (!empty($profile['profile_photo'])): ?>
+                    <img src="/<?= clean($profile['profile_photo']) ?>" class="profile-photo-preview mb-3" alt="Profil Fotoğrafı">
+                <?php else: ?>
+                    <div class="profile-photo-preview bg-light d-flex align-items-center justify-content-center mx-auto mb-3">
+                        <i class="fas fa-user fa-4x text-muted"></i>
+                    </div>
+                <?php endif; ?>
+                <div>
+                    <label class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-camera me-2"></i>Fotoğraf Değiştir
+                        <input type="file" name="profile_photo" accept="image/*" class="d-none">
+                    </label>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="col-md-10">
-                <div class="content-wrapper">
-                    <h2 class="mb-4">Profil Ayarları</h2>
+            <div class="col-md-6">
+                <label class="form-label">Ad Soyad *</label>
+                <input type="text" name="full_name" class="form-control"
+                       value="<?= clean($profile['full_name']) ?>" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Email *</label>
+                <input type="email" name="email" class="form-control"
+                       value="<?= clean($profile['email']) ?>" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Telefon *</label>
+                <input type="tel" name="phone" class="form-control"
+                       value="<?= clean($profile['phone']) ?>" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Ünvan *</label>
+                <input type="text" name="title" class="form-control"
+                       value="<?= clean($profile['title']) ?>" placeholder="Diyetisyen, Uzman Diyetisyen vb." required>
+            </div>
+        </div>
+    </div>
 
-                    <?php if (hasFlash()): ?>
-                        <?php if ($msg = getFlash('success')): ?>
-                            <div class="alert alert-success alert-dismissible fade show">
-                                <?= clean($msg) ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-                        <?php if ($msg = getFlash('error')): ?>
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                <?= clean($msg) ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-                    <?php endif; ?>
+    <div class="profile-card p-4 mb-4">
+        <h5 class="section-title">
+            <i class="fas fa-briefcase me-2"></i>Mesleki Bilgiler
+        </h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Uzmanlık Alanı *</label>
+                <input type="text" name="specialization" class="form-control"
+                       value="<?= clean($profile['specialization']) ?>" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Deneyim (Yıl) *</label>
+                <input type="number" name="experience_years" class="form-control" min="0" max="50"
+                       value="<?= $profile['experience_years'] ?>" required>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Hakkımda</label>
+                <textarea name="about_me" class="form-control" rows="4"
+                          placeholder="Kendinizden bahsedin..."><?= clean($profile['about_me'] ?? '') ?></textarea>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Eğitim</label>
+                <textarea name="education" class="form-control" rows="3"
+                          placeholder="Eğitim bilgileriniz..."><?= clean($profile['education'] ?? '') ?></textarea>
+            </div>
+        </div>
+    </div>
 
-                    <?php if (!$profile['is_approved']): ?>
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Onay Bekliyor:</strong> Profiliniz admin onayı bekliyor. Onaylandıktan sonra danışanlar sizi görebilecek.
-                        </div>
-                    <?php endif; ?>
-
-                    <form method="POST" action="" enctype="multipart/form-data">
-                        <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
-
-                        <div class="profile-card p-4 mb-4">
-                            <h5 class="section-title">
-                                <i class="fas fa-user-circle me-2"></i>Kişisel Bilgiler
-                            </h5>
-                            <div class="row g-3">
-                                <div class="col-md-3 text-center">
-                                    <div class="mb-2">
-                                        <?php
-                                        $photo = $profile['profile_photo'] ?? '';
-                                        $photoUrl = $photo ? ('/assets/uploads/' . ltrim($photo, '/')) : '/images/default-avatar.png';
-                                        ?>
-                                        <img src="<?= clean($photoUrl) ?>" alt="Profil Fotoğrafı" class="rounded-circle border" style="width:120px;height:120px;object-fit:cover;">
-                                    </div>
-                                    <div class="mt-2">
-                                        <label class="form-label">Profil Fotoğrafı</label>
-                                        <input type="file" name="profile_photo" accept="image/*" class="form-control">
-                                        <small class="text-muted d-block mt-1">JPG, PNG, WEBP. Maks 5MB</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Ad Soyad *</label>
-                                    <input type="text" name="full_name" class="form-control"
-                                           value="<?= clean($profile['full_name']) ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Email *</label>
-                                    <input type="email" name="email" class="form-control"
-                                           value="<?= clean($profile['email']) ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Telefon *</label>
-                                    <input type="tel" name="phone" class="form-control"
-                                           value="<?= clean($profile['phone']) ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Ünvan *</label>
-                                    <input type="text" name="title" class="form-control"
-                                           value="<?= clean($profile['title']) ?>"
-                                           placeholder="Örn: Uzman Diyetisyen" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="profile-card p-4 mb-4">
-                            <h5 class="section-title">
-                                <i class="fas fa-stethoscope me-2"></i>Mesleki Bilgiler
-                            </h5>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Uzmanlık Alanı *</label>
-                                    <select name="specialization" class="form-select" required>
-                                        <option value="">Seçiniz</option>
-                                        <option value="Kilo Yönetimi" <?= $profile['specialization'] === 'Kilo Yönetimi' ? 'selected' : '' ?>>Kilo Yönetimi</option>
-                                        <option value="Spor Beslenmesi" <?= $profile['specialization'] === 'Spor Beslenmesi' ? 'selected' : '' ?>>Spor Beslenmesi</option>
-                                        <option value="Çocuk Beslenmesi" <?= $profile['specialization'] === 'Çocuk Beslenmesi' ? 'selected' : '' ?>>Çocuk Beslenmesi</option>
-                                        <option value="Hamilelik Diyeti" <?= $profile['specialization'] === 'Hamilelik Diyeti' ? 'selected' : '' ?>>Hamilelik Diyeti</option>
-                                        <option value="Hastalık Diyeti" <?= $profile['specialization'] === 'Hastalık Diyeti' ? 'selected' : '' ?>>Hastalık Diyeti</option>
-                                        <option value="Vejetaryen/Vegan" <?= $profile['specialization'] === 'Vejetaryen/Vegan' ? 'selected' : '' ?>>Vejetaryen/Vegan</option>
-                                        <option value="Detoks" <?= $profile['specialization'] === 'Detoks' ? 'selected' : '' ?>>Detoks</option>
-                                        <option value="Genel Beslenme" <?= $profile['specialization'] === 'Genel Beslenme' ? 'selected' : '' ?>>Genel Beslenme</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Deneyim (Yıl) *</label>
-                                    <input type="number" name="experience_years" class="form-control" min="0" max="50"
-                                           value="<?= $profile['experience_years'] ?>" required>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Eğitim Bilgileri *</label>
-                                    <textarea name="education" class="form-control" rows="3" required><?= clean($profile['education']) ?></textarea>
-                                    <small class="text-muted">Mezun olduğunuz üniversite, bölüm ve sertifikalarınızı yazınız.</small>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Hakkımda *</label>
-                                    <textarea name="about_me" class="form-control" rows="5" required><?= clean($profile['about_me']) ?></textarea>
-                                    <small class="text-muted">Kendinizi ve çalışma yaklaşımınızı tanıtın.</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="profile-card p-4 mb-4">
-                            <h5 class="section-title">
-                                <i class="fas fa-money-bill me-2"></i>Hizmet Bilgileri
-                            </h5>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Konsültasyon Ücreti (TL) *</label>
-                                    <input type="number" name="consultation_fee" class="form-control" min="0" step="0.01"
-                                           value="<?= $profile['consultation_fee'] ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">IBAN</label>
-                                    <input type="text" name="iban" class="form-control"
-                                           value="<?= clean($profile['iban'] ?? '') ?>"
-                                           placeholder="TR00 0000 0000 0000 0000 0000 00">
-                                    <small class="text-muted">Ödeme almak için IBAN numaranız</small>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label d-block mb-2">Kabul Edilen Seans Tipleri</label>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="accepts_online"
-                                               id="acceptsOnline" <?= $profile['accepts_online_sessions'] ? 'checked' : '' ?>>
-                                        <label class="form-check-label" for="acceptsOnline">
-                                            <i class="fas fa-video me-1"></i>Online Görüşme
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" name="accepts_in_person"
-                                               id="acceptsInPerson" <?= $profile['accepts_in_person'] ? 'checked' : '' ?>>
-                                        <label class="form-check-label" for="acceptsInPerson">
-                                            <i class="fas fa-clinic-medical me-1"></i>Yüz Yüze Görüşme
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="profile-card p-4 mb-4">
-                            <h5 class="section-title">
-                                <i class="fas fa-lock me-2"></i>Şifre Değiştir
-                            </h5>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Yeni Şifre</label>
-                                    <input type="password" name="new_password" class="form-control"
-                                           placeholder="Değiştirmek istemiyorsanız boş bırakın">
-                                    <small class="text-muted">En az 8 karakter</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Yeni Şifre (Tekrar)</label>
-                                    <input type="password" name="confirm_password" class="form-control"
-                                           placeholder="Şifrenizi tekrar girin">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-end">
-                            <a href="/dietitian/dashboard.php" class="btn btn-secondary me-2">
-                                <i class="fas fa-times me-2"></i>İptal
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-2"></i>Kaydet
-                            </button>
-                        </div>
-                    </form>
+    <div class="profile-card p-4 mb-4">
+        <h5 class="section-title">
+            <i class="fas fa-coins me-2"></i>Ücretlendirme ve Hizmet
+        </h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Danışmanlık Ücreti (₺) *</label>
+                <input type="number" name="consultation_fee" class="form-control" min="0" step="0.01"
+                       value="<?= $profile['consultation_fee'] ?>" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">IBAN</label>
+                <input type="text" name="iban" class="form-control"
+                       value="<?= clean($profile['iban'] ?? '') ?>" placeholder="TR000000000000000000000000">
+            </div>
+            <div class="col-12">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="accepts_online" id="acceptsOnline"
+                           <?= $profile['accepts_online_sessions'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="acceptsOnline">
+                        Online Görüşme Kabul Ediyorum
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="accepts_in_person" id="acceptsInPerson"
+                           <?= $profile['accepts_in_person'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="acceptsInPerson">
+                        Yüz Yüze Görüşme Kabul Ediyorum
+                    </label>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="profile-card p-4 mb-4">
+        <h5 class="section-title">
+            <i class="fas fa-lock me-2"></i>Şifre Değiştir
+        </h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Yeni Şifre</label>
+                <input type="password" name="new_password" class="form-control"
+                       placeholder="Değiştirmek istemiyorsanız boş bırakın">
+                <small class="text-muted">En az 8 karakter</small>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Yeni Şifre (Tekrar)</label>
+                <input type="password" name="confirm_password" class="form-control"
+                       placeholder="Şifrenizi tekrar girin">
+            </div>
+        </div>
+    </div>
+
+    <div class="text-end">
+        <a href="/dietitian/dashboard.php" class="btn btn-secondary me-2">
+            <i class="fas fa-times me-2"></i>İptal
+        </a>
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-save me-2"></i>Kaydet
+        </button>
+    </div>
+</form>
+
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
