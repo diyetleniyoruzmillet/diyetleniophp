@@ -87,7 +87,8 @@ $dietitians = $stmt->fetchAll();
 
 $pageTitle = 'Diyetisyenlerimiz';
 $showNavbar = true;
-$extraHead = '<style>
+$extraHead = <<<'EOD'
+<style>
         :root {
             --primary-color: #10b981;
             --primary-dark: #059669;
@@ -750,7 +751,8 @@ $extraHead = '<style>
                 gap: 15px;
             }
         }
-    </style>';
+    </style>
+EOD;
 include __DIR__ . '/../includes/partials/header.php';
 ?>
 
