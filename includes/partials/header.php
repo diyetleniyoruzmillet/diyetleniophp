@@ -51,6 +51,7 @@ $_isActive = function(string $path) use ($currentPath): bool {
                     <li class="nav-item"><a class="nav-link<?= $_isActive('/dietitians.php') ? ' active' : '' ?>" href="/dietitians.php">Diyetisyenler</a></li>
                     <li class="nav-item"><a class="nav-link<?= $_isActive('/about.php') ? ' active' : '' ?>" href="/about.php">Hakkımızda</a></li>
                     <li class="nav-item"><a class="nav-link<?= $_isActive('/blog.php') ? ' active' : '' ?>" href="/blog.php">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/recipes.php') ? ' active' : '' ?>" href="/recipes.php">Tarifler</a></li>
                     <li class="nav-item"><a class="nav-link<?= $_isActive('/contact.php') ? ' active' : '' ?>" href="/contact.php">İletişim</a></li>
                     <?php if (isset($auth) && $auth && $auth->check()): ?>
                         <?php $ut = $auth->user()->getUserType();
