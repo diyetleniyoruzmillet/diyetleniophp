@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_plan'])) {
             setFlash('success', 'Diyet planı başarıyla oluşturuldu.');
             redirect('/dietitian/diet-plans.php');
         } catch (Exception $e) {
-            $error = 'Plan oluşturulurken bir hata oluştu.';
+            setFlash('error', 'Plan oluşturulurken bir hata oluştu.');
         }
     }
 }
@@ -81,47 +81,160 @@ $stmt->execute([$userId]);
 $clients = $stmt->fetchAll();
 
 $pageTitle = 'Diyet Planları';
+include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #f8f9fa; }
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 8px;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.2);
-        }
-        .content-wrapper { padding: 30px; }
-        .plan-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-left: 4px solid #28a745;
-        }
-        .plan-card.active {
-            border-left-color: #ffc107;
-            background: #fffbf0;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
+
+<style>
+    .plan-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-left: 4px solid #f093fb;
+    }
+    .plan-card.active {
+        border-left-color: #ffc107;
+        background: #fffbf0;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Diyet Planları</h2>
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createPlanModal">
+        <i class="fas fa-plus me-2"></i>Yeni Plan Oluştur
+    </button>
+</div>
+
+<?php if (count($plans) === 0): ?>
+    <div class="text-center py-5">
+        <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Henüz diyet planı oluşturmadınız</h4>
+        <p class="text-muted">Danışanlarınız için diyet planı oluşturarak başlayın.</p>
+    </div>
+<?php else: ?>
+    <?php foreach ($plans as $plan): ?>
+        <div class="plan-card <?= $plan['is_active'] ? 'active' : '' ?>">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-2">
+                        <?= clean($plan['plan_name']) ?>
+                        <?php if ($plan['is_active']): ?>
+                            <span class="badge bg-warning text-dark ms-2">Aktif</span>
+                        <?php endif; ?>
+                    </h5>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-user me-2"></i><?= clean($plan['client_name']) ?>
+                    </p>
+                    <p class="mb-2 small"><?= clean($plan['description']) ?></p>
+                    <p class="mb-0 small text-muted">
+                        <i class="far fa-calendar me-2"></i>
+                        <?= date('d.m.Y', strtotime($plan['start_date'])) ?> - <?= date('d.m.Y', strtotime($plan['end_date'])) ?>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <div class="row g-2 text-center">
+                        <div class="col-6">
+                            <small class="text-muted d-block">Kalori</small>
+                            <strong><?= $plan['daily_calories'] ?></strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Protein</small>
+                            <strong><?= $plan['daily_protein'] ?>g</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Karbonhidrat</small>
+                            <strong><?= $plan['daily_carbs'] ?>g</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Yağ</small>
+                            <strong><?= $plan['daily_fat'] ?>g</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<!-- Create Plan Modal -->
+<div class="modal fade" id="createPlanModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Yeni Diyet Planı Oluştur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+
+                    <div class="mb-3">
+                        <label class="form-label">Danışan *</label>
+                        <select name="client_id" class="form-select" required>
+                            <option value="">Seçiniz</option>
+                            <?php foreach ($clients as $client): ?>
+                                <option value="<?= $client['id'] ?>"><?= clean($client['full_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Plan Adı *</label>
+                        <input type="text" name="plan_name" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Açıklama</label>
+                        <textarea name="description" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Başlangıç Tarihi *</label>
+                            <input type="date" name="start_date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Bitiş Tarihi *</label>
+                            <input type="date" name="end_date" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Günlük Kalori *</label>
+                            <input type="number" name="daily_calories" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Protein (g) *</label>
+                            <input type="number" name="daily_protein" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Karbonhidrat (g) *</label>
+                            <input type="number" name="daily_carbs" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Yağ (g) *</label>
+                            <input type="number" name="daily_fat" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" name="create_plan" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Oluştur
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
