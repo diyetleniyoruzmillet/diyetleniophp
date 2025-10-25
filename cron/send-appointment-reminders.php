@@ -19,6 +19,7 @@ echo "[" . date('Y-m-d H:i:s') . "] Randevu hatırlatmaları kontrolü başlıyo
 
 $conn = $db->getConnection();
 $mailer = new Mailer();
+$smsService = new SmsService();
 $now = date('Y-m-d H:i:s');
 
 try {
@@ -41,8 +42,8 @@ try {
             d.email as dietitian_email
         FROM appointment_reminders ar
         INNER JOIN appointments a ON a.id = ar.appointment_id
-        INNER JOIN users c ON c.id = a.client_id
-        INNER JOIN users d ON d.id = a.dietitian_id
+        INNER JOIN users c ON c.id = a.client_id AND c.is_active = 1
+        INNER JOIN users d ON d.id = a.dietitian_id AND d.is_active = 1
         WHERE ar.status = 'pending'
         AND ar.scheduled_for <= ?
         AND a.status = 'scheduled'
@@ -103,16 +104,40 @@ try {
                     throw new Exception('E-posta gönderilemedi');
                 }
             } elseif ($reminder['reminder_type'] === 'sms') {
-                // SMS desteği eklendiğinde burası kullanılacak
-                echo "⚠️  SMS desteği henüz aktif değil (Hatırlatma #{$reminder['reminder_id']})\n";
+                // SMS hatırlatması gönder
+                // Telefon numarasını al (client tablosundan veya user tablosundan)
+                $phoneStmt = $conn->prepare("SELECT phone FROM users WHERE id = ?");
+                $phoneStmt->execute([$reminder['client_id']]);
+                $phoneData = $phoneStmt->fetch();
 
-                // Şimdilik başarısız olarak işaretle
-                $updateStmt = $conn->prepare("
-                    UPDATE appointment_reminders
-                    SET status = 'failed', error_message = 'SMS desteği aktif değil'
-                    WHERE id = ?
-                ");
-                $updateStmt->execute([$reminder['reminder_id']]);
+                if (!empty($phoneData['phone'])) {
+                    $sent = $smsService->sendAppointmentReminder($phoneData['phone'], $emailData);
+
+                    if ($sent) {
+                        // Başarılı olarak işaretle
+                        $updateStmt = $conn->prepare("
+                            UPDATE appointment_reminders
+                            SET status = 'sent', sent_at = NOW()
+                            WHERE id = ?
+                        ");
+                        $updateStmt->execute([$reminder['reminder_id']]);
+
+                        echo "📱 SMS hatırlatma gönderildi: {$phoneData['phone']} (Randevu #{$reminder['appointment_id']}, {$hoursText} kaldı)\n";
+                        $successCount++;
+                    } else {
+                        throw new Exception('SMS gönderilemedi');
+                    }
+                } else {
+                    // Telefon numarası yok
+                    $updateStmt = $conn->prepare("
+                        UPDATE appointment_reminders
+                        SET status = 'failed', error_message = 'Telefon numarası bulunamadı'
+                        WHERE id = ?
+                    ");
+                    $updateStmt->execute([$reminder['reminder_id']]);
+                    echo "⚠️  Telefon numarası yok (Hatırlatma #{$reminder['reminder_id']})\n";
+                    $failCount++;
+                }
             }
 
         } catch (Exception $e) {
