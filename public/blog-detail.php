@@ -403,17 +403,18 @@ include __DIR__ . '/../includes/partials/header.php';
             <!-- Share Section -->
             <div class="share-section">
                 <h4><i class="fas fa-share-alt me-2"></i>Bu yazıyı paylaşın</h4>
+                <?php $shareUrl = BASE_URL . '/blog-detail.php?id=' . $id; ?>
                 <div class="share-buttons">
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://diyetlenio.com/blog-detail.php?id=' . $id) ?>" target="_blank" class="share-btn facebook">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($shareUrl) ?>" target="_blank" class="share-btn facebook">
                         <i class="fab fa-facebook-f"></i>Facebook
                     </a>
-                    <a href="https://twitter.com/intent/tweet?url=<?= urlencode('https://diyetlenio.com/blog-detail.php?id=' . $id) ?>&text=<?= urlencode($article['title']) ?>" target="_blank" class="share-btn twitter">
+                    <a href="https://twitter.com/intent/tweet?url=<?= urlencode($shareUrl) ?>&text=<?= urlencode($article['title']) ?>" target="_blank" class="share-btn twitter">
                         <i class="fab fa-twitter"></i>Twitter
                     </a>
-                    <a href="https://wa.me/?text=<?= urlencode($article['title'] . ' https://diyetlenio.com/blog-detail.php?id=' . $id) ?>" target="_blank" class="share-btn whatsapp">
+                    <a href="https://wa.me/?text=<?= urlencode($article['title'] . ' ' . $shareUrl) ?>" target="_blank" class="share-btn whatsapp">
                         <i class="fab fa-whatsapp"></i>WhatsApp
                     </a>
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode('https://diyetlenio.com/blog-detail.php?id=' . $id) ?>" target="_blank" class="share-btn linkedin">
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode($shareUrl) ?>" target="_blank" class="share-btn linkedin">
                         <i class="fab fa-linkedin-in"></i>LinkedIn
                     </a>
                 </div>

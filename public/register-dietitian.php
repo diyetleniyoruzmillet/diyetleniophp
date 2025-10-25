@@ -64,16 +64,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Dosya yükleme kontrolü (ayrı tutulmalı - Validator $_FILES'ı handle etmiyor)
         $diplomaFile = null;
+        $diplomaValidated = false;
         if (isset($_FILES['diploma']) && $_FILES['diploma']['error'] === UPLOAD_ERR_OK) {
-            $allowed = ['pdf', 'jpg', 'jpeg', 'png'];
-            $fileExt = strtolower(pathinfo($_FILES['diploma']['name'], PATHINFO_EXTENSION));
+            // MIME type validation using finfo
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $_FILES['diploma']['tmp_name']);
+            finfo_close($finfo);
 
-            if (!in_array($fileExt, $allowed)) {
-                $errors[] = 'Diploma dosyası sadece PDF, JPG veya PNG formatında olmalıdır.';
+            $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+
+            if (!in_array($mimeType, $allowedMimeTypes)) {
+                $errors[] = 'Diploma dosyası sadece PDF, JPG veya PNG formatında olmalıdır. (Geçersiz dosya tipi algılandı)';
             } elseif ($_FILES['diploma']['size'] > 5 * 1024 * 1024) {
                 $errors[] = 'Diploma dosyası en fazla 5MB olabilir.';
             } else {
                 $diplomaFile = $_FILES['diploma'];
+                $diplomaValidated = true;
             }
         } else {
             $errors[] = 'Diploma dosyası yüklemeniz gereklidir.';
@@ -102,13 +108,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Diploma dosyasını kaydet
                 $diplomaPath = null;
-                if ($diplomaFile) {
+                if ($diplomaFile && $diplomaValidated) {
                     $uploadDir = __DIR__ . '/../assets/uploads/documents/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
 
-                    $diplomaFileName = 'diploma_' . uniqid() . '.' . strtolower(pathinfo($diplomaFile['name'], PATHINFO_EXTENSION));
+                    // Use MIME type to determine safe extension
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mimeType = finfo_file($finfo, $diplomaFile['tmp_name']);
+                    finfo_close($finfo);
+
+                    $mimeToExt = [
+                        'application/pdf' => 'pdf',
+                        'image/jpeg' => 'jpg',
+                        'image/png' => 'png'
+                    ];
+                    $ext = $mimeToExt[$mimeType] ?? 'bin';
+
+                    $diplomaFileName = 'diploma_' . bin2hex(random_bytes(16)) . '_' . time() . '.' . $ext;
                     $diplomaPath = $uploadDir . $diplomaFileName;
 
                     if (!move_uploaded_file($diplomaFile['tmp_name'], $diplomaPath)) {

@@ -32,12 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_payment'])) {
             throw new Exception('Lütfen dekont dosyasını yükleyin.');
         }
 
-        // Validate file type
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-        $fileType = $_FILES['receipt']['type'];
+        // Validate file type using MIME type detection
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $_FILES['receipt']['tmp_name']);
+        finfo_close($finfo);
 
-        if (!in_array($fileType, $allowedTypes)) {
-            throw new Exception('Sadece JPG, PNG veya PDF dosyası yükleyebilirsiniz.');
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+
+        if (!in_array($mimeType, $allowedMimeTypes)) {
+            throw new Exception('Sadece JPG, PNG veya PDF dosyası yükleyebilirsiniz. (Geçersiz dosya tipi algılandı)');
         }
 
         // Validate file size (max 5MB)
@@ -51,9 +54,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_payment'])) {
             mkdir($uploadDir, 0755, true);
         }
 
-        // Generate unique filename
-        $extension = pathinfo($_FILES['receipt']['name'], PATHINFO_EXTENSION);
-        $fileName = 'receipt_' . $clientId . '_' . time() . '_' . uniqid() . '.' . $extension;
+        // Determine safe extension from MIME type
+        $mimeToExt = [
+            'application/pdf' => 'pdf',
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png'
+        ];
+        $extension = $mimeToExt[$mimeType] ?? 'bin';
+
+        // Generate unique filename with cryptographically secure random bytes
+        $fileName = 'receipt_' . $clientId . '_' . time() . '_' . bin2hex(random_bytes(16)) . '.' . $extension;
         $uploadPath = $uploadDir . $fileName;
 
         // Move uploaded file
