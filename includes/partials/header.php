@@ -49,29 +49,9 @@ $_isActive = function(string $path) use ($currentPath): bool {
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link<?= $_isActive('/') ? ' active' : '' ?>" href="/">Ana Sayfa</a></li>
                     <li class="nav-item"><a class="nav-link<?= $_isActive('/dietitians.php') ? ' active' : '' ?>" href="/dietitians.php">Diyetisyenler</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Kayıt
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/register-client.php"><i class="fas fa-user me-2"></i>Danışan Kayıt</a></li>
-                            <li><a class="dropdown-item" href="/register-dietitian.php"><i class="fas fa-user-md me-2"></i>Diyetisyen Kayıt</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Destek
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/about.php"><i class="fas fa-info-circle me-2"></i>Hakkımızda</a></li>
-                            <li><a class="dropdown-item" href="/blog.php"><i class="fas fa-blog me-2"></i>Blog</a></li>
-                            <li><a class="dropdown-item" href="/recipes.php"><i class="fas fa-utensils me-2"></i>Tarifler</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/faq.php"><i class="fas fa-question-circle me-2"></i>SSS</a></li>
-                            <li><a class="dropdown-item" href="/contact.php"><i class="fas fa-envelope me-2"></i>İletişim</a></li>
-                            <li><a class="dropdown-item" href="/help.php"><i class="fas fa-life-ring me-2"></i>Yardım</a></li>
-                        </ul>
-                    </li>
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/about.php') ? ' active' : '' ?>" href="/about.php">Hakkımızda</a></li>
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/blog.php') ? ' active' : '' ?>" href="/blog.php">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/contact.php') ? ' active' : '' ?>" href="/contact.php">İletişim</a></li>
                     <?php if (isset($auth) && $auth && $auth->check()): ?>
                         <?php $ut = $auth->user()->getUserType();
                               $panelLink = $ut === 'admin' ? '/admin/dashboard.php' : ($ut === 'dietitian' ? '/dietitian/dashboard.php' : '/client/dashboard.php');
@@ -94,7 +74,8 @@ $_isActive = function(string $path) use ($currentPath): bool {
                             </ul>
                         </li>
                     <?php else: ?>
-                        <li class="nav-item ms-lg-3"><a class="btn btn-sm btn-outline-primary<?= $_isActive('/login.php') ? ' active' : '' ?>" href="/login.php">Giriş Yap</a></li>
+                        <li class="nav-item ms-lg-2"><a class="btn btn-sm btn-success" href="/register-client.php">Kayıt Ol</a></li>
+                        <li class="nav-item ms-lg-2"><a class="btn btn-sm btn-outline-primary<?= $_isActive('/login.php') ? ' active' : '' ?>" href="/login.php">Giriş Yap</a></li>
                     <?php endif; ?>
                 </ul>
             </div>
