@@ -186,20 +186,18 @@ $extraHead = <<<'EOD'
             }
         }
 
-        /* Glassmorphic Sidebar Filters */
-        .sidebar-container {
-            position: sticky;
-            top: 100px;
+        /* Top Horizontal Filters */
+        .top-filters-wrapper {
+            margin-bottom: 48px;
         }
 
         .filter-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 24px;
-            padding: 32px;
+            border-radius: 28px;
+            padding: 40px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.08);
             border: 1px solid rgba(255,255,255,0.3);
-            margin-bottom: 24px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -209,7 +207,7 @@ $extraHead = <<<'EOD'
             content: '';
             position: absolute;
             inset: 0;
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 2px;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), transparent);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -220,27 +218,81 @@ $extraHead = <<<'EOD'
         }
 
         .filter-card:hover::before {
-            opacity: 1;
+            opacity: 0.5;
         }
 
-        .filter-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+        .top-filter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
         }
 
-        .filter-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 24px;
+        .filter-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 24px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 700;
             color: var(--text-dark);
             display: flex;
             align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label i {
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .filter-actions {
+            display: flex;
             gap: 12px;
         }
 
-        .filter-title i {
-            color: var(--primary-color);
-            font-size: 1.3rem;
+        .filter-actions .btn {
+            padding: 14px 28px;
+            white-space: nowrap;
+        }
+
+        /* Specializations Row */
+        .specializations-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-top: 28px;
+            border-top: 2px solid rgba(226, 232, 240, 0.6);
+            flex-wrap: wrap;
+        }
+
+        .spec-label {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .spec-label i {
+            color: #f59e0b;
+            font-size: 1.1rem;
+        }
+
+        .spec-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .form-control, .form-select {
@@ -279,69 +331,45 @@ $extraHead = <<<'EOD'
             font-size: 1.2rem;
         }
 
-        /* Modern Category Filters */
-        .category-filter {
-            margin-bottom: 12px;
-        }
-
+        /* Modern Category Buttons (Horizontal) */
         .category-btn {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 14px;
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(248, 250, 252, 0.6);
-            border: 2px solid transparent;
-            border-radius: 16px;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(248, 250, 252, 0.8);
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 24px;
             color: var(--text-dark);
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 0.9rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            text-align: left;
             text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .category-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            opacity: 0;
-            transition: opacity 0.3s;
+            white-space: nowrap;
         }
 
         .category-btn:hover {
-            background: rgba(16, 185, 129, 0.08);
+            background: rgba(16, 185, 129, 0.1);
             border-color: var(--primary-color);
-            transform: translateX(8px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.2);
+            color: var(--primary-dark);
         }
 
         .category-btn.active {
             background: linear-gradient(135deg, var(--primary-color) 0%, #059669 100%);
             color: white;
             border-color: transparent;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
         }
 
-        .category-btn.active .category-icon {
-            animation: bounce 0.6s ease;
+        .category-btn.active:hover {
+            transform: translateY(-2px) scale(1.05);
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .category-icon {
-            width: 26px;
-            text-align: center;
-            font-size: 1.1rem;
-            position: relative;
-            z-index: 1;
+        .category-btn i {
+            font-size: 1rem;
         }
 
         /* Ultra-Modern Dietitian Cards */
@@ -404,7 +432,7 @@ $extraHead = <<<'EOD'
         }
 
         .dietitian-image {
-            height: 300px;
+            height: 380px;
             background: var(--hero-gradient);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
@@ -412,7 +440,7 @@ $extraHead = <<<'EOD'
             align-items: center;
             justify-content: center;
             color: rgba(255,255,255,0.4);
-            font-size: 5rem;
+            font-size: 6rem;
             position: relative;
             overflow: hidden;
         }
@@ -437,29 +465,31 @@ $extraHead = <<<'EOD'
         }
 
         .dietitian-body {
-            padding: 28px;
+            padding: 36px;
         }
 
         .dietitian-name {
-            font-size: 1.5rem;
-            font-weight: 800;
+            font-size: 1.75rem;
+            font-weight: 900;
             color: var(--text-dark);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             line-height: 1.3;
+            letter-spacing: -0.02em;
         }
 
         .dietitian-title {
             color: var(--text-light);
-            font-size: 0.95rem;
-            margin-bottom: 18px;
+            font-size: 1.05rem;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 500;
+            gap: 10px;
+            font-weight: 600;
         }
 
         .dietitian-title i {
             color: var(--secondary-color);
+            font-size: 1.1rem;
         }
 
         /* Modern Rating Stars */
@@ -660,59 +690,9 @@ $extraHead = <<<'EOD'
             color: white;
         }
 
-        /* Modern Results Header */
-        .results-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 36px;
-            padding: 24px 0;
-            border-bottom: 2px solid rgba(226, 232, 240, 0.6);
-        }
-
-        .results-info {
-            font-size: 1.2rem;
-            color: var(--text-dark);
-            font-weight: 700;
-        }
-
-        .results-count {
-            color: var(--primary-color);
-            font-weight: 900;
-            font-size: 1.3rem;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 8px;
-            border-radius: 14px;
-            border: 1.5px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .view-btn {
-            padding: 10px 18px;
-            border: none;
-            background: transparent;
-            border-radius: 10px;
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 1.1rem;
-        }
-
-        .view-btn:hover {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--primary-color);
-        }
-
-        .view-btn.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        /* Dietitians Grid */
+        .dietitians-grid {
+            margin-top: 24px;
         }
 
         /* Modern Pagination */
@@ -821,11 +801,6 @@ $extraHead = <<<'EOD'
 
         /* Modern Responsive Design */
         @media (max-width: 991px) {
-            .sidebar-container {
-                position: static;
-                margin-bottom: 40px;
-            }
-
             .hero-section {
                 padding: 100px 0 70px;
             }
@@ -839,11 +814,33 @@ $extraHead = <<<'EOD'
             }
 
             .filter-card {
-                padding: 24px;
+                padding: 32px;
             }
 
-            .dietitian-card {
-                margin-bottom: 24px;
+            .filter-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .filter-actions .btn {
+                width: 100%;
+            }
+
+            .specializations-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dietitian-name {
+                font-size: 1.5rem;
+            }
+
+            .dietitian-image {
+                height: 320px;
             }
         }
 
@@ -860,27 +857,25 @@ $extraHead = <<<'EOD'
                 font-size: 1.05rem;
             }
 
-            .results-header {
-                flex-direction: column;
-                gap: 20px;
-                align-items: flex-start;
+            .filter-card {
+                padding: 24px;
+                border-radius: 24px;
+            }
+
+            .spec-buttons {
+                justify-content: center;
             }
 
             .dietitian-name {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
             }
 
             .dietitian-image {
-                height: 260px;
+                height: 300px;
             }
 
-            .filter-card {
-                padding: 20px;
-                border-radius: 20px;
-            }
-
-            .filter-title {
-                font-size: 1.1rem;
+            .dietitian-body {
+                padding: 28px;
             }
 
             .pagination .page-link {
@@ -937,122 +932,96 @@ include __DIR__ . '/../includes/partials/header.php';
         </div>
     </section>
 
-    <!-- Main Content -->
+    <!-- Top Filters -->
     <div class="container my-5">
-        <div class="row">
-            <!-- Sidebar Filters -->
-            <div class="col-lg-3">
-                <div class="sidebar-container">
-                    <div class="filter-card">
-                        <h3 class="filter-title">
-                            <i class="fas fa-search"></i>
-                            Arama
-                        </h3>
-                        <form method="GET" action="/dietitians.php" id="filterForm">
+        <div class="top-filters-wrapper">
+            <div class="filter-card">
+                <form method="GET" action="/dietitians.php" id="filterForm" class="top-filter-form">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-search"></i>
+                                Arama
+                            </label>
                             <div class="search-box">
                                 <i class="fas fa-search search-icon"></i>
                                 <input type="text" name="search" class="form-control" placeholder="İsim, uzmanlık ara..." value="<?= clean($search) ?>">
                             </div>
+                        </div>
 
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold mb-3">
-                                    <i class="fas fa-star text-warning me-2"></i>Minimum Puan
-                                </label>
-                                <select name="min_rating" class="form-select">
-                                    <option value="">Tüm Puanlar</option>
-                                    <option value="3" <?= $minRating == 3 ? 'selected' : '' ?>>3+ Yıldız</option>
-                                    <option value="4" <?= $minRating == 4 ? 'selected' : '' ?>>4+ Yıldız</option>
-                                    <option value="4.5" <?= $minRating == 4.5 ? 'selected' : '' ?>>4.5+ Yıldız</option>
-                                </select>
-                            </div>
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-star text-warning"></i>
+                                Minimum Puan
+                            </label>
+                            <select name="min_rating" class="form-select">
+                                <option value="">Tüm Puanlar</option>
+                                <option value="3" <?= $minRating == 3 ? 'selected' : '' ?>>3+ Yıldız</option>
+                                <option value="4" <?= $minRating == 4 ? 'selected' : '' ?>>4+ Yıldız</option>
+                                <option value="4.5" <?= $minRating == 4.5 ? 'selected' : '' ?>>4.5+ Yıldız</option>
+                            </select>
+                        </div>
 
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold mb-3">
-                                    <i class="fas fa-sort text-primary me-2"></i>Sıralama
-                                </label>
-                                <select name="sort" class="form-select">
-                                    <option value="rating" <?= $sort == 'rating' ? 'selected' : '' ?>>En Yüksek Puan</option>
-                                    <option value="price_low" <?= $sort == 'price_low' ? 'selected' : '' ?>>Fiyat: Düşük-Yüksek</option>
-                                    <option value="price_high" <?= $sort == 'price_high' ? 'selected' : '' ?>>Fiyat: Yüksek-Düşük</option>
-                                    <option value="name" <?= $sort == 'name' ? 'selected' : '' ?>>İsme Göre (A-Z)</option>
-                                </select>
-                            </div>
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-sort text-primary"></i>
+                                Sıralama
+                            </label>
+                            <select name="sort" class="form-select">
+                                <option value="rating" <?= $sort == 'rating' ? 'selected' : '' ?>>En Yüksek Puan</option>
+                                <option value="price_low" <?= $sort == 'price_low' ? 'selected' : '' ?>>Fiyat: Düşük-Yüksek</option>
+                                <option value="price_high" <?= $sort == 'price_high' ? 'selected' : '' ?>>Fiyat: Yüksek-Düşük</option>
+                                <option value="name" <?= $sort == 'name' ? 'selected' : '' ?>>İsme Göre (A-Z)</option>
+                            </select>
+                        </div>
 
-                            <button type="submit" class="btn btn-view w-100 mb-2">
+                        <div class="filter-actions">
+                            <button type="submit" class="btn btn-book">
                                 <i class="fas fa-filter me-2"></i>Filtrele
                             </button>
-                            <a href="/dietitians.php" class="btn btn-book w-100">
+                            <a href="/dietitians.php" class="btn btn-view">
                                 <i class="fas fa-redo me-2"></i>Sıfırla
                             </a>
-                        </form>
+                        </div>
                     </div>
 
                     <!-- Popular Specializations -->
-                    <div class="filter-card">
-                        <h3 class="filter-title">
+                    <div class="specializations-row">
+                        <span class="spec-label">
                             <i class="fas fa-fire"></i>
-                            Popüler Uzmanlıklar
-                        </h3>
-                        <div class="category-filter">
+                            Popüler Uzmanlıklar:
+                        </span>
+                        <div class="spec-buttons">
                             <a href="?specialization=Zayıflama" class="category-btn <?= $specialization === 'Zayıflama' ? 'active' : '' ?>">
-                                <span class="category-icon"><i class="fas fa-weight"></i></span>
-                                <span>Zayıflama</span>
+                                <i class="fas fa-weight"></i> Zayıflama
                             </a>
-                        </div>
-                        <div class="category-filter">
                             <a href="?specialization=Spor" class="category-btn <?= $specialization === 'Spor' ? 'active' : '' ?>">
-                                <span class="category-icon"><i class="fas fa-dumbbell"></i></span>
-                                <span>Spor Diyeti</span>
+                                <i class="fas fa-dumbbell"></i> Spor Diyeti
                             </a>
-                        </div>
-                        <div class="category-filter">
                             <a href="?specialization=Diyabet" class="category-btn <?= $specialization === 'Diyabet' ? 'active' : '' ?>">
-                                <span class="category-icon"><i class="fas fa-heartbeat"></i></span>
-                                <span>Diyabet</span>
+                                <i class="fas fa-heartbeat"></i> Diyabet
                             </a>
-                        </div>
-                        <div class="category-filter">
                             <a href="?specialization=Çocuk" class="category-btn <?= $specialization === 'Çocuk' ? 'active' : '' ?>">
-                                <span class="category-icon"><i class="fas fa-child"></i></span>
-                                <span>Çocuk Beslenmesi</span>
+                                <i class="fas fa-child"></i> Çocuk
                             </a>
-                        </div>
-                        <div class="category-filter">
                             <a href="?specialization=Hamilelik" class="category-btn <?= $specialization === 'Hamilelik' ? 'active' : '' ?>">
-                                <span class="category-icon"><i class="fas fa-baby"></i></span>
-                                <span>Hamilelik</span>
+                                <i class="fas fa-baby"></i> Hamilelik
                             </a>
-                        </div>
-                        <div class="category-filter">
                             <a href="?specialization=Vegan" class="category-btn <?= $specialization === 'Vegan' ? 'active' : '' ?>">
-                                <span class="category-icon"><i class="fas fa-leaf"></i></span>
-                                <span>Vegan Beslenme</span>
+                                <i class="fas fa-leaf"></i> Vegan
                             </a>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
+        </div>
 
-            <!-- Dietitian List -->
-            <div class="col-lg-9">
-                <?php if (count($dietitians) > 0): ?>
-                    <div class="results-header">
-                        <div class="results-info">
-                            <span class="results-count"><?= $totalCount ?></span> diyetisyen bulundu
-                        </div>
-                        <div class="view-toggle">
-                            <button class="view-btn active" title="Izgara Görünümü">
-                                <i class="fas fa-th-large"></i>
-                            </button>
-                            <button class="view-btn" title="Liste Görünümü">
-                                <i class="fas fa-list"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="row g-4">
-                        <?php foreach ($dietitians as $d): ?>
-                            <div class="col-lg-4 col-md-6">
+        <!-- Dietitian List -->
+        <div class="dietitians-grid">
+            <?php if (count($dietitians) > 0): ?>
+                <div class="row g-5">
+                    <?php foreach ($dietitians as $d): ?>
+                        <div class="col-lg-6">
                                 <div class="dietitian-card">
                                     <?php if ($d['rating_avg'] >= 4.5): ?>
                                         <div class="card-badge">
@@ -1172,17 +1141,17 @@ include __DIR__ . '/../includes/partials/header.php';
                             </ul>
                         </nav>
                     <?php endif; ?>
-                <?php else: ?>
-                    <div class="empty-state">
-                        <i class="fas fa-search"></i>
-                        <h3>Diyetisyen Bulunamadı</h3>
-                        <p>Arama kriterlerinize uygun diyetisyen bulunamadı. Filtreleri değiştirip tekrar deneyin.</p>
-                        <a href="/dietitians.php" class="btn btn-view mt-3" style="width: auto;">
-                            <i class="fas fa-redo me-2"></i>Tüm Diyetisyenleri Göster
-                        </a>
-                    </div>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php else: ?>
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>Diyetisyen Bulunamadı</h3>
+                    <p>Arama kriterlerinize uygun diyetisyen bulunamadı. Filtreleri değiştirip tekrar deneyin.</p>
+                    <a href="/dietitians.php" class="btn btn-view mt-3" style="width: auto;">
+                        <i class="fas fa-redo me-2"></i>Tüm Diyetisyenleri Göster
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -1203,48 +1172,14 @@ include __DIR__ . '/../includes/partials/header.php';
             lastScroll = currentScroll;
         });
 
-        // View toggle functionality
-        const viewBtns = document.querySelectorAll('.view-btn');
-        const dietitianGrid = document.querySelector('.row.g-4');
-
-        viewBtns.forEach((btn, index) => {
-            btn.addEventListener('click', function() {
-                viewBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                if (index === 1) {
-                    // List view
-                    if (dietitianGrid) {
-                        dietitianGrid.classList.add('list-view');
-                        const cards = dietitianGrid.querySelectorAll('.col-lg-4');
-                        cards.forEach(card => {
-                            card.className = 'col-12';
-                        });
-                    }
-                } else {
-                    // Grid view
-                    if (dietitianGrid) {
-                        dietitianGrid.classList.remove('list-view');
-                        const cards = dietitianGrid.querySelectorAll('.col-12');
-                        cards.forEach(card => {
-                            card.className = 'col-lg-4 col-md-6';
-                        });
-                    }
-                }
-            });
-        });
-
-        // Smooth scroll for category buttons
+        // Smooth animation for category button clicks
         document.querySelectorAll('.category-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
-                // Add loading animation
-                const card = this.closest('.dietitian-card');
-                if (card) {
-                    card.style.opacity = '0.6';
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                    }, 300);
-                }
+                // Add subtle loading effect
+                document.body.style.opacity = '0.95';
+                setTimeout(() => {
+                    document.body.style.opacity = '1';
+                }, 200);
             });
         });
 
