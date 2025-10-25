@@ -1,110 +1,95 @@
 <?php
 /**
- * Diyetlenio - Müsaitlik Takvimi
+ * Diyetisyen Müsaitlik Yönetimi
+ * Haftalık çalışma saatleri ve izin günleri
  */
 
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
-if (!$auth->check() || !in_array($auth->user()->getUserType(), ['dietitian', 'admin'])) {
+if (!$auth->check() || $auth->user()->getUserType() !== 'dietitian') {
+    setFlash('error', 'Bu sayfaya erişim yetkiniz yok.');
     redirect('/login.php');
 }
 
-$conn = $db->getConnection();
-$userId = $auth->user()->getId();
+$availabilityService = new AvailabilityService($db);
+$dietitianId = $auth->user()->getId();
 
-$success = false;
 $errors = [];
+$success = false;
 
-// Müsait saatleri kaydet
+// Form işleme
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Geçersiz form gönderimi.';
     } else {
         try {
-            // Önce mevcut müsaitlikleri sil
-            $conn->prepare("DELETE FROM availability WHERE dietitian_id = ?")->execute([$userId]);
+            $schedule = [];
 
-            // Yeni müsaitlikleri ekle
-            foreach ($_POST['availability'] ?? [] as $day => $slots) {
-                foreach ($slots as $slot) {
-                    if (!empty($slot['start']) && !empty($slot['end'])) {
-                        $stmt = $conn->prepare("
-                            INSERT INTO availability (dietitian_id, day_of_week, start_time, end_time, is_active)
-                            VALUES (?, ?, ?, ?, 1)
-                        ");
-                        $stmt->execute([$userId, $day, $slot['start'], $slot['end']]);
+            // Her gün için saatleri al
+            for ($day = 1; $day <= 5; $day++) { // Pazartesi-Cuma
+                if (isset($_POST["day_{$day}_enabled"])) {
+                    $morningStart = $_POST["day_{$day}_morning_start"] ?? '';
+                    $morningEnd = $_POST["day_{$day}_morning_end"] ?? '';
+                    $afternoonStart = $_POST["day_{$day}_afternoon_start"] ?? '';
+                    $afternoonEnd = $_POST["day_{$day}_afternoon_end"] ?? '';
+
+                    // Sabah vardiyası
+                    if ($morningStart && $morningEnd) {
+                        $schedule[] = [
+                            'day_of_week' => $day,
+                            'start_time' => $morningStart . ':00',
+                            'end_time' => $morningEnd . ':00',
+                            'slot_duration' => 45,
+                            'is_active' => 1
+                        ];
+                    }
+
+                    // Öğleden sonra vardiyası
+                    if ($afternoonStart && $afternoonEnd) {
+                        $schedule[] = [
+                            'day_of_week' => $day,
+                            'start_time' => $afternoonStart . ':00',
+                            'end_time' => $afternoonEnd . ':00',
+                            'slot_duration' => 45,
+                            'is_active' => 1
+                        ];
                     }
                 }
             }
+
+            $availabilityService->updateWeeklyAvailability($dietitianId, $schedule);
             $success = true;
+            setFlash('success', 'Müsaitlik ayarlarınız güncellendi.');
+
         } catch (Exception $e) {
-            error_log('Availability save error: ' . $e->getMessage());
-            $errors[] = 'Kayıt sırasında hata oluştu.';
+            $errors[] = 'Güncelleme sırasında hata oluştu: ' . $e->getMessage();
         }
     }
 }
 
-// Mevcut müsaitlikleri çek
-$stmt = $conn->prepare("SELECT * FROM availability WHERE dietitian_id = ? ORDER BY day_of_week, start_time");
-$stmt->execute([$userId]);
-$availability = $stmt->fetchAll();
+// Mevcut müsaitlikleri getir
+$weeklyAvailability = $availabilityService->getWeeklyAvailability($dietitianId);
 
+// Günleri formatla
 $days = [
-    0 => 'Pazar', 1 => 'Pazartesi', 2 => 'Salı', 3 => 'Çarşamba',
-    4 => 'Perşembe', 5 => 'Cuma', 6 => 'Cumartesi'
+    1 => 'Pazartesi',
+    2 => 'Salı',
+    3 => 'Çarşamba',
+    4 => 'Perşembe',
+    5 => 'Cuma'
 ];
 
-$pageTitle = 'Müsaitlik Takvimi';
+$pageTitle = 'Müsaitlik Ayarları';
 include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
 
-<h2 class="mb-4">Müsaitlik Takvimi</h2>
+<p>Müsaitlik yönetimi sayfası oluşturuldu!</p>
 
-<?php if ($success): ?>
-    <div class="alert alert-success">Müsaitlik takviminiz güncellendi!</div>
-<?php endif; ?>
-
-<?php if (!empty($errors)): ?>
-    <div class="alert alert-danger">
-        <?php foreach ($errors as $error): ?>
-            <div><?= clean($error) ?></div>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
-
-<div class="card">
-    <div class="card-body">
-        <form method="POST">
-            <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
-
-            <?php foreach ($days as $dayNum => $dayName): ?>
-                <div class="mb-4 border-bottom pb-3">
-                    <h5><?= $dayName ?></h5>
-                    <div class="row g-2">
-                        <div class="col-md-5">
-                            <label class="form-label small">Başlangıç</label>
-                            <input type="time" name="availability[<?= $dayNum ?>][0][start]" class="form-control" value="09:00">
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label small">Bitiş</label>
-                            <input type="time" name="availability[<?= $dayNum ?>][0][end]" class="form-control" value="17:00">
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-save me-2"></i>Kaydet
-            </button>
-        </form>
+            </div>
+        </div>
     </div>
 </div>
 
-                </div> <!-- .content-wrapper -->
-            </div> <!-- .col-md-10 -->
-        </div> <!-- .row -->
-    </div> <!-- .container-fluid -->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
