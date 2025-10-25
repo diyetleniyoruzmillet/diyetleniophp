@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($errors)) {
             $email = $_POST['email'];
             try {
-                $stmt = $db->prepare("SELECT id, email, first_name FROM users WHERE email = ? AND status = 'active'");
+                $stmt = $db->prepare("SELECT id, email, first_name FROM users WHERE email = ? AND is_active = 1");
                 $stmt->execute([$email]);
                 $user = $stmt->fetch();
 

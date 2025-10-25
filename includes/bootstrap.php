@@ -72,9 +72,11 @@ try {
     // Diğer sayfalar için hata göster
     if (defined('DEBUG_MODE') && DEBUG_MODE) {
         http_response_code(500);
-        die('Sistem hatası: ' . $e->getMessage() . '<br><br>DB Host: ' . ($_ENV['DB_HOST'] ?? 'not set'));
+        error_log('Database connection error: ' . $e->getMessage() . ' | Host: ' . ($_ENV['DB_HOST'] ?? 'not set'));
+        die('Veritabanı bağlantı hatası oluştu. Lütfen daha sonra tekrar deneyin.<br>Hata kodu: DB_CONN_ERR');
     } else {
         http_response_code(500);
-        die('Sistem hatası oluştu. Lütfen daha sonra tekrar deneyin.');
+        error_log('Database connection error: ' . $e->getMessage());
+        die('Sistem bakımdadır. Lütfen daha sonra tekrar deneyin.');
     }
 }

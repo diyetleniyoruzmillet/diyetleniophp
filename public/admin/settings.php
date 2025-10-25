@@ -14,7 +14,10 @@ $conn = $db->getConnection();
 
 // Ayarları kaydetme
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
-    if (verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Geçersiz form gönderimi.');
+        redirect('/admin/settings.php');
+    } else {
         foreach ($_POST['settings'] as $key => $value) {
             $stmt = $conn->prepare("
                 INSERT INTO site_settings (setting_key, setting_value, updated_at)

@@ -190,10 +190,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log('File: ' . $e->getFile() . ':' . $e->getLine());
         error_log('Trace: ' . $e->getTraceAsString());
 
-        // Debug modunda detaylı hatayı göster
+        // Debug modunda detaylı hatayı loglara kaydet
         if (defined('DEBUG_MODE') && DEBUG_MODE) {
-            die('<h1>Registration Error</h1><pre>' . $e->getMessage() . "\n\nFile: " . $e->getFile() . ':' . $e->getLine() . "\n\nTrace:\n" . $e->getTraceAsString() . '</pre>');
+            error_log('Registration error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            error_log('Stack trace: ' . $e->getTraceAsString());
         }
+        $errors[] = 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.';
     }
 }
 

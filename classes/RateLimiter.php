@@ -178,7 +178,9 @@ class RateLimiter
     public function clearExpired(): void
     {
         if ($this->storageMethod === 'database') {
-            $this->db->query("DELETE FROM rate_limits WHERE expires_at < NOW()");
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("DELETE FROM rate_limits WHERE expires_at < NOW()");
+            $stmt->execute();
         }
     }
 
@@ -189,54 +191,52 @@ class RateLimiter
     private function hitDatabase(string $key, int $decayMinutes): int
     {
         $expiresAt = date('Y-m-d H:i:s', time() + ($decayMinutes * 60));
+        $conn = $this->db->getConnection();
 
         // Mevcut kayıt var mı?
-        $existing = $this->db->query(
-            "SELECT id, attempts FROM rate_limits WHERE rate_key = ? AND expires_at > NOW()",
-            [$key]
-        )->fetch();
+        $stmt = $conn->prepare("SELECT id, attempts FROM rate_limits WHERE rate_key = ? AND expires_at > NOW()");
+        $stmt->execute([$key]);
+        $existing = $stmt->fetch();
 
         if ($existing) {
             // Güncelle
             $newAttempts = $existing['attempts'] + 1;
-            $this->db->query(
-                "UPDATE rate_limits SET attempts = ?, expires_at = ?, last_attempt_at = NOW() WHERE id = ?",
-                [$newAttempts, $expiresAt, $existing['id']]
-            );
+            $stmt = $conn->prepare("UPDATE rate_limits SET attempts = ?, expires_at = ?, last_attempt_at = NOW() WHERE id = ?");
+            $stmt->execute([$newAttempts, $expiresAt, $existing['id']]);
             return $newAttempts;
         } else {
             // Yeni kayıt
-            $this->db->query(
-                "INSERT INTO rate_limits (rate_key, attempts, expires_at, last_attempt_at) VALUES (?, 1, ?, NOW())",
-                [$key, $expiresAt]
-            );
+            $stmt = $conn->prepare("INSERT INTO rate_limits (rate_key, attempts, expires_at, last_attempt_at) VALUES (?, 1, ?, NOW())");
+            $stmt->execute([$key, $expiresAt]);
             return 1;
         }
     }
 
     private function getAttemptsDatabase(string $key): int
     {
-        $result = $this->db->query(
-            "SELECT attempts FROM rate_limits WHERE rate_key = ? AND expires_at > NOW()",
-            [$key]
-        )->fetch();
+        $conn = $this->db->getConnection();
+        $stmt = $conn->prepare("SELECT attempts FROM rate_limits WHERE rate_key = ? AND expires_at > NOW()");
+        $stmt->execute([$key]);
+        $result = $stmt->fetch();
 
         return $result ? (int)$result['attempts'] : 0;
     }
 
     private function getLastAttemptTimeDatabase(string $key): ?int
     {
-        $result = $this->db->query(
-            "SELECT UNIX_TIMESTAMP(last_attempt_at) as timestamp FROM rate_limits WHERE rate_key = ? AND expires_at > NOW()",
-            [$key]
-        )->fetch();
+        $conn = $this->db->getConnection();
+        $stmt = $conn->prepare("SELECT UNIX_TIMESTAMP(last_attempt_at) as timestamp FROM rate_limits WHERE rate_key = ? AND expires_at > NOW()");
+        $stmt->execute([$key]);
+        $result = $stmt->fetch();
 
         return $result ? (int)$result['timestamp'] : null;
     }
 
     private function clearDatabase(string $key): void
     {
-        $this->db->query("DELETE FROM rate_limits WHERE rate_key = ?", [$key]);
+        $conn = $this->db->getConnection();
+        $stmt = $conn->prepare("DELETE FROM rate_limits WHERE rate_key = ?");
+        $stmt->execute([$key]);
     }
 
     // =============================================================
@@ -376,6 +376,7 @@ class RateLimiter
     public static function createTable(): void
     {
         $db = Database::getInstance();
+        $conn = $db->getConnection();
         $sql = "
             CREATE TABLE IF NOT EXISTS rate_limits (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -390,7 +391,8 @@ class RateLimiter
         ";
 
         try {
-            $db->query($sql);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
         } catch (Exception $e) {
             error_log("Failed to create rate_limits table: " . $e->getMessage());
         }

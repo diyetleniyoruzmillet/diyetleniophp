@@ -7,6 +7,16 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 
 header('Content-Type: application/json');
 
+// Authentication check
+if (!$auth->check()) {
+    http_response_code(401);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Bu işlem için giriş yapmalısınız'
+    ]);
+    exit;
+}
+
 try {
     $dietitianId = (int) ($_GET['dietitian_id'] ?? 0);
     $date = $_GET['date'] ?? '';

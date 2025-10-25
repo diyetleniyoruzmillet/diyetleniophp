@@ -26,7 +26,8 @@ class NotificationService
     public function create(int $userId, string $type, string $title, string $message, ?string $link = null): bool
     {
         try {
-            $stmt = $this->db->prepare("
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
                 INSERT INTO notifications (user_id, type, title, message, link, created_at)
                 VALUES (?, ?, ?, ?, ?, NOW())
             ");
@@ -56,7 +57,8 @@ class NotificationService
             }
             $sql .= " ORDER BY created_at DESC LIMIT ?";
 
-            $stmt = $this->db->prepare($sql);
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare($sql);
             $stmt->execute([$userId, $limit]);
 
             return $stmt->fetchAll();
@@ -76,7 +78,8 @@ class NotificationService
     public function getUnreadCount(int $userId): int
     {
         try {
-            $stmt = $this->db->prepare("
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
                 SELECT COUNT(*) FROM notifications
                 WHERE user_id = ? AND is_read = FALSE
             ");
@@ -100,7 +103,8 @@ class NotificationService
     public function markAsRead(int $notificationId, int $userId): bool
     {
         try {
-            $stmt = $this->db->prepare("
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
                 UPDATE notifications
                 SET is_read = TRUE, read_at = NOW()
                 WHERE id = ? AND user_id = ?
@@ -123,7 +127,8 @@ class NotificationService
     public function markAllAsRead(int $userId): bool
     {
         try {
-            $stmt = $this->db->prepare("
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
                 UPDATE notifications
                 SET is_read = TRUE, read_at = NOW()
                 WHERE user_id = ? AND is_read = FALSE
@@ -147,7 +152,8 @@ class NotificationService
     public function delete(int $notificationId, int $userId): bool
     {
         try {
-            $stmt = $this->db->prepare("
+            $conn = $this->db->getConnection();
+            $stmt = $conn->prepare("
                 DELETE FROM notifications
                 WHERE id = ? AND user_id = ?
             ");
