@@ -90,298 +90,152 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
 }
 
 $pageTitle = 'Değerlendirme Yap';
+include __DIR__ . '/../../includes/client_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #f8f9fa; }
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 8px;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.2);
-        }
-        .content-wrapper { padding: 30px; }
-        .rating-stars {
-            font-size: 2.5rem;
-            cursor: pointer;
-        }
-        .rating-stars .star {
-            color: #ddd;
-            transition: color 0.2s;
-        }
-        .rating-stars .star.active,
-        .rating-stars .star:hover {
-            color: #ffc107;
-        }
-        .success-animation {
-            text-align: center;
-            padding: 50px 0;
-        }
-        .success-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            animation: bounceIn 0.6s ease-out;
-        }
-        @keyframes bounceIn {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .success-icon i {
-            font-size: 50px;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2 sidebar p-0">
-                <div class="p-4">
-                    <h4 class="text-white mb-4">
-                        <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-                    </h4>
-                    <nav class="nav flex-column">
-                        <a class="nav-link" href="/client/dashboard.php">
-                            <i class="fas fa-chart-line me-2"></i>Dashboard
-                        </a>
-                        <a class="nav-link" href="/client/dietitians.php">
-                            <i class="fas fa-user-md me-2"></i>Diyetisyenler
-                        </a>
-                        <a class="nav-link" href="/client/appointments.php">
-                            <i class="fas fa-calendar-check me-2"></i>Randevularım
-                        </a>
-                        <a class="nav-link" href="/client/diet-plans.php">
-                            <i class="fas fa-clipboard-list me-2"></i>Diyet Planlarım
-                        </a>
-                        <a class="nav-link" href="/client/weight-tracking.php">
-                            <i class="fas fa-weight me-2"></i>Kilo Takibi
-                        </a>
-                        <a class="nav-link" href="/client/messages.php">
-                            <i class="fas fa-envelope me-2"></i>Mesajlar
-                        </a>
-                        <a class="nav-link" href="/client/profile.php">
-                            <i class="fas fa-user me-2"></i>Profilim
-                        </a>
-                        <hr class="text-white-50 my-3">
-                        <a class="nav-link" href="/">
-                            <i class="fas fa-home me-2"></i>Ana Sayfa
-                        </a>
-                        <a class="nav-link" href="/logout.php">
-                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış
-                        </a>
-                    </nav>
-                </div>
+
+<style>
+    .rating-stars {
+        font-size: 2.5rem;
+        cursor: pointer;
+    }
+    .rating-stars .star {
+        color: #ddd;
+        transition: color 0.2s;
+    }
+    .rating-stars .star.active,
+    .rating-stars .star:hover {
+        color: #ffc107;
+    }
+    .success-animation {
+        text-align: center;
+        padding: 50px 0;
+    }
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        animation: bounceIn 0.6s ease-out;
+    }
+    @keyframes bounceIn {
+        0% { transform: scale(0); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+</style>
+
+<?php if ($success): ?>
+    <div class="success-animation">
+        <div class="success-icon">
+            <i class="fas fa-check fa-3x text-white"></i>
+        </div>
+        <h3 class="text-success">Teşekkürler!</h3>
+        <p class="text-muted mb-4">Değerlendirmeniz başarıyla kaydedildi.</p>
+        <a href="/client/appointments.php" class="btn btn-success">
+            <i class="fas fa-arrow-left me-2"></i>Randevularıma Dön
+        </a>
+    </div>
+<?php else: ?>
+    <h2 class="mb-4">Değerlendirme Yap</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-4">
+                <h5>Randevu Bilgileri</h5>
+                <p class="mb-1"><strong>Diyetisyen:</strong> <?= clean($appointment['dietitian_name']) ?></p>
+                <p class="mb-1"><strong>Ünvan:</strong> <?= clean($appointment['dietitian_title']) ?></p>
+                <p class="mb-0"><strong>Tarih:</strong> <?= date('d.m.Y H:i', strtotime($appointment['appointment_date'])) ?></p>
             </div>
 
-            <div class="col-md-10">
-                <div class="content-wrapper">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8">
-                            <?php if ($success): ?>
-                                <!-- Success Message -->
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="success-animation">
-                                            <div class="success-icon">
-                                                <i class="fas fa-check"></i>
-                                            </div>
-                                            <h3>Teşekkürler!</h3>
-                                            <p class="text-muted">
-                                                Değerlendirmeniz başarıyla kaydedildi.
-                                            </p>
-                                            <div class="mt-4">
-                                                <a href="/client/appointments.php" class="btn btn-success me-2">
-                                                    <i class="fas fa-calendar-check me-2"></i>Randevularıma Dön
-                                                </a>
-                                                <a href="/client/dashboard.php" class="btn btn-outline-success">
-                                                    <i class="fas fa-home me-2"></i>Dashboard
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php else: ?>
-                                <!-- Review Form -->
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h3 class="mb-4">
-                                            <i class="fas fa-star text-warning me-2"></i>Değerlendirme Yap
-                                        </h3>
+            <?php if (isset($errors) && count($errors) > 0): ?>
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= clean($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
 
-                                        <!-- Appointment Info -->
-                                        <div class="alert alert-info mb-4">
-                                            <h5 class="mb-2"><?= clean($appointment['dietitian_name']) ?></h5>
-                                            <p class="mb-1">
-                                                <strong><?= clean($appointment['dietitian_title']) ?></strong>
-                                            </p>
-                                            <p class="mb-0">
-                                                <i class="fas fa-calendar me-2"></i>
-                                                Randevu Tarihi: <?= date('d.m.Y H:i', strtotime($appointment['appointment_date'])) ?>
-                                            </p>
-                                        </div>
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
 
-                                        <?php if ($existingReview): ?>
-                                            <div class="alert alert-warning">
-                                                <i class="fas fa-info-circle me-2"></i>
-                                                Bu randevu için daha önce değerlendirme yapmıştınız.
-                                                Aşağıdaki formu kullanarak değerlendirmenizi güncelleyebilirsiniz.
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($errors)): ?>
-                                            <div class="alert alert-danger">
-                                                <strong>Hatalar:</strong>
-                                                <ul class="mb-0 mt-2">
-                                                    <?php foreach ($errors as $error): ?>
-                                                        <li><?= clean($error) ?></li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <form method="POST">
-                                            <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
-
-                                            <!-- Rating -->
-                                            <div class="mb-4 text-center">
-                                                <label class="form-label d-block mb-3">
-                                                    <h5>Puanınız</h5>
-                                                </label>
-                                                <div class="rating-stars" id="ratingStars">
-                                                    <i class="fas fa-star star" data-rating="1"></i>
-                                                    <i class="fas fa-star star" data-rating="2"></i>
-                                                    <i class="fas fa-star star" data-rating="3"></i>
-                                                    <i class="fas fa-star star" data-rating="4"></i>
-                                                    <i class="fas fa-star star" data-rating="5"></i>
-                                                </div>
-                                                <input type="hidden" name="rating" id="rating" value="<?= $existingReview['rating'] ?? '' ?>" required>
-                                                <div class="text-muted mt-2" id="ratingText"></div>
-                                            </div>
-
-                                            <!-- Review Text -->
-                                            <div class="mb-4">
-                                                <label class="form-label">
-                                                    <h5>Değerlendirmeniz</h5>
-                                                </label>
-                                                <textarea
-                                                    name="review"
-                                                    class="form-control"
-                                                    rows="6"
-                                                    placeholder="Deneyiminizi paylaşın... (En az 10 karakter)"
-                                                    required
-                                                ><?= $existingReview['review'] ?? '' ?></textarea>
-                                                <small class="text-muted">
-                                                    Diyetisyenin profesyonelliği, iletişimi ve sunduğu hizmetin kalitesi hakkında görüşlerinizi yazabilirsiniz.
-                                                </small>
-                                            </div>
-
-                                            <!-- Submit -->
-                                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                                                <a href="/client/appointments.php" class="btn btn-secondary">
-                                                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
-                                                </a>
-                                                <button type="submit" name="submit_review" class="btn btn-success btn-lg">
-                                                    <i class="fas fa-paper-plane me-2"></i>
-                                                    <?= $existingReview ? 'Değerlendirmeyi Güncelle' : 'Gönder' ?>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-                        </div>
+                <div class="mb-4">
+                    <label class="form-label">Puan *</label>
+                    <div class="rating-stars" id="ratingStars">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
                     </div>
+                    <input type="hidden" name="rating" id="ratingInput" value="<?= $existingReview['rating'] ?? 5 ?>" required>
                 </div>
-            </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Değerlendirmeniz *</label>
+                    <textarea name="review" class="form-control" rows="5" required
+                              placeholder="Deneyiminizi paylaşın..."><?= $existingReview['review'] ?? '' ?></textarea>
+                    <small class="text-muted">En az 10 karakter</small>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" name="submit_review" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i><?= $existingReview ? 'Güncelle' : 'Gönder' ?>
+                    </button>
+                    <a href="/client/appointments.php" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>İptal
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
+<?php endif; ?>
+
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Star rating functionality
         const stars = document.querySelectorAll('.star');
-        const ratingInput = document.getElementById('rating');
-        const ratingText = document.getElementById('ratingText');
+        const ratingInput = document.getElementById('ratingInput');
+        const currentRating = parseInt(ratingInput.value) || 5;
 
-        const ratingLabels = {
-            1: 'Çok Kötü',
-            2: 'Kötü',
-            3: 'Orta',
-            4: 'İyi',
-            5: 'Mükemmel'
-        };
-
-        // Set initial rating if exists
-        const initialRating = ratingInput.value;
-        if (initialRating) {
-            updateStars(parseInt(initialRating));
-        }
+        // Set initial rating
+        updateStars(currentRating);
 
         stars.forEach(star => {
             star.addEventListener('click', function() {
-                const rating = this.getAttribute('data-rating');
+                const rating = parseInt(this.getAttribute('data-rating'));
                 ratingInput.value = rating;
                 updateStars(rating);
             });
 
-            star.addEventListener('mouseenter', function() {
-                const rating = this.getAttribute('data-rating');
-                highlightStars(rating);
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                updateStars(rating);
             });
         });
 
-        document.getElementById('ratingStars').addEventListener('mouseleave', function() {
-            const currentRating = ratingInput.value;
-            if (currentRating) {
-                updateStars(currentRating);
-            } else {
-                stars.forEach(s => s.classList.remove('active'));
-                ratingText.textContent = '';
-            }
+        document.getElementById('ratingStars').addEventListener('mouseout', function() {
+            updateStars(parseInt(ratingInput.value));
         });
-
-        function highlightStars(rating) {
-            stars.forEach((s, index) => {
-                if (index < rating) {
-                    s.classList.add('active');
-                } else {
-                    s.classList.remove('active');
-                }
-            });
-            ratingText.textContent = ratingLabels[rating];
-        }
 
         function updateStars(rating) {
-            stars.forEach((s, index) => {
+            stars.forEach((star, index) => {
                 if (index < rating) {
-                    s.classList.add('active');
+                    star.classList.add('active');
                 } else {
-                    s.classList.remove('active');
+                    star.classList.remove('active');
                 }
             });
-            ratingText.textContent = ratingLabels[rating];
         }
     </script>
 </body>
