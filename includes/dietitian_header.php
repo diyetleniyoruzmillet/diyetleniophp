@@ -151,8 +151,14 @@
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'messages.php' ? 'active' : '' ?>" href="/dietitian/messages.php">
                             <i class="fas fa-comments"></i>Mesajlar
                         </a>
+                        <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'notifications.php' ? 'active' : '' ?>" href="/dietitian/notifications.php">
+                            <i class="fas fa-bell"></i>Bildirimler
+                        </a>
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'payments.php' ? 'active' : '' ?>" href="/dietitian/payments.php">
                             <i class="fas fa-money-bill"></i>Ödemeler
+                        </a>
+                        <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'commission-payments.php' ? 'active' : '' ?>" href="/dietitian/commission-payments.php">
+                            <i class="fas fa-hand-holding-usd"></i>Komisyon Ödemeleri
                         </a>
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'reports.php' ? 'active' : '' ?>" href="/dietitian/reports.php">
                             <i class="fas fa-file-alt"></i>Raporlar

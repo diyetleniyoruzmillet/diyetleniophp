@@ -48,8 +48,30 @@ $_isActive = function(string $path) use ($currentPath): bool {
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link<?= $_isActive('/') ? ' active' : '' ?>" href="/">Ana Sayfa</a></li>
-                    <li class="nav-item"><a class="nav-link<?= $_isActive('/blog.php') ? ' active' : '' ?>" href="/blog.php">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link<?= $_isActive('/faq.php') ? ' active' : '' ?>" href="/faq.php">SSS</a></li>
+                    <li class="nav-item"><a class="nav-link<?= $_isActive('/dietitians.php') ? ' active' : '' ?>" href="/dietitians.php">Diyetisyenler</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Kayıt
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/register-client.php"><i class="fas fa-user me-2"></i>Danışan Kayıt</a></li>
+                            <li><a class="dropdown-item" href="/register-dietitian.php"><i class="fas fa-user-md me-2"></i>Diyetisyen Kayıt</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Destek
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/about.php"><i class="fas fa-info-circle me-2"></i>Hakkımızda</a></li>
+                            <li><a class="dropdown-item" href="/blog.php"><i class="fas fa-blog me-2"></i>Blog</a></li>
+                            <li><a class="dropdown-item" href="/recipes.php"><i class="fas fa-utensils me-2"></i>Tarifler</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/faq.php"><i class="fas fa-question-circle me-2"></i>SSS</a></li>
+                            <li><a class="dropdown-item" href="/contact.php"><i class="fas fa-envelope me-2"></i>İletişim</a></li>
+                            <li><a class="dropdown-item" href="/help.php"><i class="fas fa-life-ring me-2"></i>Yardım</a></li>
+                        </ul>
+                    </li>
                     <?php if (isset($auth) && $auth && $auth->check()): ?>
                         <?php $ut = $auth->user()->getUserType();
                               $panelLink = $ut === 'admin' ? '/admin/dashboard.php' : ($ut === 'dietitian' ? '/dietitian/dashboard.php' : '/client/dashboard.php');

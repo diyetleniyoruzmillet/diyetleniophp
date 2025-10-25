@@ -148,6 +148,18 @@
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'messages.php' ? 'active' : '' ?>" href="/client/messages.php">
                             <i class="fas fa-envelope"></i>Mesajlar
                         </a>
+                        <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'notifications.php' ? 'active' : '' ?>" href="/client/notifications.php">
+                            <i class="fas fa-bell"></i>Bildirimler
+                        </a>
+                        <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'payments.php' ? 'active' : '' ?>" href="/client/payments.php">
+                            <i class="fas fa-receipt"></i>Ödeme Geçmişi
+                        </a>
+                        <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'payment-upload.php' ? 'active' : '' ?>" href="/client/payment-upload.php">
+                            <i class="fas fa-upload"></i>Ödeme Yükle
+                        </a>
+                        <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'review.php' ? 'active' : '' ?>" href="/client/review.php">
+                            <i class="fas fa-star"></i>Değerlendirmelerim
+                        </a>
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'active' : '' ?>" href="/client/profile.php">
                             <i class="fas fa-user"></i>Profilim
                         </a>
