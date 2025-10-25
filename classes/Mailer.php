@@ -122,6 +122,16 @@ class Mailer
     }
 
     /**
+     * Randevu iptal e-postası
+     */
+    public function sendAppointmentCancellation(string $to, array $appointmentData): bool
+    {
+        $subject = 'Randevu İptali - Diyetlenio';
+        $body = $this->getTemplate('appointment-cancellation', $appointmentData);
+        return $this->send($to, $subject, $body);
+    }
+
+    /**
      * Toplu email gönderir
      */
     public function sendBulk(array $recipients, string $subject, string $body, bool $isHtml = true): array
@@ -209,6 +219,110 @@ class Mailer
                             <p>Şifrenizi sıfırlamak için aşağıdaki butona tıklayın:</p>
                             <p><a href='{$vars['reset_link']}' class='button'>Şifremi Sıfırla</a></p>
                             <p>Bu talebi siz yapmadıysanız, bu e-postayı görmezden gelebilirsiniz.</p>
+                        </div>
+                        <div class='footer'>© 2025 Diyetlenio. Tüm hakları saklıdır.</div>
+                    </div>
+                </body>
+                </html>
+                ";
+
+            case 'appointment-confirmation':
+                $appointmentDate = $vars['appointment_date'] ?? '';
+                $appointmentTime = $vars['start_time'] ?? '';
+                $dietitianName = $vars['dietitian_name'] ?? 'Diyetisyeniniz';
+                $clientName = $vars['client_name'] ?? 'Değerli Danışan';
+                $appointmentUrl = $vars['appointment_url'] ?? BASE_URL . '/client/appointments.php';
+
+                return "
+                <!DOCTYPE html>
+                <html>
+                <head><meta charset='UTF-8'>{$baseStyle}</head>
+                <body>
+                    <div class='container'>
+                        <div class='header'>
+                            <h1>✅ Randevunuz Oluşturuldu!</h1>
+                        </div>
+                        <div class='content'>
+                            <p>Merhaba {$clientName},</p>
+                            <p>Randevunuz başarıyla oluşturuldu!</p>
+                            <div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;'>
+                                <p style='margin: 5px 0;'><strong>Diyetisyen:</strong> {$dietitianName}</p>
+                                <p style='margin: 5px 0;'><strong>Tarih:</strong> {$appointmentDate}</p>
+                                <p style='margin: 5px 0;'><strong>Saat:</strong> {$appointmentTime}</p>
+                                <p style='margin: 5px 0;'><strong>Görüşme Tipi:</strong> Online (Video Görüşme)</p>
+                            </div>
+                            <p>Randevu saatinden 30 dakika önce görüşme linkine erişebilirsiniz.</p>
+                            <p><a href='{$appointmentUrl}' class='button'>Randevularımı Görüntüle</a></p>
+                            <p style='color: #666; font-size: 14px; margin-top: 20px;'>
+                                <strong>Önemli:</strong> Randevunuzdan önce size hatırlatma e-postaları göndereceğiz.
+                            </p>
+                        </div>
+                        <div class='footer'>© 2025 Diyetlenio. Tüm hakları saklıdır.</div>
+                    </div>
+                </body>
+                </html>
+                ";
+
+            case 'appointment-reminder':
+                $appointmentDate = $vars['appointment_date'] ?? '';
+                $appointmentTime = $vars['start_time'] ?? '';
+                $dietitianName = $vars['dietitian_name'] ?? 'Diyetisyeniniz';
+                $clientName = $vars['client_name'] ?? 'Değerli Danışan';
+                $hoursUntil = $vars['hours_until'] ?? '';
+                $videoUrl = $vars['video_url'] ?? BASE_URL . '/client/appointments.php';
+
+                return "
+                <!DOCTYPE html>
+                <html>
+                <head><meta charset='UTF-8'>{$baseStyle}</head>
+                <body>
+                    <div class='container'>
+                        <div class='header'>
+                            <h1>⏰ Randevu Hatırlatma</h1>
+                        </div>
+                        <div class='content'>
+                            <p>Merhaba {$clientName},</p>
+                            <p><strong>{$hoursUntil}</strong> sonra randevunuz var!</p>
+                            <div style='background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;'>
+                                <p style='margin: 5px 0;'><strong>Diyetisyen:</strong> {$dietitianName}</p>
+                                <p style='margin: 5px 0;'><strong>Tarih:</strong> {$appointmentDate}</p>
+                                <p style='margin: 5px 0;'><strong>Saat:</strong> {$appointmentTime}</p>
+                            </div>
+                            <p>Lütfen görüşme saatinden birkaç dakika önce hazır olun.</p>
+                            <p><a href='{$videoUrl}' class='button'>Görüşmeye Katıl</a></p>
+                        </div>
+                        <div class='footer'>© 2025 Diyetlenio. Tüm hakları saklıdır.</div>
+                    </div>
+                </body>
+                </html>
+                ";
+
+            case 'appointment-cancellation':
+                $appointmentDate = $vars['appointment_date'] ?? '';
+                $appointmentTime = $vars['start_time'] ?? '';
+                $dietitianName = $vars['dietitian_name'] ?? 'Diyetisyeniniz';
+                $clientName = $vars['client_name'] ?? 'Değerli Danışan';
+                $reason = $vars['reason'] ?? 'Belirtilmedi';
+
+                return "
+                <!DOCTYPE html>
+                <html>
+                <head><meta charset='UTF-8'>{$baseStyle}</head>
+                <body>
+                    <div class='container'>
+                        <div class='header' style='background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);'>
+                            <h1>❌ Randevu İptali</h1>
+                        </div>
+                        <div class='content'>
+                            <p>Merhaba {$clientName},</p>
+                            <p>Aşağıdaki randevunuz iptal edilmiştir:</p>
+                            <div style='background: #fee2e2; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;'>
+                                <p style='margin: 5px 0;'><strong>Diyetisyen:</strong> {$dietitianName}</p>
+                                <p style='margin: 5px 0;'><strong>Tarih:</strong> {$appointmentDate}</p>
+                                <p style='margin: 5px 0;'><strong>Saat:</strong> {$appointmentTime}</p>
+                                <p style='margin: 5px 0;'><strong>İptal Nedeni:</strong> {$reason}</p>
+                            </div>
+                            <p>Yeni bir randevu almak için platformumuzu ziyaret edebilirsiniz.</p>
                         </div>
                         <div class='footer'>© 2025 Diyetlenio. Tüm hakları saklıdır.</div>
                     </div>

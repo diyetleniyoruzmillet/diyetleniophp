@@ -87,17 +87,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $appointmentId = $conn->lastInsertId();
 
-            // Bildirim gönder (eğer varsa)
+            // E-posta bildirimi gönder
             try {
-                if (class_exists('Notification')) {
-                    $notification = new Notification();
-                    $notification->notifyAppointmentCreated($appointmentId);
-                }
+                $mailer = new Mailer();
+                $client = $auth->user();
+
+                // Danışana onay e-postası
+                $mailer->sendAppointmentConfirmation($client->getEmail(), [
+                    'client_name' => $client->getFullName(),
+                    'dietitian_name' => $dietitian['full_name'],
+                    'appointment_date' => date('d.m.Y', strtotime($date)),
+                    'start_time' => date('H:i', strtotime($time)),
+                    'appointment_url' => BASE_URL . '/client/appointments.php'
+                ]);
+
+                // Diyetisyene bildirim e-postası
+                $mailer->sendAppointmentConfirmation($dietitian['email'], [
+                    'client_name' => $client->getFullName(),
+                    'dietitian_name' => $dietitian['full_name'],
+                    'appointment_date' => date('d.m.Y', strtotime($date)),
+                    'start_time' => date('H:i', strtotime($time)),
+                    'appointment_url' => BASE_URL . '/dietitian/appointments.php'
+                ]);
+
+                // Hatırlatma kayıtları oluştur (24 saat ve 1 saat öncesi)
+                $appointmentDateTime = strtotime($date . ' ' . $time);
+
+                // 24 saat öncesi hatırlatma
+                $reminder24h = date('Y-m-d H:i:s', $appointmentDateTime - (24 * 3600));
+                $stmt = $conn->prepare("
+                    INSERT INTO appointment_reminders
+                    (appointment_id, reminder_type, scheduled_for, status)
+                    VALUES (?, 'email', ?, 'pending')
+                ");
+                $stmt->execute([$appointmentId, $reminder24h]);
+
+                // 1 saat öncesi hatırlatma
+                $reminder1h = date('Y-m-d H:i:s', $appointmentDateTime - 3600);
+                $stmt->execute([$appointmentId, $reminder1h]);
+
             } catch (Exception $e) {
-                error_log('Notification error: ' . $e->getMessage());
+                error_log('Email/Reminder error: ' . $e->getMessage());
+                // E-posta hatası randevu oluşumunu engellemez
             }
 
-            setFlash('success', 'Randevunuz başarıyla oluşturuldu!');
+            setFlash('success', 'Randevunuz başarıyla oluşturuldu! E-posta onayı gönderildi.');
             redirect('/client/appointments.php');
 
         } catch (Exception $e) {
