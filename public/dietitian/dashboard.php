@@ -88,314 +88,170 @@ try {
 }
 
 $pageTitle = 'Diyetisyen Dashboard';
+include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/modern-design-system.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: 'Inter', sans-serif;
-        }
 
-        /* Modern Sidebar - Orange gradient for dietitians */
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #f093fb 0%, #f5576c 100%);
-            box-shadow: 4px 0 30px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
-        }
+<style>
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+</style>
 
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            top: -100px;
-            right: -100px;
-            animation: pulse 4s ease-in-out infinite;
-        }
+<h2 class="mb-4">Hoş geldiniz, <?= clean($user->getFullName()) ?>!</h2>
 
-        .sidebar-brand {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 1;
-        }
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Toplam Danışan</p>
+                    <h3 class="mb-0"><?= number_format($stats['total_clients'] ?? 0) ?></h3>
+                </div>
+                <div class="stat-icon bg-primary text-white">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Tamamlanan</p>
+                    <h3 class="mb-0"><?= number_format($stats['completed_appointments'] ?? 0) ?></h3>
+                </div>
+                <div class="stat-icon bg-success text-white">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Yaklaşan</p>
+                    <h3 class="mb-0"><?= number_format($stats['upcoming_appointments'] ?? 0) ?></h3>
+                </div>
+                <div class="stat-icon bg-warning text-white">
+                    <i class="fas fa-calendar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1">Bu Ay Gelir</p>
+                    <h3 class="mb-0"><?= number_format($income['monthly_income'] ?? 0) ?> ₺</h3>
+                </div>
+                <div class="stat-icon bg-info text-white">
+                    <i class="fas fa-lira-sign"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        .sidebar-subtitle {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.7);
-            font-weight: 300;
-            position: relative;
-            z-index: 1;
-        }
+<div class="row g-4">
+    <!-- Today's Appointments -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Bugünün Randevuları (<?= count($todayAppointments) ?>)</h5>
+            </div>
+            <div class="card-body">
+                <?php if (count($todayAppointments) === 0): ?>
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Bugün randevu bulunmuyor.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Saat</th>
+                                    <th>Danışan</th>
+                                    <th>Telefon</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($todayAppointments as $apt): ?>
+                                    <tr>
+                                        <td><strong><?= date('H:i', strtotime($apt['start_time'])) ?></strong></td>
+                                        <td><?= clean($apt['client_name']) ?></td>
+                                        <td><?= clean($apt['client_phone']) ?></td>
+                                        <td>
+                                            <span class="badge bg-<?= $apt['status'] === 'completed' ? 'success' : 'warning' ?>">
+                                                <?= ucfirst($apt['status']) ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.85);
-            padding: 14px 20px;
-            margin: 6px 0;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            z-index: 1;
-        }
+    <!-- Recent Clients -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Son Danışanlar</h5>
+            </div>
+            <div class="card-body">
+                <?php if (count($recentClients) === 0): ?>
+                    <p class="text-muted text-center py-3">Henüz danışan yok.</p>
+                <?php else: ?>
+                    <div class="list-group list-group-flush">
+                        <?php foreach ($recentClients as $client): ?>
+                            <div class="list-group-item px-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0"><?= clean($client['full_name']) ?></h6>
+                                        <small class="text-muted"><?= $client['appointment_count'] ?> randevu</small>
+                                    </div>
+                                    <a href="/dietitian/clients.php?id=<?= $client['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        Görüntüle
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
 
-        .sidebar .nav-link i {
-            font-size: 1.1rem;
-            min-width: 20px;
-        }
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
 
-        .sidebar .nav-link:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.15);
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.25);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            font-weight: 600;
-        }
-
-        .sidebar .nav-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 70%;
-            background: white;
-            border-radius: 0 4px 4px 0;
-        }
-
-        .content-wrapper {
-            padding: 35px;
-        }
-
-        /* Welcome Header */
-        .welcome-header {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.3);
-            animation: fadeInDown 0.6s ease;
-        }
-
-        .welcome-header h2 {
-            font-weight: 800;
-            color: #2d3748;
-            margin-bottom: 5px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Modern Stat Cards */
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.5);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden;
-            position: relative;
-            animation: fadeInUp 0.6s ease both;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-            transform: scaleX(0);
-            transition: transform 0.4s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-        }
-
-        .stat-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(240, 147, 251, 0.08) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-
-        .stat-card:hover::after {
-            opacity: 1;
-        }
-
-        .stat-card-1 { animation-delay: 0.1s; }
-        .stat-card-2 { animation-delay: 0.2s; }
-        .stat-card-3 { animation-delay: 0.3s; }
-        .stat-card-4 { animation-delay: 0.4s; }
-
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            transition: all 0.4s;
-        }
-
-        .stat-card:hover .stat-icon {
-            transform: scale(1.1) rotate(-5deg);
-        }
-
-        /* Icon Backgrounds */
-        .icon-warning {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
-            color: white;
-        }
-
-        .icon-primary {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-            color: white;
-        }
-
-        .icon-success {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            box-shadow: 0 8px 20px rgba(86, 171, 47, 0.3);
-            color: white;
-        }
-
-        .icon-info {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
-            color: white;
-        }
-
-        /* Cards */
-        .card-custom {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.5);
-            animation: fadeInUp 0.6s ease 0.5s both;
-        }
-
-        .card-custom .card-header {
-            background: linear-gradient(135deg, #f093fb15 0%, #f5576c15 100%);
-            border: none;
-            border-radius: 20px 20px 0 0 !important;
-            padding: 20px 25px;
-            font-weight: 700;
-            color: #2d3748;
-        }
-
-        .card-custom .card-body {
-            padding: 25px;
-        }
-
-        /* List Items */
-        .list-group-item {
-            border: none;
-            border-radius: 12px !important;
-            margin-bottom: 10px;
-            padding: 18px 20px;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.7);
-        }
-
-        .list-group-item:hover {
-            background: rgba(240, 147, 251, 0.05);
-            transform: translateX(5px);
-        }
-
-        /* Badges */
-        .badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .content-wrapper { padding: 20px; }
-            .welcome-header { padding: 20px; }
-        }
-    </style>
-    <style>
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        .content-wrapper { padding: 30px; }
-        .page-header {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .table-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .alert-warning-custom {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
