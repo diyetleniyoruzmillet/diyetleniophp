@@ -372,6 +372,20 @@ $extraHead = <<<'EOD'
             font-size: 1rem;
         }
 
+        /* Clear specialization button */
+        .category-btn-clear {
+            background: rgba(220, 38, 38, 0.1) !important;
+            border-color: #dc2626 !important;
+            color: #dc2626 !important;
+        }
+
+        .category-btn-clear:hover {
+            background: #dc2626 !important;
+            color: white !important;
+            border-color: #dc2626 !important;
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3) !important;
+        }
+
         /* Ultra-Modern Dietitian Cards */
         .dietitian-card {
             background: white;
@@ -937,6 +951,9 @@ include __DIR__ . '/../includes/partials/header.php';
         <div class="top-filters-wrapper">
             <div class="filter-card">
                 <form method="GET" action="/dietitians.php" id="filterForm" class="top-filter-form">
+                    <?php if (!empty($specialization)): ?>
+                        <input type="hidden" name="specialization" value="<?= clean($specialization) ?>">
+                    <?php endif; ?>
                     <div class="filter-row">
                         <div class="filter-group">
                             <label class="filter-label">
@@ -992,24 +1009,39 @@ include __DIR__ . '/../includes/partials/header.php';
                             Popüler Uzmanlıklar:
                         </span>
                         <div class="spec-buttons">
-                            <a href="?specialization=Zayıflama" class="category-btn <?= $specialization === 'Zayıflama' ? 'active' : '' ?>">
-                                <i class="fas fa-weight"></i> Zayıflama
-                            </a>
-                            <a href="?specialization=Spor" class="category-btn <?= $specialization === 'Spor' ? 'active' : '' ?>">
-                                <i class="fas fa-dumbbell"></i> Spor Diyeti
-                            </a>
-                            <a href="?specialization=Diyabet" class="category-btn <?= $specialization === 'Diyabet' ? 'active' : '' ?>">
-                                <i class="fas fa-heartbeat"></i> Diyabet
-                            </a>
-                            <a href="?specialization=Çocuk" class="category-btn <?= $specialization === 'Çocuk' ? 'active' : '' ?>">
-                                <i class="fas fa-child"></i> Çocuk
-                            </a>
-                            <a href="?specialization=Hamilelik" class="category-btn <?= $specialization === 'Hamilelik' ? 'active' : '' ?>">
-                                <i class="fas fa-baby"></i> Hamilelik
-                            </a>
-                            <a href="?specialization=Vegan" class="category-btn <?= $specialization === 'Vegan' ? 'active' : '' ?>">
-                                <i class="fas fa-leaf"></i> Vegan
-                            </a>
+                            <?php
+                            $specs = [
+                                ['key' => 'Zayıflama', 'icon' => 'weight', 'label' => 'Zayıflama'],
+                                ['key' => 'Spor', 'icon' => 'dumbbell', 'label' => 'Spor Diyeti'],
+                                ['key' => 'Diyabet', 'icon' => 'heartbeat', 'label' => 'Diyabet'],
+                                ['key' => 'Çocuk', 'icon' => 'child', 'label' => 'Çocuk'],
+                                ['key' => 'Hamilelik', 'icon' => 'baby', 'label' => 'Hamilelik'],
+                                ['key' => 'Vegan', 'icon' => 'leaf', 'label' => 'Vegan']
+                            ];
+                            foreach ($specs as $spec):
+                                $params = [];
+                                if (!empty($search)) $params['search'] = $search;
+                                if (!empty($minRating)) $params['min_rating'] = $minRating;
+                                if (!empty($sort)) $params['sort'] = $sort;
+                                $params['specialization'] = $spec['key'];
+                                $url = '/dietitians.php?' . http_build_query($params);
+                            ?>
+                                <a href="<?= $url ?>" class="category-btn <?= $specialization === $spec['key'] ? 'active' : '' ?>">
+                                    <i class="fas fa-<?= $spec['icon'] ?>"></i> <?= $spec['label'] ?>
+                                </a>
+                            <?php endforeach; ?>
+                            <?php if (!empty($specialization)): ?>
+                                <?php
+                                $params = [];
+                                if (!empty($search)) $params['search'] = $search;
+                                if (!empty($minRating)) $params['min_rating'] = $minRating;
+                                if (!empty($sort)) $params['sort'] = $sort;
+                                $clearUrl = '/dietitians.php' . (!empty($params) ? '?' . http_build_query($params) : '');
+                                ?>
+                                <a href="<?= $clearUrl ?>" class="category-btn category-btn-clear">
+                                    <i class="fas fa-times"></i> Temizle
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </form>
