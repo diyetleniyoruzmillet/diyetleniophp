@@ -46,43 +46,90 @@ $stmt->execute($params);
 $appointments = $stmt->fetchAll();
 
 $pageTitle = 'Randevularım';
+include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #f8f9fa; }
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 8px;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.2);
-        }
-        .content-wrapper { padding: 30px; }
-        .appointment-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-left: 4px solid #28a745;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
+
+<style>
+    .appointment-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border-left: 4px solid #f093fb;
+        transition: transform 0.3s;
+    }
+    .appointment-card:hover {
+        transform: translateY(-3px);
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Randevularım</h2>
+    <div class="btn-group">
+        <a href="?status=scheduled" class="btn btn-sm <?= $status === 'scheduled' ? 'btn-primary' : 'btn-outline-primary' ?>">
+            Yaklaşan
+        </a>
+        <a href="?status=completed" class="btn btn-sm <?= $status === 'completed' ? 'btn-primary' : 'btn-outline-primary' ?>">
+            Tamamlanan
+        </a>
+        <a href="?status=cancelled" class="btn btn-sm <?= $status === 'cancelled' ? 'btn-primary' : 'btn-outline-primary' ?>">
+            İptal
+        </a>
+    </div>
+</div>
+
+<?php if (count($appointments) === 0): ?>
+    <div class="text-center py-5">
+        <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Randevu bulunamadı</h4>
+    </div>
+<?php else: ?>
+    <?php foreach ($appointments as $apt): ?>
+        <div class="appointment-card">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <div class="h3 mb-0 text-primary"><?= date('d', strtotime($apt['appointment_date'])) ?></div>
+                    <div class="text-muted"><?= date('F Y', strtotime($apt['appointment_date'])) ?></div>
+                    <div class="fw-bold mt-2"><?= date('H:i', strtotime($apt['appointment_date'])) ?></div>
+                </div>
+                <div class="col-md-5">
+                    <h5 class="mb-1"><?= clean($apt['client_name']) ?></h5>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-envelope me-2"></i><?= clean($apt['client_email']) ?><br>
+                        <i class="fas fa-phone me-2"></i><?= clean($apt['client_phone']) ?>
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <?php
+                    $badges = [
+                        'scheduled' => 'warning',
+                        'completed' => 'success',
+                        'cancelled' => 'danger'
+                    ];
+                    ?>
+                    <span class="badge bg-<?= $badges[$apt['status']] ?? 'secondary' ?>">
+                        <?= ucfirst($apt['status']) ?>
+                    </span>
+                    <div class="mt-2 small text-muted">
+                        <?= $apt['duration'] ?? 45 ?> dakika
+                    </div>
+                </div>
+                <div class="col-md-2 text-end">
+                    <a href="/dietitian/appointment-detail.php?id=<?= $apt['id'] ?>" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>Detay
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

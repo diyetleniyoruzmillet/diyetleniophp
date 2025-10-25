@@ -32,7 +32,6 @@ $stmt = $conn->prepare("
            cp.date_of_birth, cp.gender, cp.height, cp.target_weight,
            (SELECT COUNT(*) FROM appointments WHERE client_id = u.id AND dietitian_id = ? AND status = 'completed') as completed_sessions,
            (SELECT COUNT(*) FROM appointments WHERE client_id = u.id AND dietitian_id = ? AND status = 'scheduled') as upcoming_sessions,
-           (SELECT COUNT(*) FROM diet_plans WHERE client_id = u.id AND dietitian_id = ? AND status = 'active') as active_plans,
            (SELECT weight FROM weight_tracking WHERE client_id = u.id ORDER BY measurement_date DESC LIMIT 1) as current_weight
     FROM appointments a
     INNER JOIN users u ON a.client_id = u.id
@@ -40,70 +39,124 @@ $stmt = $conn->prepare("
     {$whereClause}
     ORDER BY u.full_name ASC
 ");
-$stmt->execute(array_merge([$userId, $userId, $userId], $params));
+$stmt->execute(array_merge([$userId, $userId], $params));
 $clients = $stmt->fetchAll();
 
 $pageTitle = 'Danışanlarım';
+include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #f8f9fa; }
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 8px;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.2);
-        }
-        .content-wrapper { padding: 30px; }
-        .client-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-        }
-        .client-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        .client-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            font-weight: 700;
-        }
-        .stat-badge {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 10px 15px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
+
+<style>
+    .client-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    .client-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .client-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    .stat-badge {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 10px 15px;
+        text-align: center;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Danışanlarım (<?= count($clients) ?>)</h2>
+    <form method="GET" class="d-flex">
+        <input type="text" name="search" class="form-control me-2"
+               placeholder="Danışan ara..." value="<?= clean($search) ?>">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
+
+<?php if (count($clients) === 0): ?>
+    <div class="text-center py-5">
+        <i class="fas fa-users fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Henüz danışan bulunmuyor</h4>
+        <p class="text-muted">Randevu alan danışanlarınız burada görünecek.</p>
+    </div>
+<?php else: ?>
+    <?php foreach ($clients as $client): ?>
+        <div class="client-card">
+            <div class="row align-items-center">
+                <div class="col-md-1">
+                    <div class="client-avatar">
+                        <?= strtoupper(mb_substr($client['full_name'], 0, 2)) ?>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-1"><?= clean($client['full_name']) ?></h5>
+                    <small class="text-muted">
+                        <i class="fas fa-envelope me-1"></i><?= clean($client['email']) ?>
+                    </small><br>
+                    <small class="text-muted">
+                        <i class="fas fa-phone me-1"></i><?= clean($client['phone']) ?>
+                    </small>
+                </div>
+                <div class="col-md-6">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="stat-badge">
+                                <div class="text-muted small">Tamamlanan</div>
+                                <strong><?= $client['completed_sessions'] ?></strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-badge">
+                                <div class="text-muted small">Yaklaşan</div>
+                                <strong><?= $client['upcoming_sessions'] ?></strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-badge">
+                                <div class="text-muted small">Kilo</div>
+                                <strong><?= $client['current_weight'] ? number_format($client['current_weight'], 1) . ' kg' : '-' ?></strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-badge">
+                                <div class="text-muted small">Hedef</div>
+                                <strong><?= $client['target_weight'] ? number_format($client['target_weight'], 1) . ' kg' : '-' ?></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 text-end">
+                    <a href="/dietitian/client-detail.php?id=<?= $client['id'] ?>" class="btn btn-sm btn-primary">
+                        <i class="fas fa-eye me-1"></i>Detay
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
