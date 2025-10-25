@@ -116,7 +116,31 @@ include __DIR__ . '/../../includes/dietitian_header.php';
                     </div>
                 </div>
                 <div class="col-md-2 text-end">
-                    <a href="/dietitian/appointment-detail.php?id=<?= $apt['id'] ?>" class="btn btn-sm btn-outline-primary">
+                    <?php if ($apt['status'] === 'scheduled' && $apt['is_online']): ?>
+                        <?php
+                        // Randevu zamanı (30 dakika önce katılabilir)
+                        $appointmentTime = strtotime($apt['appointment_date'] . ' ' . $apt['start_time']);
+                        $now = time();
+                        $thirtyMinsBefore = $appointmentTime - (30 * 60);
+                        $canJoin = $now >= $thirtyMinsBefore;
+                        ?>
+                        <?php if ($canJoin): ?>
+                            <a href="/video-room-jitsi.php?appointment_id=<?= $apt['id'] ?>" class="btn btn-success btn-sm w-100 mb-2">
+                                <i class="fas fa-video me-1"></i>Görüşmeye Katıl
+                            </a>
+                            <small class="text-success d-block mb-2">
+                                <i class="fas fa-check-circle"></i> Katılabilirsiniz
+                            </small>
+                        <?php else: ?>
+                            <button class="btn btn-outline-secondary btn-sm w-100 mb-2" disabled title="Randevu saatinden 30 dakika önce katılabilirsiniz">
+                                <i class="fas fa-video me-1"></i>Görüşmeye Katıl
+                            </button>
+                            <small class="text-muted d-block mb-2">
+                                <i class="fas fa-clock"></i> <?= date('H:i', $thirtyMinsBefore) ?> sonra
+                            </small>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <a href="/dietitian/appointment-detail.php?id=<?= $apt['id'] ?>" class="btn btn-sm btn-outline-primary w-100">
                         <i class="fas fa-eye me-1"></i>Detay
                     </a>
                 </div>
