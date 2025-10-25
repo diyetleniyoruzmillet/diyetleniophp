@@ -45,35 +45,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_notes'])) {
 }
 
 $pageTitle = 'Randevu Detayı';
+include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= clean($pageTitle) ?> - Diyetlenio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #f8f9fa; }
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #28a745 0%, #20c997 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 8px;
-        }
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(255,255,255,0.2);
-        }
-        .content-wrapper { padding: 30px; }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
+
+<h2 class="mb-4">Randevu Detayı</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title"><?= clean($appointment['client_name']) ?></h5>
+        <p><strong>Email:</strong> <?= clean($appointment['client_email']) ?></p>
+        <p><strong>Telefon:</strong> <?= clean($appointment['client_phone']) ?></p>
+        <p><strong>Tarih:</strong> <?= date('d.m.Y H:i', strtotime($appointment['appointment_date'])) ?></p>
+        <p><strong>Durum:</strong> <span class="badge bg-<?= $appointment['status'] === 'completed' ? 'success' : 'warning' ?>"><?= $appointment['status'] ?></span></p>
+
+        <hr>
+
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= getCsrfToken() ?>">
+            <div class="mb-3">
+                <label class="form-label">Randevu Notları</label>
+                <textarea name="notes" class="form-control" rows="5"><?= clean($appointment['notes'] ?? '') ?></textarea>
+            </div>
+            <button type="submit" name="save_notes" class="btn btn-success">
+                <i class="fas fa-save me-2"></i>Kaydet
+            </button>
+            <a href="/dietitian/appointments.php" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+            </a>
+        </form>
+    </div>
+</div>
+
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

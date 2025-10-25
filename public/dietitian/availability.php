@@ -54,57 +54,57 @@ $days = [
     4 => 'Perşembe', 5 => 'Cuma', 6 => 'Cumartesi'
 ];
 
-require __DIR__ . '/../../views/partials/dietitian-header.php';
+$pageTitle = 'Müsaitlik Takvimi';
+include __DIR__ . '/../../includes/dietitian_header.php';
 ?>
 
-<div class="container-fluid">
-    <div class="row">
-        <?php require __DIR__ . '/../../views/partials/dietitian-sidebar.php'; ?>
-        
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <h1 class="h2 mt-4 mb-4">Müsaitlik Takvimi</h1>
+<h2 class="mb-4">Müsaitlik Takvimi</h2>
 
-            <?php if ($success): ?>
-                <div class="alert alert-success">Müsaitlik takviminiz güncellendi!</div>
-            <?php endif; ?>
+<?php if ($success): ?>
+    <div class="alert alert-success">Müsaitlik takviminiz güncellendi!</div>
+<?php endif; ?>
 
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <?php foreach ($errors as $error): ?>
-                        <div><?= clean($error) ?></div>
-                    <?php endforeach; ?>
+<?php if (!empty($errors)): ?>
+    <div class="alert alert-danger">
+        <?php foreach ($errors as $error): ?>
+            <div><?= clean($error) ?></div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
+
+            <?php foreach ($days as $dayNum => $dayName): ?>
+                <div class="mb-4 border-bottom pb-3">
+                    <h5><?= $dayName ?></h5>
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <label class="form-label small">Başlangıç</label>
+                            <input type="time" name="availability[<?= $dayNum ?>][0][start]" class="form-control" value="09:00">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small">Bitiş</label>
+                            <input type="time" name="availability[<?= $dayNum ?>][0][end]" class="form-control" value="17:00">
+                        </div>
+                    </div>
                 </div>
-            <?php endif; ?>
+            <?php endforeach; ?>
 
-            <div class="card">
-                <div class="card-body">
-                    <form method="POST">
-                        <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
-
-                        <?php foreach ($days as $dayNum => $dayName): ?>
-                            <div class="mb-4 border-bottom pb-3">
-                                <h5><?= $dayName ?></h5>
-                                <div class="row g-2">
-                                    <div class="col-md-5">
-                                        <label class="form-label small">Başlangıç</label>
-                                        <input type="time" name="availability[<?= $dayNum ?>][0][start]" class="form-control" value="09:00">
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label class="form-label small">Bitiş</label>
-                                        <input type="time" name="availability[<?= $dayNum ?>][0][end]" class="form-control" value="17:00">
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save me-2"></i>Kaydet
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </main>
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save me-2"></i>Kaydet
+            </button>
+        </form>
     </div>
 </div>
 
-<?php require __DIR__ . '/../../views/partials/footer.php'; ?>
+                </div> <!-- .content-wrapper -->
+            </div> <!-- .col-md-10 -->
+        </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
