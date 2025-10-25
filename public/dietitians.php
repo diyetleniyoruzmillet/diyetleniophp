@@ -87,9 +87,7 @@ $dietitians = $stmt->fetchAll();
 
 $pageTitle = 'Diyetisyenlerimiz';
 $showNavbar = true;
-include __DIR__ . '/../includes/partials/header.php';
-?>
-    <style>
+$extraHead = '<style>
         :root {
             --primary-color: #10b981;
             --primary-dark: #059669;
@@ -752,10 +750,9 @@ include __DIR__ . '/../includes/partials/header.php';
                 gap: 15px;
             }
         }
-    </style>
-</head>
-<body>
-    <?php include __DIR__ . '/../includes/navbar.php'; ?>
+    </style>';
+include __DIR__ . '/../includes/partials/header.php';
+?>
 
     <!-- Hero Section (stats removed for cleaner design) -->
     <section class="hero-section">
