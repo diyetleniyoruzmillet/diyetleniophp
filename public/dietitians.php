@@ -423,19 +423,19 @@ $extraHead = <<<'EOD'
 
         .card-badge {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 16px;
+            right: 16px;
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: white;
-            padding: 8px 16px;
-            border-radius: 24px;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
             font-weight: 700;
             z-index: 10;
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
             animation: badgePulse 2s ease-in-out infinite;
         }
@@ -446,7 +446,7 @@ $extraHead = <<<'EOD'
         }
 
         .dietitian-image {
-            height: 380px;
+            height: 280px;
             background: var(--hero-gradient);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
@@ -454,7 +454,7 @@ $extraHead = <<<'EOD'
             align-items: center;
             justify-content: center;
             color: rgba(255,255,255,0.4);
-            font-size: 6rem;
+            font-size: 4.5rem;
             position: relative;
             overflow: hidden;
         }
@@ -479,51 +479,51 @@ $extraHead = <<<'EOD'
         }
 
         .dietitian-body {
-            padding: 36px;
+            padding: 24px;
         }
 
         .dietitian-name {
-            font-size: 1.75rem;
-            font-weight: 900;
+            font-size: 1.35rem;
+            font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             line-height: 1.3;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.01em;
         }
 
         .dietitian-title {
             color: var(--text-light);
-            font-size: 1.05rem;
-            margin-bottom: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-weight: 600;
         }
 
         .dietitian-title i {
             color: var(--secondary-color);
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
 
         /* Modern Rating Stars */
         .rating {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding: 12px 0;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(226, 232, 240, 0.6);
         }
 
         .stars {
             display: flex;
-            gap: 4px;
+            gap: 3px;
         }
 
         .stars i {
             color: #fbbf24;
-            font-size: 1.05rem;
+            font-size: 0.9rem;
             filter: drop-shadow(0 1px 2px rgba(251, 191, 36, 0.3));
         }
 
@@ -534,13 +534,13 @@ $extraHead = <<<'EOD'
         .rating-text {
             margin-left: 4px;
             color: var(--text-dark);
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 700;
         }
 
         .rating-count {
             color: var(--text-light);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
         }
 
@@ -548,22 +548,22 @@ $extraHead = <<<'EOD'
         .specializations {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 22px;
-            min-height: 70px;
+            gap: 8px;
+            margin-bottom: 18px;
+            min-height: 60px;
         }
 
         .badge-custom {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.12));
             color: var(--primary-dark);
-            padding: 8px 16px;
-            border-radius: 24px;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
             font-weight: 700;
             border: 1.5px solid rgba(16, 185, 129, 0.25);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -576,7 +576,7 @@ $extraHead = <<<'EOD'
         }
 
         .badge-custom i {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         /* Modern Price Display */
@@ -585,22 +585,22 @@ $extraHead = <<<'EOD'
             align-items: center;
             justify-content: space-between;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08));
-            padding: 18px 22px;
-            border-radius: 16px;
-            margin-bottom: 22px;
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 18px;
             border: 1.5px solid rgba(16, 185, 129, 0.2);
         }
 
         .free-badge {
-            font-size: 0.9rem !important;
-            padding: 8px 16px !important;
-            border-radius: 14px !important;
+            font-size: 0.8rem !important;
+            padding: 6px 12px !important;
+            border-radius: 12px !important;
             font-weight: 800 !important;
             letter-spacing: 0.3px;
         }
 
         .price-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-light);
             font-weight: 600;
         }
@@ -609,51 +609,51 @@ $extraHead = <<<'EOD'
         .info-row {
             display: flex;
             align-items: center;
-            gap: 24px;
-            margin-bottom: 24px;
-            padding: 16px 0;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 12px 0;
             border-top: 1px solid rgba(226, 232, 240, 0.6);
         }
 
         .info-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            gap: 6px;
+            font-size: 0.85rem;
             color: var(--text-light);
             font-weight: 500;
         }
 
         .info-item i {
             color: var(--secondary-color);
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .info-value {
-            font-weight: 800;
+            font-weight: 700;
             color: var(--text-dark);
         }
 
         /* Ultra-Modern Action Buttons */
         .card-actions {
             display: flex;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn-view {
             flex: 1;
             background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
             color: white;
-            padding: 16px 24px;
-            border-radius: 16px;
+            padding: 12px 20px;
+            border-radius: 14px;
             border: none;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             text-decoration: none;
             position: relative;
             overflow: hidden;
@@ -675,8 +675,8 @@ $extraHead = <<<'EOD'
         }
 
         .btn-view:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 28px rgba(59, 130, 246, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(59, 130, 246, 0.35);
             color: white;
         }
 
@@ -684,23 +684,23 @@ $extraHead = <<<'EOD'
             flex: 1;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 16px 24px;
-            border-radius: 16px;
+            padding: 12px 20px;
+            border-radius: 14px;
             border: none;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             text-decoration: none;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
 
         .btn-book:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 28px rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 24px rgba(16, 185, 129, 0.4);
             color: white;
         }
 
@@ -850,11 +850,15 @@ $extraHead = <<<'EOD'
             }
 
             .dietitian-name {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
             }
 
             .dietitian-image {
-                height: 320px;
+                height: 260px;
+            }
+
+            .dietitian-body {
+                padding: 20px;
             }
         }
 
@@ -881,15 +885,20 @@ $extraHead = <<<'EOD'
             }
 
             .dietitian-name {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
             }
 
             .dietitian-image {
-                height: 300px;
+                height: 240px;
             }
 
             .dietitian-body {
-                padding: 28px;
+                padding: 20px;
+            }
+
+            .badge-custom {
+                font-size: 0.7rem;
+                padding: 5px 10px;
             }
 
             .pagination .page-link {
@@ -919,18 +928,29 @@ $extraHead = <<<'EOD'
                 font-size: 0.95rem;
             }
 
+            .dietitian-image {
+                height: 220px;
+            }
+
             .dietitian-body {
-                padding: 20px;
+                padding: 18px;
+            }
+
+            .dietitian-name {
+                font-size: 1.1rem;
             }
 
             .btn-view, .btn-book {
-                padding: 14px 20px;
-                font-size: 0.9rem;
+                padding: 10px 16px;
+                font-size: 0.8rem;
             }
 
             .card-actions {
-                flex-direction: column;
-                gap: 10px;
+                gap: 8px;
+            }
+
+            .specializations {
+                min-height: 50px;
             }
         }
     </style>
@@ -1051,9 +1071,9 @@ include __DIR__ . '/../includes/partials/header.php';
         <!-- Dietitian List -->
         <div class="dietitians-grid">
             <?php if (count($dietitians) > 0): ?>
-                <div class="row g-5">
+                <div class="row g-4">
                     <?php foreach ($dietitians as $d): ?>
-                        <div class="col-lg-6">
+                        <div class="col-lg-4 col-md-6">
                                 <div class="dietitian-card">
                                     <?php if ($d['rating_avg'] >= 4.5): ?>
                                         <div class="card-badge">
