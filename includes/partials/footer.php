@@ -17,9 +17,9 @@ $showFooter = array_key_exists('showFooter', get_defined_vars()) ? (bool)$showFo
 <?php endif; ?>
 
 <!-- Floating Emergency Dietitian Button -->
-<a href="/dietitians.php" class="emergency-dietitian-btn" id="emergencyBtn" title="Acil Diyetisyen Desteği">
+<a href="/acil-diyetisyen.php" class="emergency-dietitian-btn" id="emergencyBtn" title="Acil Diyetisyen Desteği">
     <div class="emergency-icon">
-        <i class="fas fa-user-md"></i>
+        <i class="fas fa-heartbeat"></i>
     </div>
     <span class="emergency-text">Acil Diyetisyen</span>
 </a>
@@ -29,14 +29,14 @@ $showFooter = array_key_exists('showFooter', get_defined_vars()) ? (bool)$showFo
         position: fixed;
         bottom: 30px;
         right: 30px;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
         color: white;
         padding: 16px 24px;
         border-radius: 50px;
         text-decoration: none;
         font-weight: 700;
         font-size: 1rem;
-        box-shadow: 0 8px 30px rgba(240, 147, 251, 0.5);
+        box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5);
         z-index: 9999;
         display: flex;
         align-items: center;
@@ -65,7 +65,7 @@ $showFooter = array_key_exists('showFooter', get_defined_vars()) ? (bool)$showFo
     .emergency-dietitian-btn:hover {
         color: white;
         transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 12px 45px rgba(240, 147, 251, 0.7);
+        box-shadow: 0 12px 45px rgba(220, 38, 38, 0.7);
     }
 
     .emergency-icon {
@@ -89,10 +89,10 @@ $showFooter = array_key_exists('showFooter', get_defined_vars()) ? (bool)$showFo
 
     @keyframes pulseGlow {
         0%, 100% {
-            box-shadow: 0 8px 30px rgba(240, 147, 251, 0.5);
+            box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5);
         }
         50% {
-            box-shadow: 0 8px 40px rgba(240, 147, 251, 0.8), 0 0 0 10px rgba(240, 147, 251, 0.1);
+            box-shadow: 0 8px 40px rgba(220, 38, 38, 0.8), 0 0 0 10px rgba(220, 38, 38, 0.1);
         }
     }
 
