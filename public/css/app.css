@@ -123,3 +123,20 @@ body.faq { background: #f8fafc; }
 .faq .nav-pills .nav-link.active { background: linear-gradient(135deg, var(--color-accent) 0%, #06b6d4 100%); color: #fff; }
 .faq .footer { background: var(--color-dark-2); color: #fff; padding: 40px 0; text-align: center; }
 .faq .footer a { color: var(--color-accent); text-decoration: none; }
+
+
+/* Emergency Button Pulse Animation */
+@keyframes pulse-emergency {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+  }
+}
+
+.btn-danger[href*='acil-diyetisyen'] {
+  position: relative;
+  overflow: visible;
+}
+
