@@ -43,8 +43,7 @@ $showFooter = array_key_exists('showFooter', get_defined_vars()) ? (bool)$showFo
         gap: 12px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         animation: pulseGlow 2s ease-in-out infinite;
-        overflow: hidden;
-        max-width: 70px;
+        overflow: visible;
         white-space: nowrap;
     }
 
@@ -67,7 +66,6 @@ $showFooter = array_key_exists('showFooter', get_defined_vars()) ? (bool)$showFo
         color: white;
         transform: translateY(-5px) scale(1.05);
         box-shadow: 0 12px 45px rgba(240, 147, 251, 0.7);
-        max-width: 250px;
     }
 
     .emergency-icon {
@@ -84,16 +82,9 @@ $showFooter = array_key_exists('showFooter', get_defined_vars()) ? (bool)$showFo
     }
 
     .emergency-text {
-        opacity: 0;
-        max-width: 0;
-        overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        white-space: nowrap;
-    }
-
-    .emergency-dietitian-btn:hover .emergency-text {
         opacity: 1;
-        max-width: 200px;
+        white-space: nowrap;
+        font-weight: 700;
     }
 
     @keyframes pulseGlow {

@@ -186,204 +186,105 @@ $extraHead = <<<'EOD'
             }
         }
 
-        /* Top Horizontal Filters */
-        .top-filters-wrapper {
+        /* Simple Tags Section */
+        .tags-wrapper {
             margin-bottom: 48px;
         }
 
-        .filter-card {
+        .tags-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px) saturate(180%);
             border-radius: 28px;
-            padding: 40px;
+            padding: 36px 40px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.08);
             border: 1px solid rgba(255,255,255,0.3);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
         }
 
-        .filter-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 28px;
-            padding: 2px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), transparent);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-
-        .filter-card:hover::before {
-            opacity: 0.5;
-        }
-
-        .top-filter-form {
+        .tags-row {
             display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        .filter-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
+            align-items: center;
             gap: 24px;
-            align-items: end;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .filter-label {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .filter-label i {
-            color: var(--primary-color);
-            font-size: 1rem;
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .filter-actions .btn {
-            padding: 14px 28px;
-            white-space: nowrap;
-        }
-
-        /* Specializations Row */
-        .specializations-row {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding-top: 28px;
-            border-top: 2px solid rgba(226, 232, 240, 0.6);
             flex-wrap: wrap;
         }
 
-        .spec-label {
-            font-size: 1rem;
+        .tags-label {
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--text-dark);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             white-space: nowrap;
         }
 
-        .spec-label i {
-            color: #f59e0b;
-            font-size: 1.1rem;
-        }
-
-        .spec-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .form-control, .form-select {
-            border: 2px solid var(--border-color);
-            border-radius: 14px;
-            padding: 14px 18px;
-            font-size: 0.95rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(248, 250, 252, 0.5);
-            font-weight: 500;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
-            background: white;
-            transform: translateY(-1px);
-        }
-
-        .search-box {
-            position: relative;
-            margin-bottom: 28px;
-        }
-
-        .search-box input {
-            padding-left: 50px;
-            font-size: 0.95rem;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
+        .tags-label i {
+            color: var(--primary-color);
             font-size: 1.2rem;
         }
 
-        /* Modern Category Buttons (Horizontal) */
-        .category-btn {
+        .tags-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex: 1;
+        }
+
+
+        /* Modern Tag Buttons */
+        .tag-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
+            gap: 10px;
+            padding: 14px 28px;
             background: rgba(248, 250, 252, 0.8);
             border: 2px solid rgba(226, 232, 240, 0.8);
-            border-radius: 24px;
+            border-radius: 28px;
             color: var(--text-dark);
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             text-decoration: none;
             white-space: nowrap;
         }
 
-        .category-btn:hover {
+        .tag-btn:hover {
             background: rgba(16, 185, 129, 0.1);
             border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
             color: var(--primary-dark);
         }
 
-        .category-btn.active {
+        .tag-btn.active {
             background: linear-gradient(135deg, var(--primary-color) 0%, #059669 100%);
             color: white;
             border-color: transparent;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+            box-shadow: 0 10px 28px rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
         }
 
-        .category-btn.active:hover {
-            transform: translateY(-2px) scale(1.05);
+        .tag-btn.active:hover {
+            transform: translateY(-4px) scale(1.02);
         }
 
-        .category-btn i {
-            font-size: 1rem;
+        .tag-btn i {
+            font-size: 1.1rem;
         }
 
-        /* Clear specialization button */
-        .category-btn-clear {
-            background: rgba(220, 38, 38, 0.1) !important;
-            border-color: #dc2626 !important;
-            color: #dc2626 !important;
+        /* "All" button */
+        .tag-btn-all {
+            background: rgba(100, 116, 139, 0.1) !important;
+            border-color: #64748b !important;
+            color: #64748b !important;
         }
 
-        .category-btn-clear:hover {
-            background: #dc2626 !important;
+        .tag-btn-all:hover {
+            background: #64748b !important;
             color: white !important;
-            border-color: #dc2626 !important;
-            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3) !important;
+            border-color: #64748b !important;
+            box-shadow: 0 8px 20px rgba(100, 116, 139, 0.3) !important;
         }
 
         /* Ultra-Modern Dietitian Cards */
@@ -827,26 +728,14 @@ $extraHead = <<<'EOD'
                 font-size: 1.15rem;
             }
 
-            .filter-card {
-                padding: 32px;
+            .tags-card {
+                padding: 28px 32px;
             }
 
-            .filter-row {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .filter-actions {
-                flex-direction: column;
-            }
-
-            .filter-actions .btn {
-                width: 100%;
-            }
-
-            .specializations-row {
+            .tags-row {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 20px;
             }
 
             .dietitian-name {
@@ -875,13 +764,18 @@ $extraHead = <<<'EOD'
                 font-size: 1.05rem;
             }
 
-            .filter-card {
-                padding: 24px;
+            .tags-card {
+                padding: 24px 28px;
                 border-radius: 24px;
             }
 
-            .spec-buttons {
+            .tags-buttons {
                 justify-content: center;
+            }
+
+            .tag-btn {
+                font-size: 0.9rem;
+                padding: 12px 20px;
             }
 
             .dietitian-name {
@@ -966,105 +860,41 @@ include __DIR__ . '/../includes/partials/header.php';
         </div>
     </section>
 
-    <!-- Top Filters -->
+    <!-- Category Tags -->
     <div class="container my-5">
-        <div class="top-filters-wrapper">
-            <div class="filter-card">
-                <form method="GET" action="/dietitians.php" id="filterForm" class="top-filter-form">
-                    <?php if (!empty($specialization)): ?>
-                        <input type="hidden" name="specialization" value="<?= clean($specialization) ?>">
-                    <?php endif; ?>
-                    <div class="filter-row">
-                        <div class="filter-group">
-                            <label class="filter-label">
-                                <i class="fas fa-search"></i>
-                                Arama
-                            </label>
-                            <div class="search-box">
-                                <i class="fas fa-search search-icon"></i>
-                                <input type="text" name="search" class="form-control" placeholder="İsim, uzmanlık ara..." value="<?= clean($search) ?>">
-                            </div>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">
-                                <i class="fas fa-star text-warning"></i>
-                                Minimum Puan
-                            </label>
-                            <select name="min_rating" class="form-select">
-                                <option value="">Tüm Puanlar</option>
-                                <option value="3" <?= $minRating == 3 ? 'selected' : '' ?>>3+ Yıldız</option>
-                                <option value="4" <?= $minRating == 4 ? 'selected' : '' ?>>4+ Yıldız</option>
-                                <option value="4.5" <?= $minRating == 4.5 ? 'selected' : '' ?>>4.5+ Yıldız</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">
-                                <i class="fas fa-sort text-primary"></i>
-                                Sıralama
-                            </label>
-                            <select name="sort" class="form-select">
-                                <option value="rating" <?= $sort == 'rating' ? 'selected' : '' ?>>En Yüksek Puan</option>
-                                <option value="price_low" <?= $sort == 'price_low' ? 'selected' : '' ?>>Fiyat: Düşük-Yüksek</option>
-                                <option value="price_high" <?= $sort == 'price_high' ? 'selected' : '' ?>>Fiyat: Yüksek-Düşük</option>
-                                <option value="name" <?= $sort == 'name' ? 'selected' : '' ?>>İsme Göre (A-Z)</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-actions">
-                            <button type="submit" class="btn btn-book">
-                                <i class="fas fa-filter me-2"></i>Filtrele
-                            </button>
-                            <a href="/dietitians.php" class="btn btn-view">
-                                <i class="fas fa-redo me-2"></i>Sıfırla
+        <div class="tags-wrapper">
+            <div class="tags-card">
+                <div class="tags-row">
+                    <span class="tags-label">
+                        <i class="fas fa-tags"></i>
+                        Uzmanlık Alanları
+                    </span>
+                    <div class="tags-buttons">
+                        <?php
+                        $specs = [
+                            ['key' => 'Zayıflama', 'icon' => 'weight', 'label' => 'Zayıflama'],
+                            ['key' => 'Spor', 'icon' => 'dumbbell', 'label' => 'Spor Diyeti'],
+                            ['key' => 'Diyabet', 'icon' => 'heartbeat', 'label' => 'Diyabet'],
+                            ['key' => 'Çocuk', 'icon' => 'child', 'label' => 'Çocuk Beslenmesi'],
+                            ['key' => 'Hamilelik', 'icon' => 'baby', 'label' => 'Hamilelik'],
+                            ['key' => 'Vegan', 'icon' => 'leaf', 'label' => 'Vegan Beslenme']
+                        ];
+                        foreach ($specs as $spec):
+                            $url = '/dietitians.php?specialization=' . urlencode($spec['key']);
+                        ?>
+                            <a href="<?= $url ?>" class="tag-btn <?= $specialization === $spec['key'] ? 'active' : '' ?>">
+                                <i class="fas fa-<?= $spec['icon'] ?>"></i>
+                                <?= $spec['label'] ?>
                             </a>
-                        </div>
+                        <?php endforeach; ?>
+                        <?php if (!empty($specialization)): ?>
+                            <a href="/dietitians.php" class="tag-btn tag-btn-all">
+                                <i class="fas fa-th"></i>
+                                Tümü
+                            </a>
+                        <?php endif; ?>
                     </div>
-
-                    <!-- Popular Specializations -->
-                    <div class="specializations-row">
-                        <span class="spec-label">
-                            <i class="fas fa-fire"></i>
-                            Popüler Uzmanlıklar:
-                        </span>
-                        <div class="spec-buttons">
-                            <?php
-                            $specs = [
-                                ['key' => 'Zayıflama', 'icon' => 'weight', 'label' => 'Zayıflama'],
-                                ['key' => 'Spor', 'icon' => 'dumbbell', 'label' => 'Spor Diyeti'],
-                                ['key' => 'Diyabet', 'icon' => 'heartbeat', 'label' => 'Diyabet'],
-                                ['key' => 'Çocuk', 'icon' => 'child', 'label' => 'Çocuk'],
-                                ['key' => 'Hamilelik', 'icon' => 'baby', 'label' => 'Hamilelik'],
-                                ['key' => 'Vegan', 'icon' => 'leaf', 'label' => 'Vegan']
-                            ];
-                            foreach ($specs as $spec):
-                                $params = [];
-                                if (!empty($search)) $params['search'] = $search;
-                                if (!empty($minRating)) $params['min_rating'] = $minRating;
-                                if (!empty($sort)) $params['sort'] = $sort;
-                                $params['specialization'] = $spec['key'];
-                                $url = '/dietitians.php?' . http_build_query($params);
-                            ?>
-                                <a href="<?= $url ?>" class="category-btn <?= $specialization === $spec['key'] ? 'active' : '' ?>">
-                                    <i class="fas fa-<?= $spec['icon'] ?>"></i> <?= $spec['label'] ?>
-                                </a>
-                            <?php endforeach; ?>
-                            <?php if (!empty($specialization)): ?>
-                                <?php
-                                $params = [];
-                                if (!empty($search)) $params['search'] = $search;
-                                if (!empty($minRating)) $params['min_rating'] = $minRating;
-                                if (!empty($sort)) $params['sort'] = $sort;
-                                $clearUrl = '/dietitians.php' . (!empty($params) ? '?' . http_build_query($params) : '');
-                                ?>
-                                <a href="<?= $clearUrl ?>" class="category-btn category-btn-clear">
-                                    <i class="fas fa-times"></i> Temizle
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
 
@@ -1163,7 +993,11 @@ include __DIR__ . '/../includes/partials/header.php';
                             <ul class="pagination">
                                 <?php if ($page > 1): ?>
                                     <li class="page-item">
-                                        <a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($search) ?>&specialization=<?= urlencode($specialization) ?>&min_rating=<?= $minRating ?>&sort=<?= $sort ?>">
+                                        <?php
+                                        $prevParams = ['page' => $page - 1];
+                                        if (!empty($specialization)) $prevParams['specialization'] = $specialization;
+                                        ?>
+                                        <a class="page-link" href="?<?= http_build_query($prevParams) ?>">
                                             <i class="fas fa-chevron-left"></i>
                                         </a>
                                     </li>
@@ -1172,7 +1006,11 @@ include __DIR__ . '/../includes/partials/header.php';
                                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                                     <?php if ($i == 1 || $i == $totalPages || ($i >= $page - 2 && $i <= $page + 2)): ?>
                                         <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                                            <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&specialization=<?= urlencode($specialization) ?>&min_rating=<?= $minRating ?>&sort=<?= $sort ?>">
+                                            <?php
+                                            $pageParams = ['page' => $i];
+                                            if (!empty($specialization)) $pageParams['specialization'] = $specialization;
+                                            ?>
+                                            <a class="page-link" href="?<?= http_build_query($pageParams) ?>">
                                                 <?= $i ?>
                                             </a>
                                         </li>
@@ -1185,7 +1023,11 @@ include __DIR__ . '/../includes/partials/header.php';
 
                                 <?php if ($page < $totalPages): ?>
                                     <li class="page-item">
-                                        <a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($search) ?>&specialization=<?= urlencode($specialization) ?>&min_rating=<?= $minRating ?>&sort=<?= $sort ?>">
+                                        <?php
+                                        $nextParams = ['page' => $page + 1];
+                                        if (!empty($specialization)) $nextParams['specialization'] = $specialization;
+                                        ?>
+                                        <a class="page-link" href="?<?= http_build_query($nextParams) ?>">
                                             <i class="fas fa-chevron-right"></i>
                                         </a>
                                     </li>
@@ -1224,17 +1066,6 @@ include __DIR__ . '/../includes/partials/header.php';
             lastScroll = currentScroll;
         });
 
-        // Smooth animation for category button clicks
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                // Add subtle loading effect
-                document.body.style.opacity = '0.95';
-                setTimeout(() => {
-                    document.body.style.opacity = '1';
-                }, 200);
-            });
-        });
-
         // Card entrance animation on scroll
         const observerOptions = {
             threshold: 0.1,
@@ -1262,28 +1093,6 @@ include __DIR__ . '/../includes/partials/header.php';
         document.querySelectorAll('.dietitian-card').forEach(card => {
             observer.observe(card);
         });
-
-        // Auto-submit filter form on change for better UX
-        const filterSelects = document.querySelectorAll('#filterForm select');
-        filterSelects.forEach(select => {
-            select.addEventListener('change', function() {
-                // Optional: Auto-submit on change
-                // document.getElementById('filterForm').submit();
-            });
-        });
-
-        // Search input debounce
-        let searchTimeout;
-        const searchInput = document.querySelector('input[name="search"]');
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                // Optional: Add search suggestions or auto-filter
-                // searchTimeout = setTimeout(() => {
-                //     // Implement search suggestions
-                // }, 300);
-            });
-        }
 
         // Add hover effect sound/haptic feedback simulation
         document.querySelectorAll('.dietitian-card').forEach(card => {
@@ -1403,15 +1212,5 @@ include __DIR__ . '/../includes/partials/header.php';
             });
         });
 
-        // Prevent double-click on filter button
-        const filterBtn = document.querySelector('button[type="submit"]');
-        if (filterBtn) {
-            filterBtn.addEventListener('click', function() {
-                this.disabled = true;
-                setTimeout(() => {
-                    this.disabled = false;
-                }, 1000);
-            });
-        }
     </script>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>
