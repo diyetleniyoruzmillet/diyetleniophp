@@ -1041,9 +1041,9 @@ include __DIR__ . '/../includes/partials/header.php';
     </footer>
 
     <!-- Floating Emergency Dietitian Button -->
-    <a href="/dietitians.php" class="emergency-dietitian-btn" id="emergencyBtn" title="Acil Diyetisyen Desteği">
+    <a href="/acil-diyetisyen.php" class="emergency-dietitian-btn" id="emergencyBtn" title="Acil Diyetisyen Desteği">
         <div class="emergency-icon">
-            <i class="fas fa-user-md"></i>
+            <i class="fas fa-heartbeat"></i>
         </div>
         <span class="emergency-text">Acil Diyetisyen</span>
     </a>
