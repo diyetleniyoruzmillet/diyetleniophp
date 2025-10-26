@@ -428,41 +428,6 @@ include __DIR__ . '/../includes/partials/header.php';
     </style>
 </head>
 <body>
-    <!-- Modern Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Ana Sayfa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dietitians.php">Diyetisyenler</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/blog.php">Blog</a>
-                    </li>
-                    <?php if ($auth->check()): ?>
-                        <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">
-                                Panel
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -658,8 +623,6 @@ include __DIR__ . '/../includes/partials/header.php';
             <p>&copy; 2024 Diyetlenio. Tüm hakları saklıdır.</p>
         </div>
     </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Navbar scroll effect
         window.addEventListener('scroll', function() {

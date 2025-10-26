@@ -338,31 +338,6 @@ include __DIR__ . '/../includes/partials/header.php';
 <body>
     <div class="reading-progress" id="readingProgress"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-heartbeat me-2"></i>Diyetlenio
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="/">Ana Sayfa</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/blog.php">Blog</a></li>
-                    <?php if ($auth->check()): ?>
-                        <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="/<?= $auth->user()->getUserType() ?>/dashboard.php">Panel</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item"><a class="btn btn-primary ms-2" href="/login.php">Giriş Yap</a></li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <!-- Hero -->
     <header class="article-hero">
         <div class="container">
