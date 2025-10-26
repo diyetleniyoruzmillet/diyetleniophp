@@ -124,58 +124,94 @@ $pageTitle = 'Danışan Kayıt';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= clean($pageTitle) ?> - Diyetlenio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/modern-design-system.css">
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 50%, #4facfe 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             background-size: 200% 200%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+            padding: 50px 0;
             position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Background Animation */
+        .floating-circles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 15s infinite ease-in-out;
+        }
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+        .floating-circle:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            right: 15%;
+            top: 60%;
+            animation-delay: 2s;
+        }
+        .floating-circle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            left: 70%;
+            top: 30%;
+            animation-delay: 4s;
         }
 
-        /* Animated Orbs */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
-            filter: blur(80px);
-            top: -300px;
-            right: -200px;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        body::after {
-            content: '';
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(168, 224, 99, 0.2) 0%, transparent 70%);
-            filter: blur(80px);
-            bottom: -200px;
-            left: -100px;
-            animation: float 15s ease-in-out infinite reverse;
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
         }
 
         .register-container {
             position: relative;
             z-index: 1;
-            width: 100%;
-            max-width: 600px;
-            animation: fadeInUp 0.6s ease;
+        }
+
+        .register-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 50px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 30px 0;
+            }
+            .register-card {
+                padding: 30px 25px;
+            }
         }
 
         @keyframes fadeInUp {
@@ -189,68 +225,86 @@ $pageTitle = 'Danışan Kayıt';
             }
         }
 
-        .register-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 50px;
-        }
-
-        .brand-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
         .brand-icon {
             width: 80px;
             height: 80px;
             background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            border-radius: 20px;
-            display: inline-flex;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
             box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4);
-            animation: pulse 2s ease-in-out infinite;
+            animation: pulse 2s infinite;
         }
 
-        .page-title {
-            font-size: 2rem;
-            font-weight: 800;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(86, 171, 47, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 35px rgba(86, 171, 47, 0.6); }
+        }
+
+        .brand-icon i {
+            font-size: 36px;
+            color: white;
+        }
+
+        .register-card h3 {
             color: #2d3748;
+            font-weight: 700;
             margin-bottom: 10px;
         }
 
-        .page-subtitle {
+        .register-card .subtitle {
             color: #718096;
-            font-size: 1rem;
+            margin-bottom: 30px;
         }
 
-        .form-floating {
+        /* Floating Label Inputs */
+        .form-floating-custom {
+            position: relative;
             margin-bottom: 20px;
         }
 
-        .form-floating input {
+        .form-floating-custom input {
+            width: 100%;
+            padding: 18px 15px 8px;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 1.2rem 1rem;
-            font-size: 1rem;
+            font-size: 16px;
             transition: all 0.3s;
-            height: auto;
+            background: white;
         }
 
-        .form-floating input:focus {
+        .form-floating-custom input:focus {
+            outline: none;
             border-color: #56ab2f;
             box-shadow: 0 0 0 4px rgba(86, 171, 47, 0.15);
             transform: translateY(-2px);
         }
 
-        .form-floating label {
-            color: #718096;
-            padding: 1.2rem 1rem;
+        .form-floating-custom label {
+            position: absolute;
+            left: 15px;
+            top: 16px;
+            color: #a0aec0;
+            font-size: 16px;
+            transition: all 0.3s;
+            pointer-events: none;
+            background: white;
+            padding: 0 5px;
+        }
+
+        .form-floating-custom input:focus + label,
+        .form-floating-custom input:not(:placeholder-shown) + label {
+            top: -8px;
+            font-size: 12px;
+            color: #56ab2f;
+            font-weight: 600;
+        }
+
+        /* Password Toggle */
+        .password-wrapper {
+            position: relative;
         }
 
         .password-toggle {
@@ -260,79 +314,67 @@ $pageTitle = 'Danışan Kayıt';
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #718096;
+            color: #a0aec0;
             cursor: pointer;
-            padding: 5px 10px;
-            z-index: 10;
             transition: color 0.3s;
+            z-index: 10;
         }
 
         .password-toggle:hover {
             color: #56ab2f;
         }
 
+        /* Password Strength Indicator */
         .password-strength {
-            height: 5px;
-            border-radius: 3px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .password-strength.active {
+            display: block;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-fill {
+            height: 100%;
             transition: all 0.3s;
-            margin-top: 8px;
+            border-radius: 2px;
         }
 
         .strength-text {
-            font-size: 0.85rem;
-            margin-top: 5px;
-            font-weight: 500;
-        }
-
-        .form-check {
-            margin-bottom: 25px;
-        }
-
-        .form-check-input {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-        }
-
-        .form-check-input:checked {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            border-color: #56ab2f;
-        }
-
-        .form-check-label {
-            margin-left: 8px;
-            color: #2d3748;
-            cursor: pointer;
-        }
-
-        .form-check-label a {
-            color: #56ab2f;
-            text-decoration: none;
+            font-size: 12px;
             font-weight: 600;
         }
 
-        .form-check-label a:hover {
-            text-decoration: underline;
+        .strength-feedback {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 3px;
         }
 
-        .btn-register {
+        /* Buttons */
+        .btn-gradient {
             background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             border: none;
             color: white;
-            padding: 16px 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 16px;
             border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 4px 20px rgba(86, 171, 47, 0.4);
-            width: 100%;
             position: relative;
             overflow: hidden;
         }
 
-        .btn-register::before {
+        .btn-gradient::before {
             content: '';
             position: absolute;
             top: 0;
@@ -343,306 +385,313 @@ $pageTitle = 'Danışan Kayıt';
             transition: left 0.5s;
         }
 
-        .btn-register:hover::before {
+        .btn-gradient:hover::before {
             left: 100%;
         }
 
-        .btn-register:hover {
+        .btn-gradient:hover {
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 8px 30px rgba(86, 171, 47, 0.6);
             color: white;
         }
 
-        .btn-register:active {
+        .btn-gradient:active {
             transform: translateY(-1px) scale(1);
         }
 
-        .divider {
-            text-align: center;
-            margin: 30px 0;
-            position: relative;
-        }
-
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #e2e8f0;
-        }
-
-        .divider span {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 0 15px;
-            color: #718096;
-            position: relative;
-            z-index: 1;
-        }
-
-        .login-section {
-            text-align: center;
-        }
-
-        .btn-link {
-            border: 2px solid #e2e8f0;
+        .btn-outline-custom {
+            border: 2px solid #56ab2f;
+            color: #56ab2f;
             background: white;
-            color: #2d3748;
-            padding: 12px 25px;
-            font-weight: 600;
+            padding: 10px 24px;
             border-radius: 12px;
+            font-weight: 600;
             transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
         }
 
-        .btn-link:hover {
-            border-color: #56ab2f;
-            color: #56ab2f;
-            background: rgba(86, 171, 47, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .back-home {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .back-home a {
+        .btn-outline-custom:hover {
+            background: #56ab2f;
             color: white;
+        }
+
+        /* Custom Checkbox */
+        .custom-checkbox {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox label {
+            font-size: 14px;
+            color: #4a5568;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .custom-checkbox a {
+            color: #56ab2f;
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
+            font-weight: 600;
         }
 
-        .back-home a:hover {
-            opacity: 0.8;
+        .custom-checkbox a:hover {
+            text-decoration: underline;
         }
 
-        .alert {
+        /* Alert Messages */
+        .alert-custom {
             border-radius: 12px;
             border: none;
+            padding: 15px 20px;
             margin-bottom: 25px;
         }
 
-        .success-animation {
-            text-align: center;
-            animation: bounceIn 0.6s ease;
+        .alert-danger {
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 4px solid #f56565;
         }
 
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
+        /* Success State */
+        .success-animation {
+            text-align: center;
+            animation: fadeInUp 0.6s ease-out;
         }
 
         .success-icon {
             width: 100px;
             height: 100px;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
             border-radius: 50%;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 3rem;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
+            animation: bounceIn 0.6s ease-out;
         }
 
-        @media (max-width: 768px) {
-            .register-card {
-                padding: 30px 25px;
-            }
-            .page-title {
-                font-size: 1.5rem;
-            }
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-icon i {
+            font-size: 50px;
+            color: white;
+        }
+
+        .success-animation h4 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        /* Required Star */
+        .required {
+            color: #f56565;
+            margin-left: 3px;
         }
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <div class="register-card">
-            <?php if ($success): ?>
-                <div class="success-animation">
-                    <div class="success-icon">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <h2 class="page-title mb-3">Kayıt Başarılı!</h2>
-                    <p class="text-muted mb-4">
-                        Hesabınız başarıyla oluşturuldu. Artık giriş yapabilirsiniz.
-                    </p>
-                    <a href="/login.php" class="btn btn-register">
-                        <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+    <!-- Floating Background Circles -->
+    <div class="floating-circles">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <div class="container register-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="register-card">
+                    <?php if ($success): ?>
+                        <!-- Success State -->
+                        <div class="success-animation">
+                            <div class="success-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h4>Kayıt Başarılı!</h4>
+                            <p class="text-muted mb-4">Hesabınız başarıyla oluşturuldu. Artık giriş yapabilirsiniz.</p>
+                            <a href="/login.php" class="btn btn-gradient w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <!-- Registration Form -->
+                        <div class="text-center mb-4">
+                            <div class="brand-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h3>Danışan Kayıt</h3>
+                            <p class="subtitle">Sağlıklı yaşam yolculuğunuza bugün başlayın</p>
+                        </div>
+
+                        <?php if (!empty($errors)): ?>
+                            <div class="alert alert-danger alert-custom">
+                                <strong><i class="fas fa-exclamation-circle me-2"></i>Lütfen aşağıdaki hataları düzeltin:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <?php foreach ($errors as $error): ?>
+                                        <li><?= clean($error) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
+                        <form method="POST" action="/register-client.php" id="registerForm">
+                            <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
+
+                            <div class="form-floating-custom">
+                                <input
+                                    type="text"
+                                    name="full_name"
+                                    id="full_name"
+                                    placeholder=" "
+                                    value="<?= clean($_POST['full_name'] ?? '') ?>"
+                                    required
+                                    autofocus
+                                >
+                                <label for="full_name">Ad Soyad<span class="required">*</span></label>
+                            </div>
+
+                            <div class="form-floating-custom">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    placeholder=" "
+                                    value="<?= clean($_POST['email'] ?? '') ?>"
+                                    required
+                                >
+                                <label for="email">Email Adresi<span class="required">*</span></label>
+                            </div>
+
+                            <div class="form-floating-custom">
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    id="phone"
+                                    placeholder=" "
+                                    value="<?= clean($_POST['phone'] ?? '') ?>"
+                                    required
+                                >
+                                <label for="phone">Telefon (05551234567)<span class="required">*</span></label>
+                            </div>
+
+                            <div class="form-floating-custom password-wrapper">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    placeholder=" "
+                                    required
+                                >
+                                <label for="password">Şifre<span class="required">*</span></label>
+                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye" id="password-icon"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthFill"></div>
+                                </div>
+                                <div class="strength-text" id="strengthText"></div>
+                                <div class="strength-feedback" id="strengthFeedback"></div>
+                            </div>
+
+                            <div class="form-floating-custom password-wrapper">
+                                <input
+                                    type="password"
+                                    name="password_confirm"
+                                    id="password_confirm"
+                                    placeholder=" "
+                                    required
+                                >
+                                <label for="password_confirm">Şifre Tekrar<span class="required">*</span></label>
+                                <button type="button" class="password-toggle" onclick="togglePassword('password_confirm')">
+                                    <i class="fas fa-eye" id="password_confirm-icon"></i>
+                                </button>
+                            </div>
+
+                            <div class="custom-checkbox">
+                                <input
+                                    type="checkbox"
+                                    name="terms"
+                                    id="terms"
+                                    required
+                                >
+                                <label for="terms">
+                                    <a href="/page/kullanim-sartlari" target="_blank">Kullanım Şartları</a> ve
+                                    <a href="/page/gizlilik-politikasi" target="_blank">Gizlilik Politikası</a>'nı
+                                    kabul ediyorum.
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-gradient w-100">
+                                <i class="fas fa-user-plus me-2"></i>Kayıt Ol
+                            </button>
+
+                            <hr style="margin: 30px 0; border-color: #e2e8f0;">
+
+                            <div class="text-center">
+                                <p class="text-muted mb-3">Zaten hesabınız var mı?</p>
+                                <a href="/login.php" class="btn btn-outline-custom me-2">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                                </a>
+                                <a href="/register-dietitian.php" class="btn btn-outline-custom">
+                                    <i class="fas fa-user-md me-2"></i>Diyetisyen Kayıt
+                                </a>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+                </div>
+
+                <div class="text-center">
+                    <a href="/" class="back-link">
+                        <i class="fas fa-arrow-left"></i>Ana Sayfaya Dön
                     </a>
                 </div>
-            <?php else: ?>
-                <div class="brand-header">
-                    <div class="brand-icon">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <h1 class="page-title">Danışan Kayıt</h1>
-                    <p class="page-subtitle">Sağlıklı yaşam yolculuğunuza bugün başlayın</p>
-                </div>
-
-                <?php if (!empty($errors)): ?>
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        <strong>Lütfen hataları düzeltin:</strong>
-                        <ul class="mb-0 mt-2">
-                            <?php foreach ($errors as $error): ?>
-                                <li><?= clean($error) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <?php endif; ?>
-
-                <form method="POST" action="/register-client.php">
-                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
-
-                    <div class="form-floating">
-                        <input
-                            type="text"
-                            name="full_name"
-                            class="form-control"
-                            id="fullName"
-                            placeholder="Ad Soyad"
-                            value="<?= clean($_POST['full_name'] ?? '') ?>"
-                            required
-                            autofocus
-                        >
-                        <label for="fullName">
-                            <i class="fas fa-user me-2"></i>Ad Soyad
-                        </label>
-                    </div>
-
-                    <div class="form-floating">
-                        <input
-                            type="email"
-                            name="email"
-                            class="form-control"
-                            id="email"
-                            placeholder="Email Adresi"
-                            value="<?= clean($_POST['email'] ?? '') ?>"
-                            required
-                        >
-                        <label for="email">
-                            <i class="fas fa-envelope me-2"></i>Email Adresi
-                        </label>
-                    </div>
-
-                    <div class="form-floating">
-                        <input
-                            type="tel"
-                            name="phone"
-                            class="form-control"
-                            id="phone"
-                            placeholder="Telefon"
-                            value="<?= clean($_POST['phone'] ?? '') ?>"
-                            required
-                        >
-                        <label for="phone">
-                            <i class="fas fa-phone me-2"></i>Telefon (05551234567)
-                        </label>
-                    </div>
-
-                    <div class="form-floating position-relative">
-                        <input
-                            type="password"
-                            name="password"
-                            class="form-control"
-                            id="password"
-                            placeholder="Şifre"
-                            required
-                        >
-                        <label for="password">
-                            <i class="fas fa-lock me-2"></i>Şifre
-                        </label>
-                        <button type="button" class="password-toggle" onclick="togglePassword('password', 'toggleIcon1')">
-                            <i class="fas fa-eye" id="toggleIcon1"></i>
-                        </button>
-                    </div>
-                    <div class="password-strength bg-secondary" id="passwordStrength"></div>
-                    <small class="text-muted strength-text" id="strengthText">
-                        En az 8 karakter, büyük harf, küçük harf ve rakam
-                    </small>
-
-                    <div class="form-floating position-relative mt-3">
-                        <input
-                            type="password"
-                            name="password_confirm"
-                            class="form-control"
-                            id="passwordConfirm"
-                            placeholder="Şifre Tekrar"
-                            required
-                        >
-                        <label for="passwordConfirm">
-                            <i class="fas fa-lock me-2"></i>Şifre Tekrar
-                        </label>
-                        <button type="button" class="password-toggle" onclick="togglePassword('passwordConfirm', 'toggleIcon2')">
-                            <i class="fas fa-eye" id="toggleIcon2"></i>
-                        </button>
-                    </div>
-
-                    <div class="form-check mt-3">
-                        <input
-                            type="checkbox"
-                            name="terms"
-                            class="form-check-input"
-                            id="terms"
-                            required
-                        >
-                        <label class="form-check-label" for="terms">
-                            <a href="/page/kullanim-sartlari" target="_blank">Kullanım Şartları</a> ve
-                            <a href="/page/gizlilik-politikasi" target="_blank">Gizlilik Politikası</a>'nı
-                            kabul ediyorum
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-register mt-4">
-                        <i class="fas fa-user-plus me-2"></i>Kayıt Ol
-                    </button>
-
-                    <div class="divider">
-                        <span>veya</span>
-                    </div>
-
-                    <div class="login-section">
-                        <p class="text-muted mb-3">Zaten hesabınız var mı?</p>
-                        <a href="/login.php" class="btn-link me-2">
-                            <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
-                        </a>
-                        <a href="/register-dietitian.php" class="btn-link">
-                            <i class="fas fa-user-md me-2"></i>Diyetisyen Kayıt
-                        </a>
-                    </div>
-                </form>
-            <?php endif; ?>
-        </div>
-
-        <div class="back-home">
-            <a href="/">
-                <i class="fas fa-arrow-left me-2"></i>Ana Sayfaya Dön
-            </a>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function togglePassword(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
+        // Password Toggle
+        function togglePassword(fieldId) {
+            const input = document.getElementById(fieldId);
+            const icon = document.getElementById(fieldId + '-icon');
 
             if (input.type === 'password') {
                 input.type = 'text';
@@ -655,63 +704,54 @@ $pageTitle = 'Danışan Kayıt';
             }
         }
 
-        // Şifre güvenlik göstergesi
+        // Password Strength Indicator
         const passwordInput = document.getElementById('password');
-        const strengthBar = document.getElementById('passwordStrength');
+        const strengthContainer = document.getElementById('passwordStrength');
+        const strengthFill = document.getElementById('strengthFill');
         const strengthText = document.getElementById('strengthText');
+        const strengthFeedback = document.getElementById('strengthFeedback');
 
         passwordInput?.addEventListener('input', function() {
             const password = this.value;
+
+            if (password.length === 0) {
+                strengthContainer.classList.remove('active');
+                return;
+            }
+
+            strengthContainer.classList.add('active');
+
             let strength = 0;
             const feedback = [];
 
-            if (password.length >= 8) {
-                strength++;
-            } else {
-                feedback.push('8 karakter');
-            }
+            if (password.length >= 8) strength++;
+            else feedback.push('8 karakter');
 
-            if (/[a-z]/.test(password)) {
-                strength++;
-            } else {
-                feedback.push('küçük harf');
-            }
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('küçük harf');
 
-            if (/[A-Z]/.test(password)) {
-                strength++;
-            } else {
-                feedback.push('büyük harf');
-            }
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('büyük harf');
 
-            if (/[0-9]/.test(password)) {
-                strength++;
-            } else {
-                feedback.push('rakam');
-            }
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('rakam');
 
-            if (/[^a-zA-Z0-9]/.test(password)) {
-                strength++;
-            }
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
 
-            const colors = ['bg-danger', 'bg-danger', 'bg-warning', 'bg-info', 'bg-success'];
-            const widths = ['20%', '40%', '60%', '80%', '100%'];
+            const colors = ['#f56565', '#ed8936', '#ecc94b', '#48bb78', '#38a169'];
             const labels = ['Çok Zayıf', 'Zayıf', 'Orta', 'İyi', 'Güçlü'];
-            const labelColors = ['text-danger', 'text-danger', 'text-warning', 'text-info', 'text-success'];
+            const widths = ['20%', '40%', '60%', '80%', '100%'];
 
-            strengthBar.className = 'password-strength ' + (colors[strength - 1] || 'bg-secondary');
-            strengthBar.style.width = widths[strength - 1] || '0%';
+            strengthFill.style.width = widths[strength];
+            strengthFill.style.background = colors[strength];
+            strengthText.textContent = labels[strength];
+            strengthText.style.color = colors[strength];
 
-            if (password.length > 0) {
-                if (feedback.length > 0) {
-                    strengthText.textContent = 'Eksik: ' + feedback.join(', ');
-                    strengthText.className = 'strength-text text-muted';
-                } else {
-                    strengthText.textContent = labels[strength - 1] || 'Şifre Girin';
-                    strengthText.className = 'strength-text ' + (labelColors[strength - 1] || 'text-muted');
-                }
+            if (feedback.length > 0) {
+                strengthFeedback.textContent = 'Eksik: ' + feedback.join(', ');
             } else {
-                strengthText.textContent = 'En az 8 karakter, büyük harf, küçük harf ve rakam';
-                strengthText.className = 'strength-text text-muted';
+                strengthFeedback.textContent = 'Şifreniz güçlü!';
+                strengthFeedback.style.color = '#38a169';
             }
         });
     </script>
