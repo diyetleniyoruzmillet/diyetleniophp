@@ -26,9 +26,10 @@ $sql = "
            dp.total_clients, dp.experience_years
     FROM users u
     INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-    WHERE u.user_type = 'dietitian' 
-    AND u.is_active = 1 
+    WHERE u.user_type = 'dietitian'
+    AND u.is_active = 1
     AND dp.is_approved = 1
+    AND dp.rating_avg >= 3.0
 ";
 
 $params = [];

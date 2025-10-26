@@ -25,7 +25,7 @@ try {
                dp.total_clients, dp.consultation_fee, u.profile_photo, dp.experience_years
         FROM users u
         INNER JOIN dietitian_profiles dp ON u.id = dp.user_id
-        WHERE dp.is_approved = 1 AND u.is_active = 1
+        WHERE dp.is_approved = 1 AND u.is_active = 1 AND dp.rating_avg >= 3.0
         ORDER BY dp.rating_avg DESC, dp.total_clients DESC
         LIMIT 6
     ");

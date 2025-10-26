@@ -18,7 +18,7 @@ $specialization = $_GET['specialization'] ?? '';
 $search = trim($_GET['search'] ?? '');
 
 // Diyetisyenleri çek
-$whereClause = "WHERE dp.is_approved = 1 AND u.is_active = 1";
+$whereClause = "WHERE dp.is_approved = 1 AND u.is_active = 1 AND dp.rating_avg >= 3.0";
 $params = [];
 
 if (!empty($specialization)) {
