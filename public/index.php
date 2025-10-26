@@ -1053,22 +1053,21 @@ include __DIR__ . '/../includes/partials/header.php';
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
             color: white;
             padding: 16px 24px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 700;
             font-size: 1rem;
-            box-shadow: 0 8px 30px rgba(240, 147, 251, 0.5);
+            box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5);
             z-index: 9999;
             display: flex;
             align-items: center;
             gap: 12px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: pulseGlow 2s ease-in-out infinite;
-            overflow: hidden;
-            max-width: 70px;
+            overflow: visible;
             white-space: nowrap;
         }
 
@@ -1090,8 +1089,7 @@ include __DIR__ . '/../includes/partials/header.php';
         .emergency-dietitian-btn:hover {
             color: white;
             transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 12px 45px rgba(240, 147, 251, 0.7);
-            max-width: 250px;
+            box-shadow: 0 12px 45px rgba(220, 38, 38, 0.7);
         }
 
         .emergency-icon {
@@ -1108,24 +1106,17 @@ include __DIR__ . '/../includes/partials/header.php';
         }
 
         .emergency-text {
-            opacity: 0;
-            max-width: 0;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
-        }
-
-        .emergency-dietitian-btn:hover .emergency-text {
             opacity: 1;
-            max-width: 200px;
+            white-space: nowrap;
+            font-weight: 700;
         }
 
         @keyframes pulseGlow {
             0%, 100% {
-                box-shadow: 0 8px 30px rgba(240, 147, 251, 0.5);
+                box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5);
             }
             50% {
-                box-shadow: 0 8px 40px rgba(240, 147, 251, 0.8), 0 0 0 10px rgba(240, 147, 251, 0.1);
+                box-shadow: 0 8px 40px rgba(220, 38, 38, 0.8), 0 0 0 10px rgba(220, 38, 38, 0.1);
             }
         }
 
@@ -1145,17 +1136,12 @@ include __DIR__ . '/../includes/partials/header.php';
                 right: 20px;
                 padding: 14px 20px;
                 font-size: 0.9rem;
-                max-width: 60px;
             }
 
             .emergency-icon {
                 width: 32px;
                 height: 32px;
                 font-size: 1.1rem;
-            }
-
-            .emergency-dietitian-btn:hover {
-                max-width: 220px;
             }
         }
 
