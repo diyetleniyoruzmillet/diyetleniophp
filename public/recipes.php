@@ -591,18 +591,6 @@ include __DIR__ . '/../includes/partials/header.php';
             font-size: 1.1rem;
         }
 
-        /* Footer */
-        .footer {
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-            color: white;
-            padding: 50px 0;
-            margin-top: 80px;
-        }
-        .footer p {
-            margin: 0;
-            opacity: 0.9;
-        }
-
         /* Animations */
         @keyframes fadeInUp {
             from {
