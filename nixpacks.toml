@@ -1,6 +1,11 @@
 [phases.setup]
-nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mysqli", "php83Extensions.mbstring", "php83Extensions.curl", "php83Extensions.gd", "php83Extensions.zip", "bash"]
-cmds = ["mkdir -p /etc/nginx/ /var/log/nginx/ /var/cache/nginx/"]
+nixPkgs = ["nodejs", "npm"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build", "npx prisma generate"]
 
 [start]
-cmd = "php -S 0.0.0.0:$PORT -t public"
+cmd = "npm start"

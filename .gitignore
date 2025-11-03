@@ -1,7 +1,41 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+dist/
+*.tsbuildinfo
+
 # Environment files
 .env
 .env.local
 .env.*.local
+
+# Logs
+logs/
+*.log
+
+# Uploads
+assets/uploads/*
+!assets/uploads/.gitkeep
+
+# Prisma
+.prisma/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Legacy PHP
+_legacy_php/**/*.php
+!_legacy_php/.gitkeep
 
 # IDE and Editor
 .vscode/
