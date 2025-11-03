@@ -1165,5 +1165,4 @@ include __DIR__ . '/../includes/partials/header.php';
             }, 5000);
         });
     </script>
-</body>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>
