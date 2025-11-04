@@ -1,6 +1,7 @@
 <?php
 /**
  * Diyetlenio - Login Sayfası
+ * Standalone login page - no footer/navbar
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
