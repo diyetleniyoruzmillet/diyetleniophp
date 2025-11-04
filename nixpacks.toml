@@ -1,6 +1,9 @@
-# Force rebuild - Nov 4, 2025
+# Force rebuild - Nov 4, 2025 - 16:20 (CACHE CLEAR)
 [phases.setup]
 nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mysqli", "php83Extensions.mbstring", "php83Extensions.curl", "php83Extensions.gd", "php83Extensions.zip"]
+
+[phases.build]
+cmds = ["echo 'Clearing PHP cache...'", "rm -rf /tmp/* || true"]
 
 [start]
 cmd = "php -S 0.0.0.0:$PORT -t public"

@@ -1122,4 +1122,5 @@ include __DIR__ . '/../includes/partials/header.php';
             });
         });
     </script>
+<!-- Deploy timestamp: 2025-11-04 16:20 - Single footer only -->
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>
