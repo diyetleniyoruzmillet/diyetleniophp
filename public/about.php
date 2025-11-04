@@ -6,9 +6,9 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 $pageTitle = 'Hakkımızda';
-include __DIR__ . '/../includes/partials/header.php';
+ob_start();
 ?>
-    <style>
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -646,12 +646,13 @@ include __DIR__ . '/../includes/partials/header.php';
                 max-width: 300px;
             }
         }
-    </style>
-</head>
-<body>
-    <?php include __DIR__ . '/../includes/navbar.php'; ?>
+</style>
+<?php
+$extraHead = ob_get_clean();
+include __DIR__ . '/../includes/partials/header.php';
+?>
 
-    <!-- Hero -->
+<!-- Hero -->
     <section class="hero">
         <div class="container hero-content">
             <h1>Sağlıklı Yaşam Yolculuğunuzda Yanınızdayız</h1>
