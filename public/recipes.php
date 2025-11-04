@@ -1,4 +1,8 @@
 <?php
+/**
+ * Diyetlenio - Tarifler
+ * Last updated: 2025-11-04 - Force cache clear
+ */
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 // Arama ve filtre parametreleri

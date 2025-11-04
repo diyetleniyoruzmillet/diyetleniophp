@@ -2,6 +2,7 @@
 /**
  * Diyetlenio - Hakkımızda Sayfası
  * Single footer only - uses footer.php partial
+ * Last updated: 2025-11-04 - Force cache clear
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';

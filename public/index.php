@@ -2,6 +2,7 @@
 /**
  * Diyetlenio - Modern Ana Sayfa
  * Ultra-modern, profesyonel tasarım
+ * Last updated: 2025-11-04
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
