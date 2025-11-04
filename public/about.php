@@ -1,6 +1,7 @@
 <?php
 /**
  * Diyetlenio - Hakkımızda Sayfası
+ * Single footer only - uses footer.php partial
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
