@@ -44,6 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Şifreler eşleşmiyor';
     }
 
+    if (empty($phone)) {
+        $errors[] = 'Telefon numarası gereklidir';
+    } elseif (!preg_match('/^[0-9]{10,11}$/', preg_replace('/[^0-9]/', '', $phone))) {
+        $errors[] = 'Geçerli bir telefon numarası girin (10-11 rakam)';
+    }
+
     if (!$termsAccepted) {
         $errors[] = 'Kullanım şartlarını kabul etmelisiniz';
     }
@@ -335,8 +341,9 @@ $metaDescription = 'Diyetlenio\'ya danışan olarak kayıt olun ve sağlıklı y
 
                     <div class="form-floating">
                         <input type="tel" class="form-control" id="phone" name="phone"
-                               placeholder="Telefon" value="<?= clean($_POST['phone'] ?? '') ?>">
-                        <label for="phone"><i class="fas fa-phone me-2"></i>Telefon (Opsiyonel)</label>
+                               placeholder="Telefon" value="<?= clean($_POST['phone'] ?? '') ?>"
+                               pattern="[0-9\s\-\(\)\+]+" required>
+                        <label for="phone"><i class="fas fa-phone me-2"></i>Telefon Numarası</label>
                     </div>
 
                     <div class="form-floating">
