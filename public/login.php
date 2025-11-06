@@ -2,6 +2,7 @@
 /**
  * Diyetlenio - Login Sayfası
  * Standalone login page - no footer/navbar
+ * Last updated: 2025-11-06 14:30:00 - Remove footer cache
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
