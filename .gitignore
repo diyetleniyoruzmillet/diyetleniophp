@@ -88,3 +88,4 @@ build/
 *.sql.backup
 backup/
 qwen-code/
+qwen-code/
