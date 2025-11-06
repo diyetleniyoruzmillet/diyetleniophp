@@ -2,7 +2,7 @@
 /**
  * Diyetlenio - Modern Ana Sayfa
  * Ultra-modern, profesyonel tasarım
- * Last updated: 2025-11-06 - Footer fixed: removed old CSS, using modern footer
+ * Last updated: 2025-11-06 23:30 - Force cache clear for modern footer
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
