@@ -2,7 +2,7 @@
 /**
  * Diyetlenio - Modern Ana Sayfa
  * Ultra-modern, profesyonel tasarım
- * Last updated: 2025-11-04
+ * Last updated: 2025-11-06 - Footer fixed: removed old CSS, using modern footer
  */
 
 require_once __DIR__ . '/../includes/bootstrap.php';
@@ -680,38 +680,6 @@ include __DIR__ . '/../includes/partials/header.php';
             margin-right: auto;
         }
 
-        /* Footer */
-        .footer {
-            background: var(--dark);
-            color: white;
-            padding: 4rem 0 2rem;
-        }
-
-        .footer h5 {
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            transition: all 0.3s;
-            display: block;
-            margin-bottom: 0.75rem;
-        }
-
-        .footer a:hover {
-            color: white;
-            padding-left: 5px;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 3rem;
-            padding-top: 2rem;
-            text-align: center;
-            color: rgba(255,255,255,0.5);
-        }
 
         /* Responsive Design */
         @media (max-width: 992px) {

@@ -1,6 +1,7 @@
 <?php
 /**
  * Modern Footer Component
+ * Last updated: 2025-11-06 - Removed copyright text, centered legal links
  */
 ?>
 
@@ -119,12 +120,7 @@
         <!-- Footer Bottom -->
         <div class="footer-bottom">
             <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <p class="mb-0">
-                        © <?= date('Y') ?> <strong>Diyetlenio</strong>. Tüm hakları saklıdır.
-                    </p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
+                <div class="col-md-12 text-center">
                     <ul class="footer-legal">
                         <li><a href="/page/kullanim-sartlari">Kullanım Şartları</a></li>
                         <li><a href="/page/gizlilik-politikasi">Gizlilik Politikası</a></li>
