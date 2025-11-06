@@ -1,7 +1,8 @@
 <?php
 /**
  * Modern Footer Component
- * Last updated: 2025-11-06 - Removed copyright text, centered legal links
+ * Version: 2.0.1
+ * Last updated: 2025-11-06 23:45 - FORCE CACHE CLEAR
  */
 ?>
 
@@ -572,5 +573,6 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Footer v2.0.1 - 2025-11-06 23:45 -->
 </body>
 </html>
