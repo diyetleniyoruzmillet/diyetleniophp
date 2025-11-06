@@ -1,9 +1,9 @@
-# Force rebuild - Nov 4, 2025 - 16:20 (CACHE CLEAR)
+# FORCE REBUILD - Nov 7, 2025 - 00:30 - AGGRESSIVE CACHE BUST v3
 [phases.setup]
 nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mysqli", "php83Extensions.mbstring", "php83Extensions.curl", "php83Extensions.gd", "php83Extensions.zip"]
 
 [phases.build]
-cmds = ["echo 'Clearing PHP cache...'", "rm -rf /tmp/* || true"]
+cmds = ["echo 'FORCE BUILD - Clearing ALL caches...'", "rm -rf /tmp/* /var/tmp/* ~/.cache/* || true", "echo 'Build timestamp: 2025-11-07 00:30'"]
 
 [start]
 cmd = "php -S 0.0.0.0:$PORT -t public"
