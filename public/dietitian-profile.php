@@ -458,7 +458,7 @@ include __DIR__ . '/../includes/partials/header.php';
                     <p>Seans Ücreti</p>
                 </div>
 
-                <?php if ($auth->check() && $auth->user()['user_type'] === 'client'): ?>
+                <?php if ($auth->check() && $auth->user()->getUserType() === 'client'): ?>
                     <form action="/api/create-appointment.php" method="POST">
                         <input type="hidden" name="dietitian_id" value="<?= $dietitian['id'] ?>">
 
@@ -500,7 +500,7 @@ include __DIR__ . '/../includes/partials/header.php';
                             Randevu Oluştur
                         </button>
                     </form>
-                <?php elseif ($auth->check() && $auth->user()['user_type'] === 'dietitian'): ?>
+                <?php elseif ($auth->check() && $auth->user()->getUserType() === 'dietitian'): ?>
                     <div class="alert alert-info" style="border-radius: 12px;">
                         <i class="fas fa-info-circle me-2"></i>
                         Diyetisyen hesabıyla randevu alamazsınız.

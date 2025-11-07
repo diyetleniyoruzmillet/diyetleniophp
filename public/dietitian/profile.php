@@ -7,7 +7,7 @@
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
 // Diyetisyen kontrolü
-if (!$auth->check() || $auth->user()['user_type'] !== 'dietitian') {
+if (!$auth->check() || $auth->user()->getUserType() !== 'dietitian') {
     header('Location: /login.php');
     exit;
 }

@@ -7,7 +7,7 @@
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
 // Admin kontrolü
-if (!$auth->check() || $auth->user()['user_type'] !== 'admin') {
+if (!$auth->check() || $auth->user()->getUserType() !== 'admin') {
     header('Location: /login.php');
     exit;
 }

@@ -7,7 +7,7 @@
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
 // Client kontrolü
-if (!$auth->check() || $auth->user()['user_type'] !== 'client') {
+if (!$auth->check() || $auth->user()->getUserType() !== 'client') {
     header('Location: /login.php');
     exit;
 }
