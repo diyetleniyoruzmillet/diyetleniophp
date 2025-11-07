@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
             $stmt = $conn->prepare("
-                INSERT INTO users (full_name, email, password_hash, phone, user_type, is_active, email_verified, created_at)
+                INSERT INTO users (full_name, email, password, phone, user_type, is_active, is_email_verified, created_at)
                 VALUES (?, ?, ?, ?, 'client', 1, 0, NOW())
             ");
 
