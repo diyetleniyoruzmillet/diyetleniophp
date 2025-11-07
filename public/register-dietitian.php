@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
             $stmt = $conn->prepare("
-                INSERT INTO users (full_name, email, password_hash, phone, user_type, is_active, email_verified, created_at)
+                INSERT INTO users (full_name, email, password, phone, user_type, is_active, is_email_verified, created_at)
                 VALUES (?, ?, ?, ?, 'dietitian', 1, 0, NOW())
             ");
 
@@ -419,13 +419,16 @@ $metaDescription = 'Diyetlenio\'ya danışan olarak kayıt olun ve sağlıklı y
         // Password confirmation check
         const passwordConfirm = document.getElementById('passwordConfirm');
 
-        passwordConfirm.addEventListener('input', function() {
-            if (this.value !== password.value) {
-                this.setCustomValidity('Şifreler eşleşmiyor');
+        function checkPasswordMatch() {
+            if (passwordConfirm.value && passwordConfirm.value !== password.value) {
+                passwordConfirm.setCustomValidity('Şifreler eşleşmiyor');
             } else {
-                this.setCustomValidity('');
+                passwordConfirm.setCustomValidity('');
             }
-        });
+        }
+
+        password.addEventListener('input', checkPasswordMatch);
+        passwordConfirm.addEventListener('input', checkPasswordMatch);
     </script>
 </body>
 </html>

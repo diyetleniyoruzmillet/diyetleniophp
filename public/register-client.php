@@ -419,13 +419,16 @@ $metaDescription = 'Diyetlenio\'ya danışan olarak kayıt olun ve sağlıklı y
         // Password confirmation check
         const passwordConfirm = document.getElementById('passwordConfirm');
 
-        passwordConfirm.addEventListener('input', function() {
-            if (this.value !== password.value) {
-                this.setCustomValidity('Şifreler eşleşmiyor');
+        function checkPasswordMatch() {
+            if (passwordConfirm.value && passwordConfirm.value !== password.value) {
+                passwordConfirm.setCustomValidity('Şifreler eşleşmiyor');
             } else {
-                this.setCustomValidity('');
+                passwordConfirm.setCustomValidity('');
             }
-        });
+        }
+
+        password.addEventListener('input', checkPasswordMatch);
+        passwordConfirm.addEventListener('input', checkPasswordMatch);
     </script>
 </body>
 </html>
