@@ -789,7 +789,7 @@ include __DIR__ . '/../includes/partials/header.php';
     <!-- Stats Section -->
     <section class="stats-section">
         <div class="container">
-            <div class="row g-4">
+            <div class="row">
                 <div class="col-md-3" data-aos="fade-up" data-aos-delay="0">
                     <div class="stat-card">
                         <div class="stat-number" data-counter="<?= $stats['total_dietitians'] ?>"><?= $stats['total_dietitians'] ?>+</div>
@@ -824,7 +824,7 @@ include __DIR__ . '/../includes/partials/header.php';
             <h2 class="section-title" data-aos="fade-up">Neden Diyetlenio?</h2>
             <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Sağlıklı yaşam yolculuğunuzda ihtiyacınız olan her şey</p>
 
-            <div class="row g-4">
+            <div class="row">
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
                     <div class="feature-card">
                         <div class="feature-icon icon-1">
@@ -890,7 +890,7 @@ include __DIR__ . '/../includes/partials/header.php';
             <h2 class="section-title" data-aos="fade-up">Öne Çıkan Diyetisyenler</h2>
             <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">En çok tercih edilen uzman diyetisyenlerimiz</p>
 
-            <div class="row g-4">
+            <div class="row">
                 <?php
                 $delay = 0;
                 foreach ($featuredDietitians as $dietitian):
