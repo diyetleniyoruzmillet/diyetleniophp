@@ -8,15 +8,20 @@
 // Direct database connection (no bootstrap needed)
 $envFile = __DIR__ . '/../.env';
 $dbConfig = [
-    'host' => 'localhost',
-    'port' => '3306',
-    'dbname' => 'railway',
-    'username' => 'root',
-    'password' => ''
+    'host' => getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost'),
+    'port' => getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306'),
+    'dbname' => getenv('DB_DATABASE') ?: ($_ENV['DB_DATABASE'] ?? 'railway'),
+    'username' => getenv('DB_USERNAME') ?: ($_ENV['DB_USERNAME'] ?? 'root'),
+    'password' => getenv('DB_PASSWORD') ?: ($_ENV['DB_PASSWORD'] ?? '')
 ];
 
-// Try to load from .env if exists
-if (file_exists($envFile)) {
+$envDebug = [];
+$envDebug['env_file_path'] = $envFile;
+$envDebug['env_file_exists'] = file_exists($envFile);
+$envDebug['env_file_readable'] = file_exists($envFile) && is_readable($envFile);
+
+// Try to load from .env file if exists
+if (file_exists($envFile) && is_readable($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         $line = trim($line);
@@ -33,6 +38,9 @@ if (file_exists($envFile)) {
             elseif ($key === 'DB_PASSWORD') $dbConfig['password'] = $value;
         }
     }
+    $envDebug['loaded_from'] = '.env file';
+} else {
+    $envDebug['loaded_from'] = 'environment variables';
 }
 
 try {
@@ -48,13 +56,22 @@ try {
         ]
     );
 } catch (PDOException $e) {
+    $debugInfo = '<div style="background:#fff3cd;padding:15px;border-radius:5px;margin-top:20px;">';
+    $debugInfo .= '<h4>🔍 Debug Bilgileri:</h4>';
+    $debugInfo .= '<p><strong>.env Dosya Yolu:</strong> ' . htmlspecialchars($envDebug['env_file_path']) . '</p>';
+    $debugInfo .= '<p><strong>.env Dosya Var mı?:</strong> ' . ($envDebug['env_file_exists'] ? '✅ Evet' : '❌ Hayır') . '</p>';
+    $debugInfo .= '<p><strong>.env Okunabilir mi?:</strong> ' . ($envDebug['env_file_readable'] ? '✅ Evet' : '❌ Hayır') . '</p>';
+    $debugInfo .= '<p><strong>Yükleme Kaynağı:</strong> ' . htmlspecialchars($envDebug['loaded_from']) . '</p>';
+    $debugInfo .= '</div>';
+
     die('<div style="background:#f8d7da;color:#721c24;padding:20px;border-radius:5px;margin:50px;font-family:sans-serif;">
         <h3>❌ Veritabanı Bağlantı Hatası</h3>
         <p><strong>Hata:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>
         <p><strong>Host:</strong> ' . htmlspecialchars($dbConfig['host']) . ':' . htmlspecialchars($dbConfig['port']) . '</p>
         <p><strong>Database:</strong> ' . htmlspecialchars($dbConfig['dbname']) . '</p>
         <p><strong>Username:</strong> ' . htmlspecialchars($dbConfig['username']) . '</p>
-        <p>Lütfen .env dosyanızdaki veritabanı ayarlarını kontrol edin.</p>
+        ' . $debugInfo . '
+        <p style="margin-top:20px;"><strong>Çözüm:</strong> Eğer .env dosyası yoksa veya okunamıyorsa, sunucu environment variables kullanıyor olabilir. Hosting sağlayıcınızın kontrol panelinden environment variables\'ı kontrol edin.</p>
     </div>');
 }
 
