@@ -2,8 +2,8 @@
 -- Acil diyetisyen talepleri için tablo
 
 CREATE TABLE IF NOT EXISTS emergency_consultations (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NULL, -- NULL ise misafir kullanıcı
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    user_id INT UNSIGNED NULL, -- NULL ise misafir kullanıcı
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NULL,
@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS emergency_consultations (
     message TEXT NOT NULL COMMENT 'Acil danışma talebi mesajı',
     status ENUM('pending', 'in_progress', 'responded', 'closed') DEFAULT 'pending',
     admin_notes TEXT NULL COMMENT 'Admin notları',
-    assigned_to INT NULL COMMENT 'Atanan diyetisyen ID',
+    assigned_to INT UNSIGNED NULL COMMENT 'Atanan diyetisyen ID',
     response_message TEXT NULL COMMENT 'Admin/diyetisyen cevabı',
     responded_at DATETIME NULL,
-    responded_by INT NULL COMMENT 'Cevaplayan admin/diyetisyen ID',
+    responded_by INT UNSIGNED NULL COMMENT 'Cevaplayan admin/diyetisyen ID',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
