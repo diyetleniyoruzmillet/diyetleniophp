@@ -5,9 +5,58 @@
  * IMPORTANT: Delete this file after running!
  */
 
-require_once __DIR__ . '/../includes/bootstrap.php';
+// Direct database connection (no bootstrap needed)
+$envFile = __DIR__ . '/../.env';
+$dbConfig = [
+    'host' => 'localhost',
+    'port' => '3306',
+    'dbname' => 'railway',
+    'username' => 'root',
+    'password' => ''
+];
 
-$conn = $db->getConnection();
+// Try to load from .env if exists
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (empty($line) || strpos($line, '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value, '"\'');
+
+            if ($key === 'DB_HOST') $dbConfig['host'] = $value;
+            elseif ($key === 'DB_PORT') $dbConfig['port'] = $value;
+            elseif ($key === 'DB_DATABASE') $dbConfig['dbname'] = $value;
+            elseif ($key === 'DB_USERNAME') $dbConfig['username'] = $value;
+            elseif ($key === 'DB_PASSWORD') $dbConfig['password'] = $value;
+        }
+    }
+}
+
+try {
+    $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['dbname']};charset=utf8mb4";
+    $conn = new PDO(
+        $dsn,
+        $dbConfig['username'],
+        $dbConfig['password'],
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false
+        ]
+    );
+} catch (PDOException $e) {
+    die('<div style="background:#f8d7da;color:#721c24;padding:20px;border-radius:5px;margin:50px;font-family:sans-serif;">
+        <h3>❌ Veritabanı Bağlantı Hatası</h3>
+        <p><strong>Hata:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>
+        <p><strong>Host:</strong> ' . htmlspecialchars($dbConfig['host']) . ':' . htmlspecialchars($dbConfig['port']) . '</p>
+        <p><strong>Database:</strong> ' . htmlspecialchars($dbConfig['dbname']) . '</p>
+        <p><strong>Username:</strong> ' . htmlspecialchars($dbConfig['username']) . '</p>
+        <p>Lütfen .env dosyanızdaki veritabanı ayarlarını kontrol edin.</p>
+    </div>');
+}
 
 ?>
 <!DOCTYPE html>
