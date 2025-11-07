@@ -3,22 +3,12 @@
  * Logout - Çıkış Yap
  */
 
-session_start();
+require_once __DIR__ . '/../includes/bootstrap.php';
 
-// Tüm session verilerini temizle
-$_SESSION = [];
-
-// Session cookie'sini sil
-if (ini_get("session.use_cookies")) {
-    $params = session_get_cookie_params();
-    setcookie(session_name(), '', time() - 42000,
-        $params["path"], $params["domain"],
-        $params["secure"], $params["httponly"]
-    );
+// Auth ile çıkış yap
+if ($auth->check()) {
+    $auth->logout();
 }
-
-// Session'ı yok et
-session_destroy();
 
 // Ana sayfaya yönlendir
 header('Location: /');

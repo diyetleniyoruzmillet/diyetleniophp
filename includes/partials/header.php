@@ -78,6 +78,10 @@ $_isActive = function(string $path) use ($currentPath): bool {
                                 <li><a class="dropdown-item" href="<?= $panelLink ?>"><i class="fas fa-gauge me-2"></i>Panel</a></li>
                                 <?php if ($ut === 'dietitian'): ?>
                                     <li><a class="dropdown-item" href="/dietitian/profile.php"><i class="fas fa-user me-2"></i>Profilim</a></li>
+                                <?php elseif ($ut === 'client'): ?>
+                                    <li><a class="dropdown-item" href="/client/profile.php"><i class="fas fa-user me-2"></i>Profilim</a></li>
+                                <?php elseif ($ut === 'admin'): ?>
+                                    <li><a class="dropdown-item" href="/admin/profile.php"><i class="fas fa-user me-2"></i>Profilim</a></li>
                                 <?php endif; ?>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/logout.php"><i class="fas fa-right-from-bracket me-2"></i>Çıkış</a></li>
