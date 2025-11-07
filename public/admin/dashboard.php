@@ -7,7 +7,7 @@
 require_once __DIR__ . '/../../includes/bootstrap.php';
 
 // Admin kontrolü
-if (!$auth->check() || $auth->user()['user_type'] !== 'admin') {
+if (!$auth->check() || $auth->user()->getUserType() !== 'admin') {
     header('Location: /login.php');
     exit;
 }
@@ -283,7 +283,7 @@ include __DIR__ . '/../../includes/partials/header.php';
             <i class="fas fa-gauge me-3"></i>
             Admin Dashboard
         </h1>
-        <p style="color: #64748b;">Hoş geldiniz, <?= clean($auth->user()['full_name']) ?></p>
+        <p style="color: #64748b;">Hoş geldiniz, <?= clean($auth->user()->getFullName()) ?></p>
     </div>
 
     <!-- İstatistikler -->
