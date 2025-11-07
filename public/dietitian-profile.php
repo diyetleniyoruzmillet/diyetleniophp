@@ -38,7 +38,7 @@ if (!$dietitian) {
 // Fetch dietitian availability
 $availabilityStmt = $conn->prepare("
     SELECT * FROM dietitian_availability
-    WHERE dietitian_id = ? AND is_available = 1
+    WHERE dietitian_id = ? AND is_active = 1
     ORDER BY day_of_week, start_time
 ");
 $availabilityStmt->execute([$dietitianId]);
