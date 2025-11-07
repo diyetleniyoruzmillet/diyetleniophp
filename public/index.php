@@ -767,11 +767,11 @@ include __DIR__ . '/../includes/partials/header.php';
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" style="min-height: 50vh; padding: 4rem 0;">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 hero-content">
-                    <h1>Sağlıklı Yaşamın <br>Başlangıcı</h1>
+            <div class="row align-items-center justify-content-center">
+                <div class="col-lg-8 hero-content text-center">
+                    <h1>Sağlıklı Yaşamın Başlangıcı</h1>
                     <p>Uzman diyetisyenlerle online görüşme yapın, kişisel diyet programınızı alın ve hedeflerinize ulaşın.</p>
                     <div class="hero-buttons">
                         <a href="/register-client.php" class="btn btn-light btn-lg">
@@ -780,11 +780,6 @@ include __DIR__ . '/../includes/partials/header.php';
                         <a href="/dietitians.php" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-user-md me-2"></i>Diyetisyenleri Keşfet
                         </a>
-                    </div>
-                </div>
-                <div class="col-lg-6 text-center d-none d-lg-block">
-                    <div class="hero-image">
-                        <i class="fas fa-heartbeat" style="font-size: 20rem; color: rgba(255,255,255,0.2);"></i>
                     </div>
                 </div>
             </div>
@@ -944,24 +939,5 @@ include __DIR__ . '/../includes/partials/header.php';
         </div>
     </section>
     <?php endif; ?>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-content">
-                <h2 data-aos="zoom-in">Sağlıklı Yaşam Yolculuğunuza Bugün Başlayın!</h2>
-                <p data-aos="zoom-in" data-aos-delay="100">Hemen kayıt olun, uzman diyetisyeninizi bulun ve hedeflerinize ulaşın.</p>
-                <div data-aos="zoom-in" data-aos-delay="200">
-                    <a href="/register-client.php" class="btn btn-light btn-lg me-3">
-                        <i class="fas fa-user-plus me-2"></i>Ücretsiz Kayıt Ol
-                    </a>
-                    <a href="/dietitians.php" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-search me-2"></i>Diyetisyen Bul
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
 
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>
