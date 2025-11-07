@@ -12,31 +12,32 @@ $page = max(1, (int) ($_GET['page'] ?? 1));
 $limit = 12;
 $offset = ($page - 1) * $limit;
 
-// Fetch blog posts
+// Fetch blog posts (using articles table)
 $stmt = $conn->prepare("
-    SELECT bp.*, u.full_name as author_name, u.profile_photo as author_photo,
-           (SELECT COUNT(*) FROM blog_comments WHERE post_id = bp.id AND is_approved = 1) as comment_count
-    FROM blog_posts bp
-    INNER JOIN users u ON bp.author_id = u.id
-    WHERE bp.is_published = 1
-    ORDER BY bp.published_at DESC
+    SELECT a.*, u.full_name as author_name, u.profile_photo as author_photo,
+           (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id AND is_approved = 1) as comment_count,
+           a.excerpt as content
+    FROM articles a
+    INNER JOIN users u ON a.author_id = u.id
+    WHERE a.status = 'approved'
+    ORDER BY a.published_at DESC
     LIMIT ? OFFSET ?
 ");
 $stmt->execute([$limit, $offset]);
 $posts = $stmt->fetchAll();
 
 // Get total count for pagination
-$countStmt = $conn->query("SELECT COUNT(*) FROM blog_posts WHERE is_published = 1");
+$countStmt = $conn->query("SELECT COUNT(*) FROM articles WHERE status = 'approved'");
 $totalPosts = $countStmt->fetchColumn();
 $totalPages = ceil($totalPosts / $limit);
 
 // Featured posts
 $featuredStmt = $conn->prepare("
-    SELECT bp.*, u.full_name as author_name
-    FROM blog_posts bp
-    INNER JOIN users u ON bp.author_id = u.id
-    WHERE bp.is_published = 1 AND bp.is_featured = 1
-    ORDER BY bp.published_at DESC
+    SELECT a.*, u.full_name as author_name, a.excerpt as content
+    FROM articles a
+    INNER JOIN users u ON a.author_id = u.id
+    WHERE a.status = 'approved' AND a.is_featured = 1
+    ORDER BY a.published_at DESC
     LIMIT 3
 ");
 $featuredStmt->execute();
@@ -275,7 +276,7 @@ include __DIR__ . '/../includes/partials/header.php';
                 <div class="col-md-4 mb-3">
                     <div style="background: white; border-radius: 16px; padding: 1.5rem; height: 100%;">
                         <h4 style="font-weight: 700; color: var(--text-dark); margin-bottom: 1rem;">
-                            <a href="/blog-post.php?id=<?= $post['id'] ?>" style="color: inherit; text-decoration: none;">
+                            <a href="/article.php?id=<?= $post['id'] ?>" style="color: inherit; text-decoration: none;">
                                 <?= clean($post['title']) ?>
                             </a>
                         </h4>
@@ -313,7 +314,7 @@ include __DIR__ . '/../includes/partials/header.php';
                         <?php endif; ?>
 
                         <h3 class="blog-title">
-                            <a href="/blog-post.php?id=<?= $post['id'] ?>">
+                            <a href="/article.php?id=<?= $post['id'] ?>">
                                 <?= clean($post['title']) ?>
                             </a>
                         </h3>
