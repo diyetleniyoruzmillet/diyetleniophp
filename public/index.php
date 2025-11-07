@@ -689,12 +689,15 @@ include __DIR__ . '/../includes/partials/header.php';
             .section-title {
                 font-size: 2.8rem;
             }
+            .stats-section {
+                margin-top: -60px;
+            }
         }
 
         @media (max-width: 768px) {
             .hero {
-                min-height: 85vh;
-                padding: 2rem 0;
+                min-height: 75vh;
+                padding: 3rem 0;
             }
             .hero h1 {
                 font-size: 2.8rem;
@@ -703,20 +706,39 @@ include __DIR__ . '/../includes/partials/header.php';
             .hero p {
                 font-size: 1.15rem;
                 max-width: 100%;
+                margin-bottom: 2rem;
             }
             .hero-buttons .btn {
                 padding: 1rem 2rem;
                 font-size: 1rem;
             }
+            .stats-section {
+                padding: 3rem 0;
+                margin-top: -40px;
+            }
+            .stat-card {
+                margin-bottom: 1rem;
+            }
             .section-title {
                 font-size: 2.2rem;
                 letter-spacing: -1px;
+                margin-bottom: 1rem;
             }
             .section-subtitle {
                 font-size: 1.1rem;
+                margin-bottom: 3rem;
             }
             .stat-number {
                 font-size: 3rem;
+            }
+            .features-section {
+                padding: 4rem 0;
+            }
+            .feature-card {
+                margin-bottom: 1rem;
+            }
+            .dietitian-card {
+                margin-bottom: 1rem;
             }
             .cta-content h2 {
                 font-size: 2.5rem;
@@ -724,30 +746,36 @@ include __DIR__ . '/../includes/partials/header.php';
             .cta-content p {
                 font-size: 1.15rem;
             }
-            .feature-card,
-            .dietitian-card {
-                margin-bottom: 2rem;
-            }
         }
 
         @media (max-width: 576px) {
             .navbar-brand {
                 font-size: 1.5rem;
             }
+            .hero {
+                min-height: 70vh;
+            }
             .hero h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
             .hero p {
                 font-size: 1rem;
+                margin-bottom: 1.5rem;
             }
             .hero-buttons .btn {
                 padding: 0.9rem 1.8rem;
                 font-size: 0.95rem;
                 display: block;
                 margin: 0.5rem auto;
+                width: 100%;
+                max-width: 300px;
             }
             .stats-section {
-                padding: 3rem 0;
+                padding: 2rem 0;
+                margin-top: -30px;
+            }
+            .stat-card {
+                padding: 1.5rem 1rem;
             }
             .stat-number {
                 font-size: 2.5rem;
@@ -755,10 +783,26 @@ include __DIR__ . '/../includes/partials/header.php';
             .section-title {
                 font-size: 1.8rem;
             }
+            .section-subtitle {
+                font-size: 1rem;
+            }
+            .features-section {
+                padding: 3rem 0;
+            }
+            .feature-card {
+                padding: 2rem 1.5rem;
+            }
             .feature-icon {
                 width: 70px;
                 height: 70px;
                 font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+            }
+            .feature-title {
+                font-size: 1.3rem;
+            }
+            .dietitian-body {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -767,7 +811,7 @@ include __DIR__ . '/../includes/partials/header.php';
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <!-- Hero Section -->
-    <section class="hero" style="min-height: 50vh; padding: 4rem 0;">
+    <section class="hero">
         <div class="container">
             <div class="row align-items-center justify-content-center">
                 <div class="col-lg-8 hero-content text-center">
@@ -789,7 +833,7 @@ include __DIR__ . '/../includes/partials/header.php';
     <!-- Stats Section -->
     <section class="stats-section">
         <div class="container">
-            <div class="row">
+            <div class="row g-3">
                 <div class="col-md-3" data-aos="fade-up" data-aos-delay="0">
                     <div class="stat-card">
                         <div class="stat-number" data-counter="<?= $stats['total_dietitians'] ?>"><?= $stats['total_dietitians'] ?>+</div>
@@ -824,7 +868,7 @@ include __DIR__ . '/../includes/partials/header.php';
             <h2 class="section-title" data-aos="fade-up">Neden Diyetlenio?</h2>
             <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Sağlıklı yaşam yolculuğunuzda ihtiyacınız olan her şey</p>
 
-            <div class="row">
+            <div class="row g-3">
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
                     <div class="feature-card">
                         <div class="feature-icon icon-1">
@@ -890,7 +934,7 @@ include __DIR__ . '/../includes/partials/header.php';
             <h2 class="section-title" data-aos="fade-up">Öne Çıkan Diyetisyenler</h2>
             <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">En çok tercih edilen uzman diyetisyenlerimiz</p>
 
-            <div class="row">
+            <div class="row g-3">
                 <?php
                 $delay = 0;
                 foreach ($featuredDietitians as $dietitian):
@@ -939,5 +983,25 @@ include __DIR__ . '/../includes/partials/header.php';
         </div>
     </section>
     <?php endif; ?>
+
+    <!-- AOS Animation Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
 
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>
