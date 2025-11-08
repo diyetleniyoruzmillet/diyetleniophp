@@ -909,7 +909,7 @@ include __DIR__ . '/../includes/partials/header.php';
                                 <div class="dietitian-card">
                                     <?php if ($d['rating_avg'] >= 4.5): ?>
                                         <div class="card-badge">
-                                            <i class="fas fa-award"></i> Top Rated
+                                            <i class="fas fa-award"></i> En Beğenilen
                                         </div>
                                     <?php endif; ?>
 
@@ -978,10 +978,17 @@ include __DIR__ . '/../includes/partials/header.php';
                                                 <i class="fas fa-eye"></i>
                                                 Profil
                                             </a>
-                                            <a href="/dietitian-profile.php?id=<?= $d['id'] ?>#book" class="btn btn-book">
-                                                <i class="fas fa-calendar-check"></i>
-                                                Randevu Al
-                                            </a>
+                                            <?php if ($auth->check() && $auth->user()->getUserType() === 'client'): ?>
+                                                <a href="/dietitian-profile.php?id=<?= $d['id'] ?>#book" class="btn btn-book">
+                                                    <i class="fas fa-calendar-check"></i>
+                                                    Randevu Al
+                                                </a>
+                                            <?php else: ?>
+                                                <a href="/login.php?redirect=/dietitian-profile.php?id=<?= $d['id'] ?>%23book" class="btn btn-book">
+                                                    <i class="fas fa-calendar-check"></i>
+                                                    Randevu Al
+                                                </a>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -1197,20 +1204,11 @@ include __DIR__ . '/../includes/partials/header.php';
             heroObserver.observe(heroSection);
         }
 
-        // Add loading state to buttons
+        // Smooth navigation for buttons
         document.querySelectorAll('a.btn-view, a.btn-book').forEach(btn => {
             btn.addEventListener('click', function(e) {
-                if (!this.classList.contains('loading')) {
-                    this.classList.add('loading');
-                    const originalHTML = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-                    // Reset after navigation (in case it's prevented)
-                    setTimeout(() => {
-                        this.innerHTML = originalHTML;
-                        this.classList.remove('loading');
-                    }, 3000);
-                }
+                // Allow normal navigation
+                this.style.opacity = '0.7';
             });
         });
 
