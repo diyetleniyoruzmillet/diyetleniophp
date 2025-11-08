@@ -15,6 +15,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
     Header set X-XSS-Protection "1; mode=block"
 </IfModule>
 
+# Error Pages
+ErrorDocument 404 /404.php
+ErrorDocument 500 /404.php
+
 # PHP Settings
 <IfModule mod_php.c>
     php_value upload_max_filesize 10M
