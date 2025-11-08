@@ -979,12 +979,12 @@ include __DIR__ . '/../includes/partials/header.php';
                                                 Profil
                                             </a>
                                             <?php if ($auth->check() && $auth->user()->getUserType() === 'client'): ?>
-                                                <a href="/dietitian-profile.php?id=<?= $d['id'] ?>#book" class="btn btn-book">
+                                                <a href="/dietitian-profile.php?id=<?= $d['id'] ?>#book" class="btn btn-book" onclick="window.location.href=this.href; return false;">
                                                     <i class="fas fa-calendar-check"></i>
                                                     Randevu Al
                                                 </a>
                                             <?php else: ?>
-                                                <a href="/login.php?redirect=/dietitian-profile.php?id=<?= $d['id'] ?>%23book" class="btn btn-book">
+                                                <a href="/login.php?redirect=<?= urlencode('/dietitian-profile.php?id=' . $d['id'] . '#book') ?>" class="btn btn-book" onclick="window.location.href=this.href; return false;">
                                                     <i class="fas fa-calendar-check"></i>
                                                     Randevu Al
                                                 </a>
