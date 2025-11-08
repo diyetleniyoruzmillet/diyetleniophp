@@ -541,6 +541,8 @@ $extraHead = <<<'EOD'
         .card-actions {
             display: flex;
             gap: 10px;
+            position: relative;
+            z-index: 10;
         }
 
         .btn-view {
@@ -560,6 +562,8 @@ $extraHead = <<<'EOD'
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            z-index: 10;
         }
 
         .btn-view::before {
@@ -599,6 +603,9 @@ $extraHead = <<<'EOD'
             gap: 6px;
             text-decoration: none;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
         }
 
         .btn-book:hover {
@@ -979,12 +986,12 @@ include __DIR__ . '/../includes/partials/header.php';
                                                 Profil
                                             </a>
                                             <?php if ($auth->check() && $auth->user()->getUserType() === 'client'): ?>
-                                                <a href="/dietitian-profile.php?id=<?= $d['id'] ?>#book" class="btn btn-book" onclick="window.location.href=this.href; return false;">
+                                                <a href="/dietitian-profile.php?id=<?= $d['id'] ?>#book" class="btn btn-book">
                                                     <i class="fas fa-calendar-check"></i>
                                                     Randevu Al
                                                 </a>
                                             <?php else: ?>
-                                                <a href="/login.php?redirect=<?= urlencode('/dietitian-profile.php?id=' . $d['id'] . '#book') ?>" class="btn btn-book" onclick="window.location.href=this.href; return false;">
+                                                <a href="/login.php?redirect=<?= urlencode('/dietitian-profile.php?id=' . $d['id'] . '#book') ?>" class="btn btn-book">
                                                     <i class="fas fa-calendar-check"></i>
                                                     Randevu Al
                                                 </a>
