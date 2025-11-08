@@ -118,7 +118,7 @@ $metaDescription = 'Diyetlenio\'ya danışan olarak kayıt olun ve sağlıklı y
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f1f5f9;
             min-height: 100vh;
             display: flex;
             align-items: center;

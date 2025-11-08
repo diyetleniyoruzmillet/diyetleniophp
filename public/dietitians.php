@@ -1204,13 +1204,8 @@ include __DIR__ . '/../includes/partials/header.php';
             heroObserver.observe(heroSection);
         }
 
-        // Smooth navigation for buttons
-        document.querySelectorAll('a.btn-view, a.btn-book').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                // Allow normal navigation
-                this.style.opacity = '0.7';
-            });
-        });
+        // Remove any click interference on buttons
+        // Buttons now use onclick handlers in HTML for direct navigation
 
     </script>
 <?php include __DIR__ . '/../includes/partials/footer.php'; ?>
